@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Button } from 'react-native';
+import {handleSignin} from '../../firebase/signIn';
 
 export const Input = (props: any) => (
     <TextInput
@@ -26,6 +27,10 @@ export default function Login() {
             <Input label="Password:" placeholder="Enter your password here" value={password} onChangeText={setPassword} secureTextEntry={true}></Input>
             <Text>username:{username} (tracking for testing)</Text>
             <Text>password:{password} (tracking for testing)</Text>
+            <Button
+            onPress={() => handleSignin(username, password)}
+            title='Log In'
+            />
         </View>
     );
 }

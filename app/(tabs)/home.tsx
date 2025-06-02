@@ -1,15 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, ScrollView } from 'react-native';
 import {router} from 'expo-router';
-import { AuthContext } from '../../context/AuthContext';
-import { useContext } from 'react';
+import { useAuth } from "../../context/UserContext";
 
 export default function Home() {
-  const { isLoggedIn } = useContext(AuthContext);
+  const currentUser = useAuth();
     return (
         <ScrollView style={styles.container}>
             <View style={styles.block}>
-                <View style={styles.rowBlock}><Text>{ isLoggedIn ? "Welcome" : "Welcome guest" }</Text></View>
+                <View style={styles.rowBlock}><Text>{ currentUser === null ? "Welcome guest" : "Welcome" }</Text></View>
                  <View style={styles.rowBlock}><Text>Weather info</Text></View>
             </View>
             <View style={styles.largeBlock}>
