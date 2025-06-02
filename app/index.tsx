@@ -1,10 +1,9 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { Redirect } from "expo-router";
-import { AuthContext } from "../context/AuthContext";
-import { useContext } from "react";
+import { useAuth } from "../context/UserContext";
 
 export default function Index() {
-  const { isLoggedIn } = useContext(AuthContext);
+  const currentUser = useAuth();
   return (
     <View
       style={{
@@ -13,7 +12,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      {isLoggedIn ? <Redirect href="/home" /> : <Redirect href="/login"/>}
+      {currentUser === null ? <Redirect href="/home" /> : <Redirect href="/login"/>}
     </View>
   );
 }

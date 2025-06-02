@@ -1,21 +1,21 @@
 import { Stack } from "expo-router";
 import {SafeAreaView} from "react-native-safe-area-context";
 import { StyleSheet, Text, View} from 'react-native';
-import { AuthContext } from "../context/AuthContext";
-import { useContext, useState } from "react";
+import { useState } from "react";
+import { AuthProvider } from "@/context/UserContext";
 
 export default function RootLayout() {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
-    <AuthContext.Provider value={{isLoggedIn}}>  
-    <SafeAreaView style={styles.container}>
-      <View style={styles.box}>
-        <Text>NC Holiday</Text>
-      </View>
-  <Stack screenOptions={{ headerShown: true }} />
-  </SafeAreaView>
-  </AuthContext.Provider>
+    <AuthProvider>  
+      <SafeAreaView style={styles.container}>
+        <View style={styles.box}>
+          <Text>NC Holiday</Text>
+        </View>
+        <Stack screenOptions={{ headerShown: true }} />
+      </SafeAreaView>
+    </AuthProvider>
 )
 }
 
