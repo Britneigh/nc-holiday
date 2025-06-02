@@ -1,6 +1,10 @@
 import { Text, View } from "react-native";
+import { Redirect } from "expo-router";
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
 
 export default function Index() {
+  const { isLoggedIn } = useContext(AuthContext);
   return (
     <View
       style={{
@@ -9,7 +13,8 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+      {isLoggedIn ? <Redirect href="/home" /> : <Redirect href="/login"/>}
     </View>
   );
 }
+
