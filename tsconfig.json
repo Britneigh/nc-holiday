@@ -1,7 +1,12 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "target": "es2017", // Or es2015, esnext, etc.
+    "lib": ["dom", "es2017"], // Ensure "es2015" or a later version is here
+    "module": "esnext", // Or commonjs, depending on your setup
+    "moduleResolution": "bundler",
     "strict": true,
+    "noEmit": false,
     "paths": {
       "@/*": [
         "./*"
