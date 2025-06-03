@@ -1,108 +1,61 @@
-import axios from 'axios';
-import Constants from 'expo-constants';
+import axios from "axios";
 
-// Get environment variables from app.config.js
-const { AMADEUS_CLIENT_ID, AMADEUS_CLIENT_SECRET } = Constants.expoConfig.extra;
+let AMADEUS_CLIENT_ID;
+let AMADEUS_CLIENT_SECRET;
 
-// Get access token from Amadeus
-const getAccessToken = () => {
-  const authUrl = 'https://test.api.amadeus.com/v1/security/oauth2/token';
+if (typeof window === "undefined") {
+  // Node.js (e.g., Jest, backend)
+  import("dotenv").then(dotenv => dotenv.config());
+
+  AMADEUS_CLIENT_ID = process.env.AMADEUS_CLIENT_ID;
+  AMADEUS_CLIENT_SECRET = process.env.AMADEUS_CLIENT_SECRET;
+
+  if (!AMADEUS_CLIENT_ID || !AMADEUS_CLIENT_SECRET) {
+    console.warn("⚠️ Missing Amadeus credentials in environment variables");
+  }
+} else {
+  // Expo (frontend)
+  const Constants = require("expo-constants").default;
+  AMADEUS_CLIENT_ID = Constants.expoConfig.extra.AMADEUS_CLIENT_ID;
+  AMADEUS_CLIENT_SECRET = Constants.expoConfig.extra.AMADEUS_CLIENT_SECRET;
+
+  if (!AMADEUS_CLIENT_ID || !AMADEUS_CLIENT_SECRET) {
+    console.warn("⚠️ Missing Amadeus credentials in app config");
+  }
+}
+
+// ✅ use optional fallback in case values aren't passed in explicitly
+export const getAccessToken = (
+  clientId = AMADEUS_CLIENT_ID,
+  clientSecret = AMADEUS_CLIENT_SECRET
+) => {
+  const authUrl = "https://test.api.amadeus.com/v1/security/oauth2/token";
 
   const data = new URLSearchParams({
-    grant_type: 'client_credentials',
-    client_id: AMADEUS_CLIENT_ID,
-    client_secret: AMADEUS_CLIENT_SECRET
+    grant_type: "client_credentials",
+    client_id: clientId,
+    client_secret: clientSecret,
   });
 
-  return axios.post(authUrl, data, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  }).then((response) => response.data.access_token);
-};
-
-// Flights
-export const flightsApi = axios.create({
-  baseURL: "https://test.api.amadeus.com/v2"
-});
-
-export const flightSearchWithDestination = ({
-  originLocationCode,
-  destinationLocationCode,
-  departureDate,
-  adults
-}) => {
-  return getAccessToken()
-    .then((token) => {
-      return flightsApi.get(`/shopping/flight-offers`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        params: {
-          originLocationCode,
-          destinationLocationCode,
-          departureDate,
-          adults
-        }
-      });
+  return axios
+    .post(authUrl, data.toString(), {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
     })
-    .then((response) => response.data);
+    .then((response) => response.data.access_token);
 };
 
-export const flightSearchWithoutDestination = ({
-  originLocationCode
-}) => {
-  return getAccessToken()
-    .then((token) => {
-      return flightsApi.get(`/shopping/flight-offers`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        params: {
-          originLocationCode
-        }
-      });
-    })
-    .then((response) => response.data);
-};
-
-// Hotels
-export const hotelsApi = axios.create({
-  baseURL: "https://test.api.amadeus.com/v3"
-});
-
-export const hotelSearch = ({ hotelIds }) => {
-  return getAccessToken()
-    .then((token) => {
-      return hotelsApi.get(`/shopping/hotel-offers`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        params: {
-          hotelIds
-        }
-      });
-    })
-    .then((response) => response.data);
-};
-
-// Activities
-export const activitiesApi = axios.create({
-  baseURL: "https://test.api.amadeus.com/v1"
-});
-
-export const activitySearch = ({ latitude, longitude }) => {
-  return getAccessToken()
-    .then((token) => {
-      return activitiesApi.get(`/shopping/activities`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        params: {
-          latitude,
-          longitude
-        }
-      });
+export const getFlightDestinations = (token, origin, maxPrice) => {
+  return axios
+    .get("https://test.api.amadeus.com/v1/shopping/flight-destinations", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        origin,
+        maxPrice,
+      },
     })
     .then((response) => response.data);
 };
