@@ -6,29 +6,33 @@ import { ReactNode } from 'react';
 
 
 type AuthContextType = {
-    currentUser: User | null;
+  currentUser: User | null;
+  isLoading: boolean;
 }
 const AuthContext = createContext<AuthContextType>({
-    currentUser: null,
+  currentUser: null,
+  isLoading: true,
 });
 
 type AuthProviderProps = {
-    children: ReactNode;
+  children: ReactNode;
 };
 
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
-        setCurrentUser(user)
+      setCurrentUser(user);
+      setIsLoading(false);
     });
     return () => unsub();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ currentUser }}>
+    <AuthContext.Provider value={{ currentUser, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
