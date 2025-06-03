@@ -1,12 +1,16 @@
+import ActivityCard from '@/components/ActivityCard';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 
 export default function ListItinerary() {
     return (
-        <View style={styles.container}>
-
+        <ScrollView style={styles.container}>
             <Text>List Itinerary</Text>
-        </View>
+            <ActivityCard />
+            <ActivityCard />
+            <ActivityCard />
+            <ActivityCard />
+        </ScrollView>
     );
 }
 
