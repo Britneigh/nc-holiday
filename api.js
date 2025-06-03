@@ -11,7 +11,7 @@ if (typeof window === "undefined") {
   AMADEUS_CLIENT_SECRET = process.env.AMADEUS_CLIENT_SECRET;
 
   if (!AMADEUS_CLIENT_ID || !AMADEUS_CLIENT_SECRET) {
-    console.warn("⚠️ Missing Amadeus credentials in environment variables");
+    console.warn("WARNING Missing Amadeus credentials in environment variables");
   }
 } else {
   // Expo (frontend)
@@ -20,11 +20,10 @@ if (typeof window === "undefined") {
   AMADEUS_CLIENT_SECRET = Constants.expoConfig.extra.AMADEUS_CLIENT_SECRET;
 
   if (!AMADEUS_CLIENT_ID || !AMADEUS_CLIENT_SECRET) {
-    console.warn("⚠️ Missing Amadeus credentials in app config");
+    console.warn("WARNING Missing Amadeus credentials in app config");
   }
 }
 
-// ✅ use optional fallback in case values aren't passed in explicitly
 export const getAccessToken = (
   clientId = AMADEUS_CLIENT_ID,
   clientSecret = AMADEUS_CLIENT_SECRET
@@ -55,6 +54,28 @@ export const getFlightDestinations = (token, origin, maxPrice) => {
       params: {
         origin,
         maxPrice,
+      },
+    })
+    .then((response) => response.data);
+};
+
+export const getFlightOffers = (
+  token,
+  originLocationCode,
+  destinationLocationCode,
+  departureDate,
+  adults = 1
+) => {
+  return axios
+    .get("https://test.api.amadeus.com/v2/shopping/flight-offers", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        originLocationCode,
+        destinationLocationCode,
+        departureDate,
+        adults,
       },
     })
     .then((response) => response.data);
