@@ -52,3 +52,15 @@ export interface FlightData {
 export interface Trip extends TripData {
     id: string;
 }
+
+export interface Accom extends AccomData {
+    id: string;
+}
+
+export interface Activity extends ActivityData {
+    id: string;
+}
+
+export interface Flight extends FlightData {
+    id: string;
+}
