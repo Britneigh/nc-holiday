@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, View, Button } from 'react-native';
-import {handleSignin} from '../../firebase/signIn';
+import {handleSignup} from '../../firebase/signUp';
 
 export const Input = (props: any) => (
     <TextInput
@@ -17,7 +17,7 @@ const confirmPasswordsMatch = (confirmationPassword: string, password: string) =
   }
 }
 
-export default function Login() {
+export default function SignUp() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -28,7 +28,7 @@ export default function Login() {
             <Text>username:{username} (tracking for testing)</Text>
             <Text>password:{password} (tracking for testing)</Text>
             <Button
-            onPress={() => handleSignin(username, password)}
+            onPress={() => handleSignup(username, password)}
             title='Log In'
             />
             
