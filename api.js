@@ -82,3 +82,20 @@ export const getFlightOffers = (
     })
     .then((response) => response.data);
 };
+
+export const flightSearchWithDestination = async ({
+  originLocationCode,
+  destinationLocationCode,
+  departureDate,
+  adults = 1,
+}) => {
+  const token = await getAccessToken();
+  return getFlightOffers(
+    token,
+    originLocationCode,
+    destinationLocationCode,
+    departureDate,
+    adults
+  );
+};
+
