@@ -4,7 +4,7 @@ import { type ActivityData } from "./types";
 
 export function addActivity(
   tripId: string,
-  activityDetails: Omit<ActivityData, 'userId'> & { // Assuming userId in ActivityData is optional or handled differently
+  activityDetails: Omit<ActivityData, 'userId'> & { 
     startTime?: Date | Timestamp;
     endTime?: Date | Timestamp;
   }
@@ -23,7 +23,7 @@ export function addActivity(
     ...activityDetails,
     startTime: startTimeTimestamp,
     endTime: endTimeTimestamp,
-    isBooked: activityDetails.isBooked || false, // Default isBooked if not provided
+    isBooked: activityDetails.isBooked || false,
   };
 
   return updateDoc(tripDocRef, {

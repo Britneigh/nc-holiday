@@ -1,6 +1,6 @@
 import { doc, updateDoc, arrayUnion, serverTimestamp, Timestamp } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import { type AccomData } from "./types"; // Assuming AccomData is in your types file
+import { type AccomData } from "./types"; 
 
 export function addAccom(
   tripId: string,
