@@ -18,11 +18,11 @@ describe("Amadeus Flight Offers API", () => {
 
         return getFlightOffers(token, "PAR", "LON", "2025-07-01", 1);
       })
-      .then(data => {
-        console.log("SUCCESS - Flight offers:", data);
-        expect(data).toHaveProperty("data");
-        expect(Array.isArray(data.data)).toBe(true);
-        expect(data.data.length).toBeGreaterThan(0);
+      .then(flightOffers => {
+        console.log("SUCCESS - Flight offers:", flightOffers.data);
+        expect(flightOffers).toHaveProperty("data");
+        expect(Array.isArray(flightOffers.data)).toBe(true);
+        expect(flightOffers.data.length).toBeGreaterThan(0);
       })
       .catch(error => {
         console.error("ERROR - Error fetching flight offers:", error.response?.data || error.message);
