@@ -1,3 +1,2 @@
-import {handleSignup} from './firebase/signUp.js'
-
+import { handleSignup } from './firebase/signUp.js';
 handleSignup('garymorris1968@gmail.com', 'password');

@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, ScrollView } from 'react-native';
 
 export default function CalendarItinerary() {
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
 
             <Text>Calendar Itinerary</Text>
-        </View>
+        </ScrollView>
     );
 }
 
