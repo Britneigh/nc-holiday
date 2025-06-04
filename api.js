@@ -5,41 +5,26 @@ let AMADEUS_CLIENT_SECRET;
 
 if (typeof window === "undefined") {
   // Node.js (e.g., Jest, backend)
-  require("dotenv").config();
+  import("dotenv").then((dotenv) => dotenv.config());
 
   AMADEUS_CLIENT_ID = process.env.AMADEUS_CLIENT_ID;
   AMADEUS_CLIENT_SECRET = process.env.AMADEUS_CLIENT_SECRET;
 
   if (!AMADEUS_CLIENT_ID || !AMADEUS_CLIENT_SECRET) {
-    console.warn("WARNING Missing Amadeus credentials in environment variables");
+    console.warn(
+      "WARNING Missing Amadeus credentials in environment variables"
+    );
   }
 } else {
   // Expo (frontend)
-  const Constants = require("expo-constants").default || {};
-  AMADEUS_CLIENT_ID = Constants?.expoConfig?.extra?.AMADEUS_CLIENT_ID;
-  AMADEUS_CLIENT_SECRET = Constants?.expoConfig?.extra?.AMADEUS_CLIENT_SECRET;
+  const Constants = require("expo-constants").default;
+  AMADEUS_CLIENT_ID = Constants.expoConfig.extra.AMADEUS_CLIENT_ID;
+  AMADEUS_CLIENT_SECRET = Constants.expoConfig.extra.AMADEUS_CLIENT_SECRET;
 
   if (!AMADEUS_CLIENT_ID || !AMADEUS_CLIENT_SECRET) {
     console.warn("WARNING Missing Amadeus credentials in app config");
   }
 }
-
-export const flightSearchWithDestination = async ({
-  originLocationCode,
-  destinationLocationCode,
-  departureDate,
-  adults = 1,
-}) => {
-  const token = await getAccessToken();
-  return getFlightOffers(
-    token,
-    originLocationCode,
-    destinationLocationCode,
-    departureDate,
-    adults
-  );
-};
-
 
 export const getAccessToken = (
   clientId = AMADEUS_CLIENT_ID,
