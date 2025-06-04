@@ -3,6 +3,16 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore"
 import Constants from 'expo-constants'
 
+interface FirebaseConfig {
+  apiKey: string;
+  authDomain: string;
+  projectId: string;
+  storageBucket: string;
+  messagingSenderId: string;
+  appId: string;
+  measurementId: string;
+}
+
 const {
   FIREBASE_API_KEY,
   FIREBASE_AUTH_DOMAIN,
@@ -11,10 +21,10 @@ const {
   FIREBASE_MESSAGING_SENDER_ID,
   FIREBASE_APP_ID,
   FIREBASE_MEASUREMENT_ID,
-} = Constants.expoConfig.extra;
+} = Constants.expoConfig?.extra ?? {};
 
 
-const firebaseConfig = {
+const firebaseConfig: FirebaseConfig = {
   apiKey: FIREBASE_API_KEY,
   authDomain: FIREBASE_AUTH_DOMAIN,
   projectId: FIREBASE_PROJECT_ID,

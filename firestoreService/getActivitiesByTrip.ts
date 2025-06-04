@@ -8,7 +8,7 @@ import {
   DocumentData
 } from 'firebase/firestore';
 import { db } from "../firebaseConfig";
-import { type Activity, type ActivityData } from "./types"; // Ensure these types are defined
+import { type Activity, type ActivityData } from "./types"; 
 
 export function getActivitiesByTripId(tripId: string): Promise<Activity[] | null> {
     const activitiesColRef = collection(db, "activities");

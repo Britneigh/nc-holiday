@@ -1,124 +1,67 @@
-import { flightSearchWithDestination } from '../api'
-import axios from 'axios'
+jest.mock("expo-constants", () => ({
+  default: {
+  expoConfig: {
+    extra: {
+      AMADEUS_CLIENT_ID: "test_client_id",
+      AMADEUS_CLIENT_SECRET: "test_client_secret",
+    },
+  },
+},
+}));
 
-jest.mock('axios')
-jest.mock('expo-constants')
+jest.mock("axios", () => ({
+    post: jest.fn(),
+    get: jest.fn(),
+}));
 
-describe('flightSearchWithDestination', () => {
+import { flightSearchWithDestination } from "../api";
+import axios from "axios";
+
+describe("flightSearchWithDestination", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
-  axios.create.mockReturnValue({
-  get: mockGet,
-  post: mockPost,
-});
-
-
-
-  it('resolves with flight data when API calls succeed', () => {
-    // Mock token fetch
-    axios.post.mockResolvedValueOnce({ data: { access_token: 'mock-token' } })
-    // Mock flight offers fetch
-    axios.get.mockResolvedValueOnce({ data: { flights: ['flight1', 'flight2'] } })
+  test("resolves with flight data when API calls succeed", async () => {
+    axios.post.mockResolvedValueOnce({ data: { access_token: "mock-token" } });
+    axios.get.mockResolvedValueOnce({
+      data: { flights: ["flight1", "flight2"] },
+    });
 
     const params = {
-      originLocationCode: 'BOS',
-      destinationLocationCode: 'PAR',
-      departureDate: '2025-06-10',
-      adults: 1
-    }
+      originLocationCode: "BOS",
+      destinationLocationCode: "PAR",
+      departureDate: "2025-06-10",
+      adults: 1,
+    };
 
-    // Return the promise so Jest waits for it
-    return flightSearchWithDestination(params).then(data => {
-      expect(axios.post).toHaveBeenCalledWith(
-        'https://test.api.amadeus.com/v1/security/oauth2/token',
-        expect.any(URLSearchParams),
-        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-      )
-      expect(axios.get).toHaveBeenCalledWith(
-        '/shopping/flight-offers',
-        expect.objectContaining({
-          headers: { Authorization: 'Bearer mock-token' },
-          params
-        })
-      )
-      expect(data).toEqual({ flights: ['flight1', 'flight2'] })
-    })
-  })
+    const data = await flightSearchWithDestination(params);
 
-  it('rejects if token fetch fails', () => {
-    axios.post.mockRejectedValueOnce(new Error('token error'))
+    expect(axios.post).toHaveBeenCalledWith(
+      "https://test.api.amadeus.com/v1/security/oauth2/token",
+      "grant_type=client_credentials&client_id=test_client_id&client_secret=test_client_secret",
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
 
-    return flightSearchWithDestination({}).catch(err => {
-      expect(err).toBeInstanceOf(Error)
-      expect(err.message).toBe('token error')
-    })
-  })
+    expect(axios.get).toHaveBeenCalledWith(
+      "https://test.api.amadeus.com/v2/shopping/flight-offers",
+      {"headers": {"Authorization": "Bearer mock-token"}, "params": {"adults": 1, "departureDate": "2025-06-10", "destinationLocationCode": "PAR", "originLocationCode": "BOS"}}
+    );
 
-  it('rejects if flight fetch fails', () => {
-    axios.post.mockResolvedValueOnce({ data: { access_token: 'mock-token' } })
-    axios.get.mockRejectedValueOnce(new Error('flights error'))
+    expect(data).toEqual({ flights: ["flight1", "flight2"] });
+    });
 
-    return flightSearchWithDestination({}).catch(err => {
-      expect(err).toBeInstanceOf(Error)
-      expect(err.message).toBe('flights error')
-    })
-  })
-})
+  test("rejects if token fetch fails", async () => {
+    axios.post.mockRejectedValueOnce(new Error("token error"));
 
-// Mock expo-constants
-// jest.mock('expo-constants', () => ({
-//     expoConfig: {
-//       extra: {
-//         AMADEUS_CLIENT_ID: 'fake-client-id',
-//         AMADEUS_CLIENT_SECRET: 'fake-client-secret'
-//       }
-//     }
-//   }))
-  
-//   describe('flightSearchWithDestination', () => {
-//     it('should fetch access token and then return flight offers', async () => {
-//       // Mock token response
-//       axios.post.mockResolvedValueOnce({
-//         data: { access_token: 'fake-token' }
-//       })
-  
-//       // Mock flight search response
-//       axios.create = jest.fn(() => axios) // return the mocked axios instance
-  
-//       axios.get.mockResolvedValueOnce({
-//         data: { flights: ['flight1', 'flight2'] }
-//       })
-  
-//       const params = {
-//         originLocationCode: 'BOS',
-//         destinationLocationCode: 'PAR',
-//         departureDate: '2025-06-30',
-//         adults: 1
-//       }
-  
-//       const data = await flightSearchWithDestination(params)
-  
-//       expect(axios.post).toHaveBeenCalledWith(
-//         'https://test.api.amadeus.com/v1/security/oauth2/token',
-//         expect.anything(),
-//         expect.objectContaining({
-//           headers: {
-//             'Content-Type': 'application/x-www-form-urlencoded'
-//           }
-//         })
-//       )
-  
-//       expect(axios.get).toHaveBeenCalledWith(
-//         '/shopping/flight-offers',
-//         expect.objectContaining({
-//           headers: { Authorization: 'Bearer fake-token' },
-//           params
-//         })
-//       )
-  
-//       expect(data).toEqual({ flights: ['flight1', 'flight2'] })
-//     })
-//   })
+    await expect(flightSearchWithDestination({})).rejects.toThrow("token error");
+  });
 
+  test("rejects if flight fetch fails", async () => {
+    axios.post.mockResolvedValueOnce({ data: { access_token: "mock-token" } });
+
+    axios.get.mockRejectedValueOnce(new Error("flights error"));
+
+    await expect(flightSearchWithDestination({})).rejects.toThrow("flights error");
+  });
+});

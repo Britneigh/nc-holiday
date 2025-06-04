@@ -7,8 +7,8 @@ import {
   QuerySnapshot, 
   QueryDocumentSnapshot 
 } from 'firebase/firestore';
-import { db, auth } from "../firebaseConfig"; // Your initialized instances
-import { type Trip, type TripData } from "./types"; // Your defined interfaces
+import { db, auth } from "../firebaseConfig"; 
+import { type Trip, type TripData } from "./types";
 
 export function getCurrentUserTrips(): Promise<Trip[] | null> {
   const currentUser = auth.currentUser;
