@@ -26,10 +26,10 @@ export default function SignUp() {
 
     return (
         <View style={styles.container}>
-            <Input label="Username:" placeholder="Enter your email here" value={username} onChangeText={setUsername}></Input>
-            <Input label="Password:" placeholder="Enter your password here" value={password} onChangeText={setPassword} secureTextEntry={true}></Input>
+            <TextInput placeholder="Enter your email here" value={username} onChangeText={setUsername} autoCapitalize='none' style={styles.input} />
+            <TextInput placeholder="Enter your password here" value={password} onChangeText={setPassword} secureTextEntry={true} autoCapitalize='none' style={styles.input} />
             {showPassword ? <Text>{password}</Text> : null}
-            <Input label="Confirm password:" placeholder="Confirm your password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry={true}></Input>
+            <TextInput placeholder="Confirm your password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry={true} autoCapitalize='none' style={styles.input} />
             {showPassword ? <Text>{confirmPassword}</Text> : null}
             {confirmPassword !== password ? <Text>Passwords do not match.</Text> : null}
             <Text>Show Password?</Text>
@@ -58,4 +58,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    input: {
+        padding: 5,
+        borderColor: "red",
+        borderWidth: 2
+    }
 });
