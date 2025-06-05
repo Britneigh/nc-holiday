@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig.js'
+import { auth } from '../firebaseConfig';
 
-export const handleSignup = (email, password)=>{
+export const handleSignup = (email: string, password: string)=>{
 
     return createUserWithEmailAndPassword (auth, email, password)
     .then ((userCredential)=>{
