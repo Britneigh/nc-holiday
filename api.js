@@ -61,7 +61,7 @@ export const getFlightDestinations = (token, origin, maxPrice) => {
     .then((response) => response.data);
 };
 
-export const getFlightOffers = (
+export const getFlightSearchWithDestination = (
   token,
   originLocationCode,
   destinationLocationCode,
@@ -80,22 +80,12 @@ export const getFlightOffers = (
         adults,
       },
     })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch((error) => {
+      const normalizedError = {
+        status: error.response?.status || 500,
+        data: error.response?.data || { message: error.message || "Unknown error" },
+      };
+      throw normalizedError;
+    });
 };
-
-export const flightSearchWithDestination = async ({
-  originLocationCode,
-  destinationLocationCode,
-  departureDate,
-  adults = 1,
-}) => {
-  const token = await getAccessToken();
-  return getFlightOffers(
-    token,
-    originLocationCode,
-    destinationLocationCode,
-    departureDate,
-    adults
-  );
-};
-
