@@ -1,37 +1,8 @@
 import { doc, getDoc, DocumentSnapshot } from 'firebase/firestore';
-import { db } from "../firebaseConfig.js";
-import { Timestamp } from 'firebase/firestore';
-// import { type Trip, type TripData } from "./types"
+import { db } from "../firebaseConfig";
+import { type Trip, type TripData } from "./types"
 
-interface ActivityData {
-    userId: string;
-    location: string;
-    startTime?: Timestamp;
-    endTime?: Timestamp;
-    description: string;
-    cost?: number;
-    bookingLink?: string;
-    isBooked: boolean;
-    pictures?: string[];
-}
-
- interface TripData {
-    userId: string;
-    tripName: string;
-    location: string;
-    cost: number;
-    startDate: Timestamp;
-    endDate: Timestamp;
-    activities: ActivityData[];
-    createdAt: Timestamp;
-    updatedAt: Timestamp;
-}
-
-interface Trip extends TripData {
-    id: string;
-}
-
-export function getTripById(tripId: string): Promise<Trip | null> {
+export function getTripById(tripId: string) {
     const tripDocRef = doc(db ,"trips", tripId);
     
     return getDoc(tripDocRef)
@@ -55,5 +26,3 @@ export function getTripById(tripId: string): Promise<Trip | null> {
             return null;
         })
 }
-
-getTripById("yxyQzZ8adGc3O36DV6tT");

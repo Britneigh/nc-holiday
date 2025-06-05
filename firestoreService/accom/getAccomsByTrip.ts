@@ -7,8 +7,8 @@ import {
   QueryDocumentSnapshot,
   DocumentData
 } from 'firebase/firestore';
-import { db } from "../firebaseConfig";
-import { type Accom, type AccomData } from "./types"; 
+import { db } from "../../firebaseConfig";
+import { type Accom, type AccomData } from "../types"; 
 
 export function getAccommodationsByTripId(tripId: string): Promise<Accom[] | null> {
     const accommodationsColRef = collection(db, "accommodation");
