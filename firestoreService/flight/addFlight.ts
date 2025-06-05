@@ -1,6 +1,6 @@
 import { doc, updateDoc, arrayUnion, serverTimestamp, Timestamp } from "firebase/firestore";
-import { db } from "../firebaseConfig";
-import { type FlightData } from "./types";
+import { db } from "../../firebaseConfig";
+import { type FlightData } from "../types";
 
 export function addFlight(
   tripId: string,
