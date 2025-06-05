@@ -26,7 +26,7 @@ export default function ArrivalFlightSearch({ flightData, arrivalSearchQuery, se
             >unselect airport</Text></Pressable> : null}
             {arrivalSearchQuery && filteredResults.length === 0 ? <Text>No Results Found</Text> : null}
             <TextInput
-                placeholder='Arrival Airport'
+                placeholder='Search for cities or airports...'
                 clearButtonMode='always'
                 style={styles.input}
                 autoCorrect={false}
