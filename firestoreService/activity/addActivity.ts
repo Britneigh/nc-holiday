@@ -1,6 +1,7 @@
 import { doc, updateDoc, arrayUnion, serverTimestamp, Timestamp } from "firebase/firestore";
-import { db } from "../firebaseConfig";
-import { type ActivityData } from "./types";
+
+import { db } from "../../firebaseConfig";
+import { type ActivityData } from "../types";
 
 export function addActivity(
   tripId: string,

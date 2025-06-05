@@ -10,7 +10,8 @@ import {
 import { db, auth } from "../firebaseConfig"; // Your initialized instances
 import { type Trip, type TripData } from "./types"; // Your defined interfaces
 
-export function getCurrentUserTrips(): Promise<Trip[] | null> {
+export function getTrips(): Promise<Trip[] | null> {
+
   const currentUser = auth.currentUser;
 
   if (!currentUser) {
