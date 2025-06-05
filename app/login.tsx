@@ -23,8 +23,8 @@ export default function Login() {
 
     return (
         <View style={styles.container}>
-            <Input label="Username:" placeholder="Enter your email here" value={username} onChangeText={setUsername}></Input>
-            <Input label="Password:" placeholder="Enter your password here" value={password} onChangeText={setPassword} secureTextEntry={true}></Input>
+            <TextInput placeholder="Enter your email here" value={username} onChangeText={setUsername} autoCapitalize='none' style={styles.input} />
+            <TextInput placeholder="Enter your password here" value={password} onChangeText={setPassword} secureTextEntry={true} autoCapitalize='none' style={styles.input} />
             {showPassword ? <Text>{password}</Text> : null}
             <Text>Show Password?</Text>
             <Switch
@@ -52,4 +52,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    input: {
+        padding: 5,
+        borderColor: "red",
+        borderWidth: 2
+    }
 });
