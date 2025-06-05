@@ -1,17 +1,17 @@
 jest.mock("expo-constants", () => ({
   default: {
-  expoConfig: {
-    extra: {
-      AMADEUS_CLIENT_ID: "test_client_id",
-      AMADEUS_CLIENT_SECRET: "test_client_secret",
+    expoConfig: {
+      extra: {
+        AMADEUS_CLIENT_ID: "test_client_id",
+        AMADEUS_CLIENT_SECRET: "test_client_secret",
+      },
     },
   },
-},
 }));
 
 jest.mock("axios", () => ({
-    post: jest.fn(),
-    get: jest.fn(),
+  post: jest.fn(),
+  get: jest.fn(),
 }));
 
 import { flightSearchWithDestination } from "../api";
@@ -23,7 +23,9 @@ describe("flightSearchWithDestination", () => {
   });
 
   test("resolves with flight data when API calls succeed", async () => {
-    axios.post.mockResolvedValueOnce({ data: { access_token: "mock-token" } });
+    axios.post.mockResolvedValueOnce({
+      data: { access_token: "mock-token" },
+    });
     axios.get.mockResolvedValueOnce({
       data: { flights: ["flight1", "flight2"] },
     });
@@ -45,16 +47,26 @@ describe("flightSearchWithDestination", () => {
 
     expect(axios.get).toHaveBeenCalledWith(
       "https://test.api.amadeus.com/v2/shopping/flight-offers",
-      {"headers": {"Authorization": "Bearer mock-token"}, "params": {"adults": 1, "departureDate": "2025-06-10", "destinationLocationCode": "PAR", "originLocationCode": "BOS"}}
+      {
+        headers: { Authorization: "Bearer mock-token" },
+        params: {
+          adults: 1,
+          departureDate: "2025-06-10",
+          destinationLocationCode: "PAR",
+          originLocationCode: "BOS",
+        },
+      }
     );
 
     expect(data).toEqual({ flights: ["flight1", "flight2"] });
-    });
+  });
 
   test("rejects if token fetch fails", async () => {
     axios.post.mockRejectedValueOnce(new Error("token error"));
 
-    await expect(flightSearchWithDestination({})).rejects.toThrow("token error");
+    await expect(flightSearchWithDestination({})).rejects.toThrow(
+      "token error"
+    );
   });
 
   test("rejects if flight fetch fails", async () => {
@@ -62,6 +74,8 @@ describe("flightSearchWithDestination", () => {
 
     axios.get.mockRejectedValueOnce(new Error("flights error"));
 
-    await expect(flightSearchWithDestination({})).rejects.toThrow("flights error");
+    await expect(flightSearchWithDestination({})).rejects.toThrow(
+      "flights error"
+    );
   });
 });
