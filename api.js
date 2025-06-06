@@ -67,39 +67,89 @@ export const getFlightSearchWithDestination = (
   destinationLocationCode,
   departureDate,
   adults,
-  returnDate,
+  returnDate
 ) => {
   const params = {
-        originLocationCode,
-        destinationLocationCode,
-        departureDate,
-        adults,
-      }
+    originLocationCode,
+    destinationLocationCode,
+    departureDate,
+    adults,
+  };
 
   if (returnDate) {
-    params.returnDate = returnDate; 
+    params.returnDate = returnDate;
   }
-  
+
   return axios
     .get("https://test.api.amadeus.com/v2/shopping/flight-offers", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-     params,
-     
+      params,
     })
     .then((response) => {
-      console.log(response.data)
-      return response.data
+      // console.log(response.data)
+      return response.data;
     })
     .catch((error) => {
       const normalizedError = {
         status: error.response?.status || 500,
-        data: error.response?.data || { message: error.message || "Unknown error" },
+        data: error.response?.data || {
+          message: error.message || "Unknown error",
+        },
       };
       throw normalizedError;
     });
 };
 
+//--------------------
 
+export const getHotelList = (
+  token,
+  cityCode,
+  radius = 5,
+  radiusUnit = "KM",
+  chainCodes = [],
+  amenities = [],
+  ratings = [],
+  hotelSource = "ALL"
+) => {
+  const params = {
+    cityCode,
+    radius,
+    radiusUnit,
+    hotelSource,
+  };
 
+  if (chainCodes.length > 0) params.chainCodes = chainCodes.join(",");
+  if (amenities.length > 0) params.amenities = amenities.join(",");
+  if (ratings.length > 0) params.ratings = ratings.join(",");
+
+  return axios
+    .get(
+      "https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params,
+      }
+    )
+    .then((response) => {
+      console.log
+      return response.data;
+    })
+    // .then((hotelList) => {
+    //   const hotelIds = hotelList.map((hotel) => hotel.hotelId);
+    //   console.log(hotelIds, "<----- hotelIds");
+    // })
+    .catch((error) => {
+      const normalizedError = {
+        status: error.response?.status || 500,
+        data: error.response?.data || {
+          message: error.message || "Unknown error",
+        },
+      };
+      throw normalizedError;
+    });
+};
