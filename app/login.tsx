@@ -16,6 +16,7 @@ export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [loginError, setLoginError] = useState(false)
 
     const toggleSwitch = () => {
         setShowPassword(!showPassword)
@@ -34,13 +35,21 @@ export default function Login() {
                 onValueChange={toggleSwitch}
                 value={showPassword}
             />
+            {loginError ? <Text>No existing user matches those details. Please check your credentials or sign up.</Text> : null}
             <Button
+            disabled={username && password ? false: true}
                 onPress={() => {
-                    const user: object = handleSignin(username, password)
-                    { user ? router.replace('/home') : <Text>No existing user that matches those details. Please check again or sign up.</Text> }
-                }}
-                title='Log In'
+                handleSignin(username, password)
+                .then((user) => {
+                    router.replace('/home');
+                })
+                .catch((error) => {
+                    setLoginError(true)
+                })
+            }}
+            title="Log In"
             />
+            
             <Pressable onPress={() => router.push('/signup')}>
                 <Text>Don't have an account? Sign up</Text>
             </Pressable>

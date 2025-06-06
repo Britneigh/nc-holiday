@@ -19,6 +19,7 @@ export default function SignUp() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [signupError, setSignupError] = useState(false)
 
     const toggleSwitch = () => {
         setShowPassword(!showPassword)
@@ -40,10 +41,17 @@ export default function SignUp() {
                 onValueChange={toggleSwitch}
                 value={showPassword}
             />
+            {signupError ? <Text>An issue occured when trying to sign up.</Text> : null }
             <Button
+            disabled={username && password ? false: true}
                 onPress={() => {
-                    const user: object = handleSignup(username, password)
-                    { user ? router.navigate('/login') : <Text>An issue occured when trying to sign up.</Text> }
+                    handleSignup(username, password)
+                    .then(()=>{
+                        router.navigate('/login');
+                    })
+                    .catch((error)=>{
+                        setSignupError(true)
+                    })                   
                 }}
                 title='Sign Up'
             />

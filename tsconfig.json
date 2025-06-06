@@ -14,7 +14,9 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+     "jsx": "react-native", // 👈 Add this line
+    "outDir": "./dist"
   },
   "include": [
     "**/*.ts",
