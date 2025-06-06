@@ -136,14 +136,90 @@ export const getHotelList = (
       }
     )
     .then((response) => {
-      console.log
       return response.data;
     })
-    // .then((hotelList) => {
-    //   const hotelIds = hotelList.map((hotel) => hotel.hotelId);
-    //   console.log(hotelIds, "<----- hotelIds");
-    // })
     .catch((error) => {
+      const normalizedError = {
+        status: error.response?.status || 500,
+        data: error.response?.data || {
+          message: error.message || "Unknown error",
+        },
+      };
+      throw normalizedError;
+    });
+};
+
+//--------------------------
+
+export const getHotelSearch = (
+  token,
+  hotelList, // object passed in
+  adults = 1,
+  checkInDate,
+  checkOutDate,
+  countryOfResidence,
+  roomQuantity = 1,
+  priceRange,
+  currency,
+  paymentPolicy = "NONE",
+  boardType,
+  includeClosed = false,
+  bestRatesOnly = true,
+  lang
+) => {
+  // Extract and validate hotelIds
+  const hotelIds = Array.isArray(hotelList?.data)
+    ? hotelList.data.map((item) => item.hotelId).filter(Boolean)
+    : [];
+
+  // Auto-default checkInDate if missing
+  if (!checkInDate) {
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    checkInDate = today;
+  }
+
+  // Auto-default checkOutDate if missing
+  if (!checkOutDate) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    checkOutDate = tomorrow.toISOString().split("T")[0];
+  }
+
+
+  // Build params object
+  const params = {
+    adults,
+    checkInDate,
+    checkOutDate,
+    countryOfResidence,
+    roomQuantity,
+    priceRange,
+    currency,
+    paymentPolicy,
+    boardType,
+    includeClosed,
+    bestRatesOnly,
+    lang,
+  };
+
+  params.hotelIds = hotelIds.join(",");
+
+  // Clean out undefined params
+  Object.keys(params).forEach(
+    (key) => params[key] === undefined && delete params[key]
+  );
+
+  return axios
+    .get("https://test.api.amadeus.com/v3/shopping/hotel-offers", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params,
+    })
+    .then((response) => {
+      return response.data;
+    })
+   .catch((error) => {
       const normalizedError = {
         status: error.response?.status || 500,
         data: error.response?.data || {
