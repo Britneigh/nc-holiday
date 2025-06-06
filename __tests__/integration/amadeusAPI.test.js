@@ -178,3 +178,49 @@ describe("Amadeus Hotels Search", () => {
       });
   });
 });
+
+///--------------------------
+
+
+describe.only("Amadeus Activities and Tours List", () => {
+  test("successfully fetches list of activites and tour given longitude and latitude", () => {
+    const clientId = process.env.AMADEUS_CLIENT_ID;
+    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+
+    expect(clientId).toBeTruthy();
+    expect(clientSecret).toBeTruthy();
+
+    return getAccessToken(clientId, clientSecret)
+      .then((token) => {
+        return getToursAndActivities(token, "MIA");
+      })
+      .then((toursAndActivities) => {
+        expect(toursAndActivities).toHaveProperty("data");
+        expect(Array.isArray(toursAndActivities.data)).toBe(true);
+        expect(toursAndActivities.data.length).toBeGreaterThan(0);
+      })
+      .catch((error) => {
+        console.error(
+          "ERROR - Error fetching tours and activities:",
+          error.response?.data || error.message
+        );
+        throw error;
+      });
+  });
+  test("Returns 400 when given incorrect parameter(s)", () => {
+    const clientId = process.env.AMADEUS_CLIENT_ID;
+    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+
+    expect(clientId).toBeTruthy();
+    expect(clientSecret).toBeTruthy();
+
+    return getAccessToken(clientId, clientSecret)
+      .then((token) => {
+        return getHotelList(token, "XXX");
+      })
+      .catch((error) => {
+        console.log("API Error:", error.data.message);
+        expect(error.status).toBe(400);
+      });
+  });
+});
