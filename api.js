@@ -218,7 +218,7 @@ export const getHotelSearch = (
     .then((response) => {
       return response.data;
     })
-   .catch((error) => {
+    .catch((error) => {
       const normalizedError = {
         status: error.response?.status || 500,
         data: error.response?.data || {
@@ -235,24 +235,21 @@ export const getToursAndActivities = (
   token,
   latitude,
   longitude,
-  redius
+  radius = 10
 ) => {
   const params = {
-  latitude,
-  longitude,
-  redius
+    latitude,
+    longitude,
+    radius,
   };
 
   return axios
-    .get(
-      "https://test.api.amadeus.com/v1/shopping/activities",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params,
-      }
-    )
+    .get("https://test.api.amadeus.com/v1/shopping/activities", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params,
+    })
     .then((response) => {
       return response.data;
     })
