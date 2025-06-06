@@ -1,7 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { getAccessToken, getFlightSearchWithDestination, getHotelList } from "../../api";
+import {
+  getAccessToken,
+  getFlightSearchWithDestination,
+  getHotelList,
+  getHotelSearch,
+} from "../../api";
 
 jest.setTimeout(30000);
 
@@ -15,9 +20,6 @@ describe("Amadeus Flight Offers API", () => {
 
     return getAccessToken(clientId, clientSecret)
       .then((token) => {
-        console.log("SUCCESS - Access token retrieved");
-        console.log("Access Token:", token);
-
         return getFlightSearchWithDestination(
           token,
           "PAR",
@@ -48,9 +50,6 @@ describe("Amadeus Flight Offers API", () => {
 
     return getAccessToken(clientId, clientSecret)
       .then((token) => {
-        console.log("SUCCESS - Access token retrieved");
-        console.log("Access Token:", token);
-
         return getFlightSearchWithDestination(
           token,
           "XXX",
@@ -60,7 +59,7 @@ describe("Amadeus Flight Offers API", () => {
         );
       })
       .catch((error) => {
-        console.error("API Error:", error.data.message);
+        console.log("API Error:", error.data.message);
         expect(error.status).toBe(400);
       });
   });
@@ -68,8 +67,7 @@ describe("Amadeus Flight Offers API", () => {
 
 ///-----
 
-
-describe("Amadeus Hotels", () => {
+describe("Amadeus Hotels List", () => {
   test("successfully fetches list of hotels when given city code", () => {
     const clientId = process.env.AMADEUS_CLIENT_ID;
     const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
@@ -79,13 +77,7 @@ describe("Amadeus Hotels", () => {
 
     return getAccessToken(clientId, clientSecret)
       .then((token) => {
-        console.log("SUCCESS - Access token retrieved");
-        console.log("Access Token:", token);
-
-        return getHotelList(
-          token,
-          "MIA",
-        );
+        return getHotelList(token, "MIA");
       })
       .then((hotelList) => {
         expect(hotelList).toHaveProperty("data");
@@ -109,16 +101,79 @@ describe("Amadeus Hotels", () => {
 
     return getAccessToken(clientId, clientSecret)
       .then((token) => {
-        console.log("SUCCESS - Access token retrieved");
-        console.log("Access Token:", token);
-
-        return getHotelList(
-          token,
-          "XXX",
-        );
+        return getHotelList(token, "XXX");
       })
       .catch((error) => {
-        console.error("API Error:", error.data.message);
+        console.log("API Error:", error.data.message);
+        expect(error.status).toBe(400);
+      });
+  });
+});
+
+///-------
+
+describe("Amadeus Hotels Search", () => {
+  test("successfully fetches list of available hotels when passed array of hotel codes", () => {
+    const clientId = process.env.AMADEUS_CLIENT_ID;
+    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+
+    expect(clientId).toBeTruthy();
+    expect(clientSecret).toBeTruthy();
+
+    return getAccessToken(clientId, clientSecret)
+      .then((token) => {
+        return getHotelList(token, "MIA");
+      })
+      .then((hotelList) => {
+        return getAccessToken(clientId, clientSecret).then((token) => {
+          return getHotelSearch(token, hotelList);
+        });
+      })
+      .then((hotelSearch) => {
+        console.log(hotelSearch.data, "<==== hotel search response");
+        hotelOffers = hotelSearch.data;
+        hotelOffers.forEach((hotelOffer) => {
+          console.info(`Hotel: ${hotelOffer.hotel.name}`);
+
+          hotelOffer.offers.forEach((offer, index) => {
+            console.info(`  Offer ${index + 1}:`);
+            console.info(
+              `    Price: ${offer.price.total} ${offer.price.currency}`
+            );
+          });
+        });
+        expect(hotelSearch).toHaveProperty("data");
+        expect(Array.isArray(hotelSearch.data)).toBe(true);
+        expect(hotelSearch.data.length).toBeGreaterThan(0);
+      })
+      .catch((error) => {
+        console.error(
+          "ERROR - Error fetching hotel list:",
+          error.response?.data || error.message
+        );
+        throw error;
+      });
+  });
+
+  test("Returns 400 when given incorrect parameter(s)", () => {
+    const clientId = process.env.AMADEUS_CLIENT_ID;
+    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+
+    expect(clientId).toBeTruthy();
+    expect(clientSecret).toBeTruthy();
+
+    return getAccessToken(clientId, clientSecret)
+      .then((token) => {
+        const ret = getHotelSearch(token, ["fuckoff"]);
+        return ret;
+      })
+      .then((ret) => {
+        console.log(ret, "<===return");
+      })
+
+      .catch((error) => {
+        console.log(error, "<=== error being returned");
+        console.log("API Error:", error.data.message);
         expect(error.status).toBe(400);
       });
   });
