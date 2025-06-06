@@ -185,7 +185,6 @@ export const getHotelSearch = (
     checkOutDate = tomorrow.toISOString().split("T")[0];
   }
 
-
   // Build params object
   const params = {
     adults,
@@ -220,6 +219,44 @@ export const getHotelSearch = (
       return response.data;
     })
    .catch((error) => {
+      const normalizedError = {
+        status: error.response?.status || 500,
+        data: error.response?.data || {
+          message: error.message || "Unknown error",
+        },
+      };
+      throw normalizedError;
+    });
+};
+
+///---------------------
+
+export const getToursAndActivities = (
+  token,
+  latitude,
+  longitude,
+  redius
+) => {
+  const params = {
+  latitude,
+  longitude,
+  redius
+  };
+
+  return axios
+    .get(
+      "https://test.api.amadeus.com/v1/shopping/activities",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params,
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
       const normalizedError = {
         status: error.response?.status || 500,
         data: error.response?.data || {
