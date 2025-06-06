@@ -66,21 +66,32 @@ export const getFlightSearchWithDestination = (
   originLocationCode,
   destinationLocationCode,
   departureDate,
-  adults = 1
+  adults,
+  returnDate,
 ) => {
+  const params = {
+        originLocationCode,
+        destinationLocationCode,
+        departureDate,
+        adults,
+      }
+
+  if (returnDate) {
+    params.returnDate = returnDate; 
+  }
+  
   return axios
     .get("https://test.api.amadeus.com/v2/shopping/flight-offers", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      params: {
-        originLocationCode,
-        destinationLocationCode,
-        departureDate,
-        adults,
-      },
+     params,
+     
     })
-    .then((response) => response.data)
+    .then((response) => {
+      console.log(response.data)
+      return response.data
+    })
     .catch((error) => {
       const normalizedError = {
         status: error.response?.status || 500,
@@ -89,3 +100,6 @@ export const getFlightSearchWithDestination = (
       throw normalizedError;
     });
 };
+
+
+
