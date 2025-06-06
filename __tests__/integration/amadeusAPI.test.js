@@ -6,6 +6,7 @@ import {
   getFlightSearchWithDestination,
   getHotelList,
   getHotelSearch,
+  getToursAndActivities,
 } from "../../api";
 
 jest.setTimeout(30000);
@@ -181,8 +182,7 @@ describe("Amadeus Hotels Search", () => {
 
 ///--------------------------
 
-
-describe.only("Amadeus Activities and Tours List", () => {
+describe("Amadeus Activities and Tours List", () => {
   test("successfully fetches list of activites and tour given longitude and latitude", () => {
     const clientId = process.env.AMADEUS_CLIENT_ID;
     const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
@@ -192,7 +192,7 @@ describe.only("Amadeus Activities and Tours List", () => {
 
     return getAccessToken(clientId, clientSecret)
       .then((token) => {
-        return getToursAndActivities(token, "MIA");
+        return getToursAndActivities(token, -80.23881, 25.73856);
       })
       .then((toursAndActivities) => {
         expect(toursAndActivities).toHaveProperty("data");
@@ -216,7 +216,7 @@ describe.only("Amadeus Activities and Tours List", () => {
 
     return getAccessToken(clientId, clientSecret)
       .then((token) => {
-        return getHotelList(token, "XXX");
+        return getToursAndActivities(token, 32, 25.73856); /// coconut grove hotel miami
       })
       .catch((error) => {
         console.log("API Error:", error.data.message);
