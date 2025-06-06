@@ -6,7 +6,7 @@ export default function DateFlightSearch({date, setDate}) {
   
   const [show, setShow] = useState(false);
 
-  const onChange = (selectedDate) => {
+  const onChange = (event, selectedDate) => {
     setShow(false);
     if (selectedDate) {
       setDate(selectedDate);
@@ -18,7 +18,10 @@ export default function DateFlightSearch({date, setDate}) {
     setDate(new Date(webDateValue));
   };
 
-  const formattedDate = date.toISOString().split('T')[0];
+  
+const formattedDate = date ? date.toISOString().split('T')[0] : null
+
+
 
   return (
     <View style={styles.container}>
