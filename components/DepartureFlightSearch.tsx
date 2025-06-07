@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { StyleSheet, Text, View, TextInput, FlatList, Pressable } from 'react-native';
 
 
-export default function DepartureFlightSearch({ flightData, departureSearchQuery, selectedDepartureCode, setDepartureSearchQuery, setSelectedDepartureCode }) {
+export default function DepartureFlightSearch({ flightData, departureSearchQuery, selectedDepartureCode, setDepartureSearchQuery, setSelectedDepartureCode }: any) {
 
     const filteredResults = useMemo(() => {
         if (!departureSearchQuery) {
@@ -10,7 +10,7 @@ export default function DepartureFlightSearch({ flightData, departureSearchQuery
         }
         const lowerCaseDepQuery = departureSearchQuery.toLowerCase()
 
-        return flightData.filter(({ city, code }) =>
+        return flightData.filter(({ city, code }: any) =>
             city.toLowerCase().includes(lowerCaseDepQuery) ||
             code.toLowerCase().includes(lowerCaseDepQuery)
         )
@@ -21,10 +21,8 @@ export default function DepartureFlightSearch({ flightData, departureSearchQuery
             <Text>Choose a departure airport.</Text>
             <Text style={{ fontSize: 16, color: 'black', marginTop: 8 }}
             >Selected Airport Code: {selectedDepartureCode || 'no departure code selected'}</Text>
-            {selectedDepartureCode ? <Pressable onPress={() => setSelectedDepartureCode('')}
-            ><Text
-                style={styles.link}
-            >unselect airport</Text></Pressable> : null}
+            {selectedDepartureCode ? <Pressable onPress={() => setSelectedDepartureCode('')}>
+            <Text style={styles.link}>unselect airport</Text></Pressable> : null}
             {departureSearchQuery && filteredResults.length === 0 ? <Text>No Results Found</Text> : null}
             <TextInput
                 placeholder='Search for cities or airports...'

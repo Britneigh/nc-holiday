@@ -2,26 +2,24 @@ import { useState } from 'react';
 import { StyleSheet, View, TextInput, Pressable, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-export default function DateFlightSearch({date, setDate}) {
+export default function DateFlightSearch({date, setDate}: any) {
   
   const [show, setShow] = useState(false);
 
-  const onChange = (event, selectedDate) => {
+  const onChange = (event: any, selectedDate: Date | undefined) => {
     setShow(false);
     if (selectedDate) {
       setDate(selectedDate);
     }
   };
 
-  const webOnChange = (event) => {
+  const webOnChange = (event: any) => {
     const webDateValue = event.target.value;
     setDate(new Date(webDateValue));
   };
 
   
-const formattedDate = date ? date.toISOString().split('T')[0] : null
-
-
+const formattedDate = date ? date.toISOString().split('T')[0] : ''
 
   return (
     <View style={styles.container}>

@@ -2,10 +2,10 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 
-export default function ActivityCard() {
+export default function ActivityCard({trip}: any) {
     return (
         <TouchableOpacity style={styles.container} onPress={() => router.push('/activity-info')}>
-            <Text>A clickable component with info about a activity</Text>
+            <Text>A clickable component with info about an activity</Text>
         </TouchableOpacity>
     );
 }

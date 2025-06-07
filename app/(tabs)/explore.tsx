@@ -8,11 +8,11 @@ export default function Explore() {
             <Text>Explore</Text>
             <Button
                 title="Search Flights"
-                onPress={() => router.push('/flight-search')}
+                onPress={() => router.navigate('/flight-search')}
             />
             <Button
                 title="Search Hotels"
-                onPress={() => router.push('/hotel-search')}
+                onPress={() => router.navigate('/hotel-search')}
             />
         </View>
     );

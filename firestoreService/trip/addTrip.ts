@@ -1,6 +1,6 @@
 import { collection, addDoc, serverTimestamp, Timestamp } from "firebase/firestore";
-import { db, auth } from "../firebaseConfig";
-import { type TripData, type ActivityData } from "./types";
+import { db, auth } from "../../firebaseConfig";
+import { type TripData, type ActivityData } from "../types";
 
 export function addTrip(
   tripDetails: Omit<TripData, 'userId' | 'createdAt' | 'updatedAt' | 'activities'> & {

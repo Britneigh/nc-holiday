@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text, Button } from 'react-native';
-import { router } from 'expo-router';
+import React from 'react';
+import { StyleSheet, FlatList, Text } from 'react-native';
 
 import HotelLocationSearch from '@/components/HotelLocationSearch'
 import HotelRatingSearch from '@/components/HotelRatingSearch';
@@ -10,16 +9,24 @@ import HotelAmeneties from '@/components/HotelAmenities';
 
 
 export default function hotelSearch(){
+  const placeholderData = [{ key: 'dummyData' }];
 
     return (
-        <ScrollView style={styles.container}>
+    <FlatList
+      data={placeholderData}
+      renderItem={null}
+      ListHeaderComponent={
+        <>
             <Text>Choose a location:</Text>
             <HotelLocationSearch />
             <Text>Choose a rating:</Text>
             <HotelRatingSearch />
             <HotelQueries />
             <HotelAmeneties />
-        </ScrollView>
+        </>
+      }
+     contentContainerStyle={styles.container}
+    />
     )
 
 
