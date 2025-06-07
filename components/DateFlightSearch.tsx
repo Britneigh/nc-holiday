@@ -43,7 +43,7 @@ const formattedDate = date ? date.toISOString().split('T')[0] : null
           </Pressable>
           {show && (
             <DateTimePicker
-              value={date}
+              value={date ?? new Date()}
               mode="date"
               display={Platform.OS === 'ios' ? 'inline' : 'default'}
               onChange={onChange}

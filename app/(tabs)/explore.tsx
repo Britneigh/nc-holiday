@@ -10,6 +10,10 @@ export default function Explore() {
                 title="Search Flights"
                 onPress={() => router.push('/flight-search')}
             />
+            <Button
+                title="Search Hotels"
+                onPress={() => router.push('/hotel-search')}
+            />
         </View>
     );
 }

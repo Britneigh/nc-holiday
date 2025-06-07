@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { AuthProvider } from "@/context/UserContext";
 import { router } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+{/* import { ReactQueryDevtools } from '@tanstack/react-query-devtools'; */}
 
 const queryClient = new QueryClient();
 export default function RootLayout() {
@@ -19,7 +19,7 @@ export default function RootLayout() {
         </View>
         <Stack screenOptions={{ headerShown: true }} />
       </SafeAreaView>
-      <ReactQueryDevtools />
+      {/* <ReactQueryDevtools /> */}
     </AuthProvider>
     </QueryClientProvider>
   )

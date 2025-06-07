@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, View, ScrollView, Text, Button } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { getAccessToken, getFlightSearchWithDestination } from '../../api';
@@ -11,7 +11,23 @@ const { selectedDepartureCode, selectedArrivalCode, departureDate, numberOfAdult
 
 const adults = Number(numberOfAdults);
 
-  
+              
+function getFlightDuration(departureTime: string, arrivalTime: string): string {
+  const departure = new Date(departureTime);
+  const arrival = new Date(arrivalTime);
+
+  const diffMs = arrival.getTime() - departure.getTime();
+
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  const hours = Math.floor(diffMins / 60);
+  const minutes = diffMins % 60;
+
+  const hourText = hours === 1 ? '1 hr' : hours > 1 ? `${hours} hrs` : '';
+  const minuteText = minutes === 1 ? '1 min' : minutes > 1 ? `${minutes} mins` : '';
+
+  return [hourText, minuteText].filter(Boolean).join(' ');
+}
+
  const flightsQuery = useQuery({
     queryKey: ['flights', selectedDepartureCode, selectedArrivalCode, departureDate, numberOfAdults, returnDate],
     queryFn: () =>
@@ -37,21 +53,49 @@ const adults = Number(numberOfAdults);
         return <Text>{error}</Text>;
     };
 
+    const airlines = flightsQuery.data?.dictionaries?.carriers || {};
+  
     return (
     <ScrollView>
-    {flightsQuery.data?.data?.map((flight: any, index: number) => (
-    <View key={index} style={styles.card}>
-    <Text>{`Price: ${flight.price.grandTotal} ${flight.price.currency}`}</Text>
+    {flightsQuery.data?.data?.map((flight: any, index: number) => {
+        let carrierCode = flight.validatingAirlineCodes?.[0];
+        let airline = airlines[carrierCode] || carrierCode;
+        const departureDateTime = new Date(flight.itineraries[0].segments[0].departure.at);
+        const formattedDepartureDate = departureDateTime.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'long',
+        });
+        const formattedDepartureTime = flight.itineraries[0].segments[0].departure.at.slice(11, -3);
+        const arrivalDateTime = new Date(flight.itineraries[0].segments[0].arrival.at);
+
+        const formattedArrivalDate = arrivalDateTime.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'long',
+        });
+        const formattedArrivalTime = flight.itineraries[0].segments[0].arrival.at.slice(11, -3);
+
+        const departure = flight.itineraries[0].segments[0].departure.at;
+        const arrival = flight.itineraries[0].segments[0].arrival.at;
+
+        const duration = getFlightDuration(departure, arrival);
+
+      
+      return (
+      <View key={index} style={styles.card}>
+        <Text>{`Price: ${flight.price.grandTotal} ${flight.price.currency}`}</Text>
         <Text>{`Seats available: ${flight.numberOfBookableSeats}`}</Text>
+        <Text>{`Departure time: ${formattedDepartureTime}, ${formattedDepartureDate}`}</Text>
+        <Text>{`Arrival time: ${formattedArrivalTime}, ${formattedArrivalDate}`}</Text>
+        <Text>{`Total duration: ${duration}`}</Text>
         <Text>{`From: ${flight.itineraries[0].segments[0].departure.iataCode}`}</Text>
-         <Text>{`Departure time: ${flight.itineraries[0].segments[0].departure.at}`}</Text>
         <Text>{`To: ${flight.itineraries[0].segments[flight.itineraries[0].segments.length -1].arrival.iataCode}`}</Text>
-        <Text>{`Arrival time: ${flight.itineraries[0].segments[flight.itineraries[0].segments.length -1].arrival.at}`}</Text>
-    </View>
-    ))}
-    </ScrollView>
+        <Text>{`Airline: ${airline}`}</Text>
+      </View>
     )
-}
+    })}
+    </ScrollView>
+    );
+  }
 
 const styles = StyleSheet.create({
   container: {
