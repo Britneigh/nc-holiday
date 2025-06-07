@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, ScrollView, Text, Button } from 'react-native';
+import { StyleSheet, ScrollView, Text, Button } from 'react-native';
 import { router } from 'expo-router';
 import { testAirportData } from '@/test-data/testAirportData';
 import DepartureFlightSearch from '@/components/DepartureFlightSearch';
 import ArrivalFlightSearch from '@/components/ArrivalFlightSearch';
 import NumberOfAdultsSearch from '@/components/NumberOfAdultsSearch';
 import DateFlightSearch from '@/components/DateFlightSearch';
-import {getFlightSearchWithDestination, getAccessToken} from '../../api'
 import { useQueryClient } from '@tanstack/react-query';
 import { useIsFocused } from '@react-navigation/native';
 
