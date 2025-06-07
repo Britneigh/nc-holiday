@@ -1,33 +1,22 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, connectAuthEmulator } from "firebase/auth";
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
-import { getTripById } from "../trip/getTripById"
-import { getTrips } from "../trip/getTrips"
+/// <reference types="jest" />
 
-const firebaseConfig = {
-  apiKey: "emulator-api-key",
-  authDomain: "localhost",
-  projectId: "emulator-id",
-  // ...
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { db, auth } from "../../firebaseConfig";
+import { getTripById } from "../trip/getTripById";
 
-beforeEach(() => {
-    const projectId = "emulator-id";
-    const firestoreEmulatorHost = "localhost:8080";
-    return fetch(`http://${firestoreEmulatorHost}/emulator/v1/projects/${projectId}/databases/(default)/documents`, {
-        method: 'DELETE'
-    }) 
-    .catch ((error) => {
-        console.error("Error clearing Firestore data:", error);
-    })
-})
+beforeEach(async () => {
+  const projectId = "emulator-id";
+  const firestoreEmulatorHost = "localhost:8080";
+  await fetch(`http://${firestoreEmulatorHost}/emulator/v1/projects/${projectId}/databases/(default)/documents`, {
+    method: "DELETE",
+  });
+});
 
-describe('GET', () => {
-  describe('Get trip by Id', () => {
-    test('Returns trip with correct Id', () => {
-      getTripById()
+describe("GET", () => {
+  describe("Get trip by Id", () => {
+    test("Returns trip with correct Id", async () => {
+      const tripId = "test-trip-id";
+      const trip = await getTripById(tripId);
+      expect(trip.id).toBe(tripId);
     });
   });
 });
