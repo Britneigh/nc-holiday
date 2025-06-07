@@ -4,6 +4,15 @@ import { router } from 'expo-router';
 import { useAuth } from "../../context/UserContext";
 
 export default function Home() {
+
+   const navigateTo = (path: string) => {
+    if (typeof document !== 'undefined' && document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    router.push(path);
+  };
+
+  
     const { currentUser } = useAuth();
     return (
         <ScrollView style={styles.container}>
@@ -17,13 +26,19 @@ export default function Home() {
             <View style={styles.buttonView}>
                 <Button
                     title="View calendar itinerary"
-                    onPress={() => router.push('/calendar-itinerary')}
+                    onPress={() => navigateTo('/calendar-itinerary')}
                 />
             </View>
             <View style={styles.buttonView}>
                 <Button
-                    title="View list itinerary"
-                    onPress={() => router.push('/list-itinerary')}
+                    title="View trips"
+                    onPress={() => navigateTo('/trips')}
+                />
+            </View>
+            <View style={styles.buttonView}>
+                <Button
+                    title="Add trip"
+                    onPress={() => navigateTo('/trip-add')}
                 />
             </View>
             <View style={styles.mediumBlock}>

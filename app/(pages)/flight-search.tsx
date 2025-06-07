@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text, Button } from 'react-native';
+import { StyleSheet, Text, Button, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { testAirportData } from '@/test-data/testAirportData';
 import DepartureFlightSearch from '@/components/DepartureFlightSearch';
@@ -38,8 +38,15 @@ useEffect(() => {
   setNumberOfAdults(1);
 }, []);
 
+const placeholderData = [{ key: 'dummyData' }];
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+const departureDay = new Date(departureDate);
+departureDay.setHours(0, 0, 0, 0);
+
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text>Select departure airport</Text>
                 <DepartureFlightSearch
                     flightData={testAirportData}
@@ -58,9 +65,10 @@ useEffect(() => {
                 />
             <Text>Select departure date</Text>
                 <DateFlightSearch date={departureDate} setDate={setDepartureDate}/>
+                    {departureDay < today ? <Text>Selected departure date is in the past!</Text> : null}
             <Text>Select return date</Text>
                 <DateFlightSearch date={returnDate} setDate={setReturnDate}/>
-                {returnDate && returnDate < departureDate ? <Text>Return date is before depature date!</Text> : null}
+                    {returnDate && returnDate < departureDate ? <Text>Return date is before depature date!</Text> : null}
             <Text>Select number of adult passengers</Text>
                 <NumberOfAdultsSearch
                     numberOfAdults={numberOfAdults}
@@ -85,8 +93,8 @@ useEffect(() => {
                     });
                 }}
             />
-        </ScrollView>
-    );
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
