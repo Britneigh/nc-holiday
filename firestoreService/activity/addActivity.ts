@@ -1,15 +1,25 @@
-import { doc, updateDoc, arrayUnion, serverTimestamp, Timestamp } from "firebase/firestore";
-import { db } from "../firebaseConfig";
-import { type ActivityData } from "./types";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  Timestamp
+} from "firebase/firestore";
+import { db, auth } from "../../firebaseConfig";
+import { type ActivityData } from "../types";
 
 export function addActivity(
   tripId: string,
-  activityDetails: Omit<ActivityData, 'userId'> & { // Assuming userId in ActivityData is optional or handled differently
+  activityDetails: Omit<ActivityData, 'userId' | 'tripId' | 'createdAt' | 'updatedAt'> & {
     startTime?: Date | Timestamp;
     endTime?: Date | Timestamp;
   }
-): Promise<boolean> {
-  const tripDocRef = doc(db, "trips", tripId);
+): Promise<string | null> {
+  const currentUser = auth.currentUser;
+
+  if (!currentUser) {
+    console.error("Error adding activity: No user logged in.");
+    return Promise.resolve(null);
+  }
 
   const startTimeTimestamp = activityDetails.startTime instanceof Date
     ? Timestamp.fromDate(activityDetails.startTime)
@@ -19,23 +29,26 @@ export function addActivity(
     ? Timestamp.fromDate(activityDetails.endTime)
     : activityDetails.endTime;
 
-  const newActivity: ActivityData = {
+  const newActivityData: ActivityData = {
     ...activityDetails,
+    tripId: tripId,
+    userId: currentUser.uid,
     startTime: startTimeTimestamp,
     endTime: endTimeTimestamp,
-    isBooked: activityDetails.isBooked || false, // Default isBooked if not provided
+    isBooked: activityDetails.isBooked || false,
+    createdAt: serverTimestamp() as Timestamp,
+    updatedAt: serverTimestamp() as Timestamp,
   };
 
-  return updateDoc(tripDocRef, {
-    activities: arrayUnion(newActivity),
-    updatedAt: serverTimestamp()
-  })
-  .then(() => {
-    console.log(`Activity added to trip ID: ${tripId}`);
-    return true;
-  })
-  .catch((error) => {
-    console.error(`Error adding activity to trip ID ${tripId}: `, error);
-    return false;
-  });
+  const activitiesColRef = collection(db, "activities");
+
+  return addDoc(activitiesColRef, newActivityData)
+    .then((docRef) => {
+      console.log(`New activity added with ID: ${docRef.id}`);
+      return docRef.id;
+    })
+    .catch((error) => {
+      console.error(`Error adding activity for trip ID ${tripId}: `, error);
+      return null;
+    });
 }

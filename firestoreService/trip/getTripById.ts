@@ -1,13 +1,13 @@
 import { doc, getDoc, DocumentSnapshot } from 'firebase/firestore';
-import { db } from "../firebaseConfig";
-import { type Trip, type TripData } from "./types"
+import { db } from "../../firebaseConfig";
+import { type Trip, type TripData } from "../types"
 
-export function getTripById(tripId: string) {
+export const getTripById = (tripId: string) => {
     const tripDocRef = doc(db ,"trips", tripId);
     
     return getDoc(tripDocRef)
         .then((tripSnap: DocumentSnapshot) => {
-            if (tripSnap) {
+            if (tripSnap.exists()) {
                 const tripDataFromFirestore = tripSnap.data() as TripData
                 const tripWithId: Trip = {
                     id: tripSnap.id,

@@ -7,10 +7,10 @@ import {
   QuerySnapshot, 
   QueryDocumentSnapshot 
 } from 'firebase/firestore';
-import { db, auth } from "../firebaseConfig"; // Your initialized instances
-import { type Trip, type TripData } from "./types"; // Your defined interfaces
+import { db, auth } from "../../firebaseConfig"; 
+import { type Trip, type TripData } from "../types"
 
-export function getCurrentUserTrips(): Promise<Trip[] | null> {
+export function getTrips(): Promise<Trip[] | null> {
   const currentUser = auth.currentUser;
 
   if (!currentUser) {
@@ -33,7 +33,7 @@ export function getCurrentUserTrips(): Promise<Trip[] | null> {
       console.log("My trips: ", myTrips);
       return myTrips;
     })
-    .catch((error: any) => { // Typed error (can also use Error or unknown)
+    .catch((error: any) => {
       console.error("Error getting trips: ", error);
       return null;
     });

@@ -10,7 +10,7 @@ import {
 import { db } from "../../firebaseConfig";
 import { type Accom, type AccomData } from "../types"; 
 
-export function getAccommodationsByTripId(tripId: string): Promise<Accom[] | null> {
+export function getAccomsByTrip(tripId: string): Promise<Accom[] | null> {
     const accommodationsColRef = collection(db, "accommodation");
     const q = query(accommodationsColRef, where("tripId", "==", tripId));
     
