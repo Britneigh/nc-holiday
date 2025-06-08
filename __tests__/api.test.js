@@ -14,7 +14,7 @@ jest.mock("axios", () => ({
   get: jest.fn(),
 }));
 
-import { flightSearchWithDestination } from "../api";
+import { getFlightSearchWithDestination } from "../api";
 import axios from "axios";
 
 describe("flightSearchWithDestination", () => {
@@ -37,7 +37,7 @@ describe("flightSearchWithDestination", () => {
       adults: 1,
     };
 
-    const data = await flightSearchWithDestination(params);
+    const data = await getFlightSearchWithDestination(params);
 
     expect(axios.post).toHaveBeenCalledWith(
       "https://test.api.amadeus.com/v1/security/oauth2/token",
@@ -64,7 +64,7 @@ describe("flightSearchWithDestination", () => {
   test("rejects if token fetch fails", async () => {
     axios.post.mockRejectedValueOnce(new Error("token error"));
 
-    await expect(flightSearchWithDestination({})).rejects.toThrow(
+    await expect(getFlightSearchWithDestination({})).rejects.toThrow(
       "token error"
     );
   });
@@ -74,7 +74,7 @@ describe("flightSearchWithDestination", () => {
 
     axios.get.mockRejectedValueOnce(new Error("flights error"));
 
-    await expect(flightSearchWithDestination({})).rejects.toThrow(
+    await expect(getFlightSearchWithDestination({})).rejects.toThrow(
       "flights error"
     );
   });

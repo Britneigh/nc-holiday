@@ -1,22 +1,22 @@
-/// <reference types="jest" />
-
 import { db, auth } from "../../firebaseConfig";
 import { getTripById } from "../trip/getTripById";
 
-beforeEach(async () => {
+beforeEach(() => {
   const projectId = "emulator-id";
-  const firestoreEmulatorHost = "localhost:8080";
-  await fetch(`http://${firestoreEmulatorHost}/emulator/v1/projects/${projectId}/databases/(default)/documents`, {
+ const firestoreEmulatorHost = "localhost:8082"; // or your actual Firestore emulator port
+
+  return fetch(`http://${firestoreEmulatorHost}/emulator/v1/projects/${projectId}/databases/(default)/documents`, {
     method: "DELETE",
   });
 });
 
 describe("GET", () => {
   describe("Get trip by Id", () => {
-    test("Returns trip with correct Id", async () => {
+    test("Returns trip with correct Id", () => {
       const tripId = "test-trip-id";
-      const trip = await getTripById(tripId);
-      expect(trip.id).toBe(tripId);
+      return getTripById(tripId).then(trip => {
+        expect(trip.id).toBe(tripId);
+      });
     });
   });
 });
