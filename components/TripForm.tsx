@@ -8,17 +8,18 @@ import { addTrip } from '../firestoreService/trip/addTrip';
 export default function TripForm({ tripName, setTripName, location, setLocation, startDate, setStartDate, endDate, setEndDate, tripPictures, setTripPictures }: any) {
 
 const onPress = () => {
-    if (typeof document !== 'undefined' && document.activeElement instanceof HTMLElement) {
+  if (typeof document !== 'undefined' && document.activeElement instanceof HTMLElement) {
     document.activeElement.blur();
   }
  
-    const tripDetails: any = {
+  const tripDetails: any = {
     tripName,   
     location,   
     startDate,
     endDate,   
     activities: [],
   };
+  
   addTrip(tripDetails)
     .then((newTripId) => {
       if (newTripId) {
@@ -55,7 +56,7 @@ const onPress = () => {
             />
         <TripDates startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate}/>
         <TripPictures tripPictures={tripPictures} setTripPictures={setTripPictures}/>
-        <Button title="Add Trip" onPress={onPress}/>
+        <Button title="Add Trip" onPress={onPress} disabled={!tripName.trim() || !location.trim()}/>
     </View>
     );
 }

@@ -8,21 +8,27 @@ export default function trips() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [isLoading, setIsLoading] = useState(true);
     
-  useEffect(() => {
+
+  const fetchTrips = () => {
+    setIsLoading(true)
     getTrips()
-      .then((fetchedTrips) => {
-        if (fetchedTrips) {
+    .then((fetchedTrips) => {
+    if (fetchedTrips) {
         setIsLoading(false)
-          setTrips(fetchedTrips);
-        }
-      })
+        setTrips(fetchedTrips);
+    }
+    })
+  }
+
+  useEffect(() => {
+  fetchTrips();
   }, []); 
 
     return (
         <ScrollView style={styles.container}>
             <Text>List of trips</Text>
             {trips.map((trip) => (
-        <ActivityCard key={trip.id} trip={trip} />
+        <ActivityCard key={trip.id} trip={trip} refreshTrips={fetchTrips} />
       ))}
         </ScrollView>
     );

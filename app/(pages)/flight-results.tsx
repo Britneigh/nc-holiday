@@ -1,17 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, Text, Button } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { getAccessToken, getFlightSearchWithDestination } from '../../api';
 import { useLocalSearchParams } from 'expo-router';
+import { addFlight } from '@/firestoreService/flight/addFlight';
+import { Picker } from '@react-native-picker/picker';
+import { getTrips } from '@/firestoreService/trip/getTrips';
+import { Trip } from '../../firestoreService/types';
+
 
 
 export default function FlightSearchResults(){
 const { selectedDepartureCode, selectedArrivalCode, departureDate, numberOfAdults, returnDate } = useLocalSearchParams();
-
+const [isLoading, setIsLoading] = useState<boolean>(false);
+const [trips, setTrips] = useState<Trip[]>([]);
+const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
 
 const adults = Number(numberOfAdults);
 
-              
+ useEffect(() => {
+  getTrips().then((data) => {
+    if (data) setTrips(data);
+  });
+}, []);
+
 function getFlightDuration(departureTime: string, arrivalTime: string): string {
   const departure = new Date(departureTime);
   const arrival = new Date(arrivalTime);
@@ -27,6 +39,9 @@ function getFlightDuration(departureTime: string, arrivalTime: string): string {
 
   return [hourText, minuteText].filter(Boolean).join(' ');
 }
+
+
+
 
  const flightsQuery = useQuery({
     queryKey: ['flights', selectedDepartureCode, selectedArrivalCode, departureDate, numberOfAdults, returnDate],
@@ -79,6 +94,35 @@ function getFlightDuration(departureTime: string, arrivalTime: string): string {
 
         const duration = getFlightDuration(departure, arrival);
 
+        {/*function saveFlight(flight: any){
+            if (!selectedTripId) {
+            alert("Please select a trip first.");
+            return;
+          }
+
+          const flightDetails = {
+            price: flight.price.grandTotal,
+            seatsAvailable: flight.numberOfBookableSeats,
+            departureDate: formattedDepartureDate,
+            arrivalDate: formattedArrivalDate,
+            departureTime: formattedDepartureTime,
+            arrivalTime: formattedArrivalTime,
+            totalDuration: duration,
+            from: flight.itineraries[0].segments[0].departure.iataCode,
+            to: flight.itineraries[0].segments[flight.itineraries[0].segments.length -1].arrival.iataCode,
+            airline: airline,
+          }
+
+          setIsLoading(true);
+          addFlight(selectedTripId, flightDetails)
+          .then(() => {
+            alert("Flight saved successfully.");
+          })
+          .catch((err) => {
+            alert("Error saving flight.");
+          })
+          .finally(() => setIsLoading(false));
+        } */}
       
       return (
       <View key={index} style={styles.card}>
@@ -90,6 +134,19 @@ function getFlightDuration(departureTime: string, arrivalTime: string): string {
         <Text>{`From: ${flight.itineraries[0].segments[0].departure.iataCode}`}</Text>
         <Text>{`To: ${flight.itineraries[0].segments[flight.itineraries[0].segments.length -1].arrival.iataCode}`}</Text>
         <Text>{`Airline: ${airline}`}</Text>
+        <View style={{ margin: 16 }}>
+  <Text>Select a Trip to Save Flights To:</Text>
+  <Picker
+    selectedValue={selectedTripId}
+    onValueChange={(itemValue) => setSelectedTripId(itemValue)}
+  >
+    <Picker.Item label="-- Select Trip --" value={null} />
+    {trips.map((trip) => (
+      <Picker.Item key={trip.id} label={trip.tripName} value={trip.id} />
+    ))}
+  </Picker>
+</View>
+        <Button title="Save to Trips" onPress={() => saveFlight(flight)}></Button>
       </View>
     )
     })}
