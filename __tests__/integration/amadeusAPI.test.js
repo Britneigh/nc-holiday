@@ -4,12 +4,14 @@ dotenv.config();
 import {
   getAccessToken,
   getFlightSearchWithDestination,
+  getHolidayData,
+  getHolidayDataTest,
   getHotelList,
   getHotelSearch,
   getToursAndActivities,
 } from "../../api";
 
-jest.setTimeout(30000);
+jest.setTimeout(100000);
 
 describe("Amadeus Flight Offers API", () => {
   test("successfully fetches flight offers when given correct parameters", () => {
@@ -192,9 +194,10 @@ describe("Amadeus Activities and Tours List", () => {
 
     return getAccessToken(clientId, clientSecret)
       .then((token) => {
-        return getToursAndActivities(token, -80.23881, 25.73856);
+        return getToursAndActivities(token, 25.73856, -80.26248, 30);
       })
       .then((toursAndActivities) => {
+        console.log(toursAndActivities, "<=== tours and activities");
         expect(toursAndActivities).toHaveProperty("data");
         expect(Array.isArray(toursAndActivities.data)).toBe(true);
         expect(toursAndActivities.data.length).toBeGreaterThan(0);
@@ -216,7 +219,7 @@ describe("Amadeus Activities and Tours List", () => {
 
     return getAccessToken(clientId, clientSecret)
       .then((token) => {
-        return getToursAndActivities(token, 32, 25.73856); /// coconut grove hotel miami
+        return getToursAndActivities(token, 131, -80.26248, 30); /// coconut grove hotel miami
       })
       .catch((error) => {
         console.log("API Error:", error.data.message);
@@ -224,3 +227,39 @@ describe("Amadeus Activities and Tours List", () => {
       });
   });
 });
+
+//// --------------------
+
+// To retrieve:
+// const savedResults = JSON.parse(fs.readFileSync('holidayData.json', 'utf-8'));
+
+describe.only("Amadeus Get Hotels and experiences initial departure and maxPrice", () => {
+  test("Given a flight dep/dest/date/passengers, returns nested array with results", () => {
+    const clientId = process.env.AMADEUS_CLIENT_ID;
+    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+
+    expect(clientId).toBeTruthy();
+    expect(clientSecret).toBeTruthy();
+
+    return getAccessToken(clientId, clientSecret)
+      .then((token) => {
+        return getHolidayDataTest(token, "PAR", "LON", "2025-07-01", 1); // Correct usage
+      })
+      .then((results) => {
+      fs.writeFileSync('holidayData.json', JSON.stringify(results, null, 2));})
+
+      .then((destinationList) => {
+        console.log(destinationList, "<===array returned to test")
+        expect(Array.isArray(destinationList)).toBe(true);
+        // Optionally test more about the structure/content of destinationList here
+      })
+      .catch((error) => {
+        console.error(
+          "ERROR - Error fetching data in test",
+          JSON.stringify(error, null, 2)
+        );
+        throw error;
+      });
+  });
+});
+

@@ -4,7 +4,6 @@ let AMADEUS_CLIENT_ID;
 let AMADEUS_CLIENT_SECRET;
 
 if (typeof window === "undefined") {
-  // Node.js (e.g., Jest, backend)
   import("dotenv").then((dotenv) => dotenv.config());
 
   AMADEUS_CLIENT_ID = process.env.AMADEUS_CLIENT_ID;
@@ -16,7 +15,6 @@ if (typeof window === "undefined") {
     );
   }
 } else {
-  // Expo (frontend)
   const Constants = require("expo-constants").default;
   AMADEUS_CLIENT_ID = Constants.expoConfig.extra.AMADEUS_CLIENT_ID;
   AMADEUS_CLIENT_SECRET = Constants.expoConfig.extra.AMADEUS_CLIENT_SECRET;
@@ -47,7 +45,14 @@ export const getAccessToken = (
     .then((response) => response.data.access_token);
 };
 
-export const getFlightDestinations = (token, origin, maxPrice) => {
+///-------------------------------
+
+export const getFlightDestinations = (
+  token,
+  origin,
+  departureDate,
+  maxPrice
+) => {
   return axios
     .get("https://test.api.amadeus.com/v1/shopping/flight-destinations", {
       headers: {
@@ -55,11 +60,23 @@ export const getFlightDestinations = (token, origin, maxPrice) => {
       },
       params: {
         origin,
+        departureDate,
         maxPrice,
       },
     })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error(
+        "ERROR in getFlightDestinations:",
+        error?.response?.status,
+        error?.response?.data
+      );
+
+      return { data: { data: [] } };
+    });
 };
+
+//----------------------
 
 export const getFlightSearchWithDestination = (
   token,
@@ -153,7 +170,7 @@ export const getHotelList = (
 
 export const getHotelSearch = (
   token,
-  hotelList, // object passed in
+  hotelList,
   adults = 1,
   checkInDate,
   checkOutDate,
@@ -167,25 +184,21 @@ export const getHotelSearch = (
   bestRatesOnly = true,
   lang
 ) => {
-  // Extract and validate hotelIds
   const hotelIds = Array.isArray(hotelList?.data)
     ? hotelList.data.map((item) => item.hotelId).filter(Boolean)
     : [];
 
-  // Auto-default checkInDate if missing
   if (!checkInDate) {
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     checkInDate = today;
   }
 
-  // Auto-default checkOutDate if missing
   if (!checkOutDate) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     checkOutDate = tomorrow.toISOString().split("T")[0];
   }
 
-  // Build params object
   const params = {
     adults,
     checkInDate,
@@ -203,7 +216,6 @@ export const getHotelSearch = (
 
   params.hotelIds = hotelIds.join(",");
 
-  // Clean out undefined params
   Object.keys(params).forEach(
     (key) => params[key] === undefined && delete params[key]
   );
@@ -263,3 +275,344 @@ export const getToursAndActivities = (
       throw normalizedError;
     });
 };
+
+//-----------------------------------
+
+export const delay = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+export const rateLimitedRequest = (fn, args = [], retries = 5, attempt = 1) => {
+  return fn(...args).catch((error) => {
+    if (error?.status === 429 && retries > 0) {
+      const baseDelay = 2000 * 2 ** (attempt - 1);
+      const jitter = Math.floor(Math.random() * 1000) - 500;
+      const backoff = baseDelay + jitter;
+
+      console.warn(`Rate limited. Retry attempt ${attempt} after ${backoff}ms`);
+      return delay(backoff).then(() =>
+        rateLimitedRequest(fn, args, retries - 1, attempt + 1)
+      );
+    }
+    throw error;
+  });
+};
+
+export const getHolidayData = (
+  token,
+  origin,
+  destination,
+  date,
+  passengers = 1
+) => {
+  const results = [];
+
+  return rateLimitedRequest(getFlightSearchWithDestination, [
+    token,
+    origin,
+    destination,
+    date,
+    passengers,
+  ])
+    .then((flightsResponse) => {
+      const flights = (flightsResponse?.data || []).slice(0, 5);
+
+      return flights.reduce((flightChain, flight) => {
+        return flightChain.then(() => {
+          const flightResult = {
+            flight,
+            hotels: [],
+          };
+
+          return rateLimitedRequest(getHotelList, [token, destination])
+            .then((hotelsResponse) => {
+              const hotels = (hotelsResponse?.data || []).slice(0, 5);
+
+              return hotels.reduce((hotelChain, hotel) => {
+                return hotelChain
+                  .then(() => delay(500))
+                  .then(() =>
+                    rateLimitedRequest(getToursAndActivities, [
+                      token,
+                      hotel.latitude,
+                      hotel.longitude,
+                    ])
+                      .then((toursResponse) => {
+                        const tours = (toursResponse?.data || []).slice(0, 5);
+                        flightResult.hotels.push({
+                          hotel,
+                          tours,
+                        });
+                      })
+                      .catch((error) => {
+                        console.error(
+                          `Error fetching tours for hotel ${hotel.name}:`,
+                          error
+                        );
+                        flightResult.hotels.push({
+                          hotel,
+                          tours: [],
+                        });
+                      })
+                  );
+              }, Promise.resolve());
+            })
+            .catch((error) => {
+              console.error(
+                `Error fetching hotels for flight to ${destination}:`,
+                error
+              );
+            })
+            .then(() => {
+              results.push(flightResult);
+            });
+        });
+      }, Promise.resolve());
+    })
+    .catch((error) => {
+      console.error(
+        `Error fetching flights from ${origin} to ${destination}:`,
+        error
+      );
+    })
+    .then(() => {
+      return results;
+    });
+};
+
+//--------------------------
+
+export const getHolidayDataTest = (
+  token,
+  origin,
+  destination,
+  date,
+  passengers = 1
+) => {
+  const results = [];
+
+  return rateLimitedRequest(getFlightSearchWithDestination, [
+    token,
+    origin,
+    destination,
+    date,
+    passengers,
+  ])
+    .then((flightsResponse) => {
+      const flights = (flightsResponse?.data || []).slice(0, 2);
+
+      return flights.reduce((flightChain, flight) => {
+        return flightChain.then(() => {
+          const flightResult = {
+            flight,
+            text: flightText(flight),
+            hotels: [],
+          };
+
+          return rateLimitedRequest(getHotelList, [token, destination])
+            .then((hotelsResponse) => {
+              const hotels = (hotelsResponse?.data || []).slice(0, 2);
+
+              return hotels.reduce((hotelChain, hotel) => {
+                return hotelChain
+                  .then(() => delay(500))
+                  .then(() =>
+                    rateLimitedRequest(getToursAndActivities, [
+                      token,
+                      hotel.latitude,
+                      hotel.longitude,
+                    ])
+                      .then((toursResponse) => {
+                        const tours = (toursResponse?.data || [])
+                          .slice(0, 2)
+                          .map((tour) => ({
+                            tour,
+                            text: tourText(tour), // Add the text field here
+                          }));
+                        flightResult.hotels.push({
+                          text: hotelText(hotel),
+                          hotel,
+                          tours,
+                        });
+                      })
+                      .catch((error) => {
+                        console.error(
+                          `Error fetching tours for hotel ${hotel.name}:`,
+                          error
+                        );
+                        flightResult.hotels.push({
+                          hotel,
+                          tours: [],
+                        });
+                      })
+                  );
+              }, Promise.resolve());
+            })
+            .catch((error) => {
+              console.error(
+                `Error fetching hotels for flight to ${destination}:`,
+                error
+              );
+            })
+            .then(() => {
+              results.push(flightResult);
+            });
+        });
+      }, Promise.resolve());
+    })
+    .catch((error) => {
+      console.error(
+        `Error fetching flights from ${origin} to ${destination}:`,
+        error
+      );
+    })
+    .then(() => {
+      return results;
+    });
+};
+
+//-------
+
+export const extractFlightInfo = (flightOffer) => {
+  // Get first itinerary (usually main trip)
+  const itinerary = flightOffer.itineraries[0];
+
+  // Get first and last segment to find overall departure and arrival
+  const firstSegment = itinerary.segments[0];
+  const lastSegment = itinerary.segments[itinerary.segments.length - 1];
+
+  // Departure info
+  const departureAirport = firstSegment.departure.iataCode;
+  const departureTime = firstSegment.departure.at;
+
+  // Arrival info
+  const arrivalAirport = lastSegment.arrival.iataCode;
+  const arrivalTime = lastSegment.arrival.at;
+
+  // Airline code (from first segment)
+  const airlineCode = firstSegment.carrierCode;
+
+  // Total price
+  const totalPrice = flightOffer.price.total;
+  const currency = flightOffer.price.currency;
+
+  return {
+    departureAirport,
+    departureTime,
+    arrivalAirport,
+    arrivalTime,
+    airlineCode,
+    totalPrice,
+    currency,
+  };
+};
+
+//-----------
+
+const flightText = (flight) => {
+  const {
+    departureAirport,
+    departureTime,
+    arrivalAirport,
+    arrivalTime,
+    airlineCode,
+    totalPrice,
+    currency,
+  } = extractFlightInfo(flight);
+
+  return `Flight from ${departureAirport} at ${departureTime} to ${arrivalAirport} at ${arrivalTime} | Airline: ${airlineCode} | Price: ${totalPrice} ${currency}`;
+};
+
+//------
+
+function extractHotelInfo(hotelOffer) {
+  // The main hotel info is inside hotelOffer.hotel
+  const hotel = hotelOffer.hotel;
+
+  // Hotel basic info
+  const name = hotel.name;
+  const starRating = hotel.rating; // usually a string like "4"
+
+  // Take first offer from offers array for room and price details
+  const offer = hotelOffer.offers && hotelOffer.offers[0];
+
+  // Room type and price info
+  const roomType = offer?.room?.type || "N/A";
+  const totalPrice = offer?.price?.total || "N/A";
+  const currency = offer?.price?.currency || "";
+  const checkInDate = offer?.checkInDate || "N/A";
+  const checkOutDate = offer?.checkOutDate || "N/A";
+
+  // Extract a thumbnail image URL (first image if exists)
+  let thumbnail = "No image available";
+  if (hotel.media && hotel.media.length > 0) {
+    // Usually media is an array of objects with 'uri' or 'url'
+    thumbnail = hotel.media[0].uri || hotel.media[0].url || thumbnail;
+  }
+
+  return {
+    name,
+    starRating,
+    roomType,
+    totalPrice,
+    currency,
+    checkInDate,
+    checkOutDate,
+    thumbnail,
+  };
+}
+
+////-----
+
+function hotelText(hotelOffer) {
+  const {
+    name,
+    starRating,
+    roomType,
+    totalPrice,
+    currency,
+    checkInDate,
+    checkOutDate,
+    thumbnail,
+  } = extractHotelInfo(hotelOffer);
+
+  return `
+Hotel: ${name} (${starRating}★)
+Room Type: ${roomType}
+Price: ${totalPrice} ${currency}
+Check-in: ${checkInDate}
+Check-out: ${checkOutDate}
+Thumbnail: ${thumbnail}
+`;
+}
+
+///----
+
+function extractTourInfo(tour) {
+  return {
+    name: tour.name || "N/A",
+    description: tour.shortDescription || tour.description || "No description",
+    price: tour.price?.amount || "N/A",
+    currency: tour.price?.currency || "",
+    category: tour.category?.name || "N/A",
+    rating: tour.rating || "N/A",
+    images:
+      tour.media && tour.media.length > 0
+        ? tour.media.map((m) => m.uri || m.url)
+        : [],
+  };
+}
+
+function tourText(tour) {
+  const { name, description, price, currency, category, rating, images } =
+    extractTourInfo(tour);
+
+  return `
+Tour: ${name}
+Category: ${category}
+Price: ${price} ${currency}
+Rating: ${rating}
+Description: ${description}
+Images: ${images.length > 0 ? images.join(", ") : "No images available"}
+`;
+}
