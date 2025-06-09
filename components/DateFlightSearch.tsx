@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { StyleSheet, View, TextInput, Pressable, Platform } from 'react-native';
+import { StyleSheet, View, TextInput, Pressable, Platform, Text } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-export default function DateFlightSearch({date, setDate}: any) {
-  
+export default function DateFlightSearch({ date, setDate }: any) {
+
   const [show, setShow] = useState(false);
 
-  const onChange = (event: any, selectedDate: Date | undefined) => {
+  const onChange = (event: any, selectedDate: any) => {
     setShow(false);
     if (selectedDate) {
       setDate(selectedDate);
@@ -18,21 +18,27 @@ export default function DateFlightSearch({date, setDate}: any) {
     setDate(new Date(webDateValue));
   };
 
-  
-const formattedDate = date ? date.toISOString().split('T')[0] : ''
+
+  const formattedDate = date ? date.toISOString().split('T')[0] : null
+
+
 
   return (
     <View style={styles.container}>
       {Platform.OS === 'web' ? (
-        <input 
-          type='date'
-          value={formattedDate}
-          onChange={webOnChange}
-        />
+        <>
+          <Text style={styles.labelDescription}>Selected Date:</Text>
+          <input
+            type='date'
+            value={formattedDate}
+            onChange={webOnChange}
+          />
+        </>
       ) : (
         <>
+          <Text style={styles.labelDescription}>Selected Date:</Text>
           <Pressable onPress={() => setShow(true)}>
-            <TextInput 
+            <TextInput
               value={formattedDate}
               editable={false}
               pointerEvents="none"
@@ -58,9 +64,18 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   input: {
-    borderWidth: 1,
     borderColor: '#ccc',
-    padding: 12,
+    borderWidth: 1,
     borderRadius: 8,
+    marginTop: 5,
+    padding: 10,
+    fontSize: 16,
+    backgroundColor: '#fff',
+  },
+  labelDescription: {
+    fontSize: 12,
+    fontWeight: '400',
+    marginBottom: 8,
+    color: '#333',
   },
 });
