@@ -10,8 +10,8 @@ import { useIsFocused } from "@react-navigation/native";
 export default function ActivitySearch() {
   const [citySearchQuery, setCitySearchQuery] = useState("");
   const [selectedCityCode, setSelectedCityCode] = useState("");
-  const [selectedCityLong, setSelectedCityLong] = useState()
-  const [selectedCityLat, setSelectedCityLat] = useState()
+  const [selectedCityLong, setSelectedCityLong] = useState();
+  const [selectedCityLat, setSelectedCityLat] = useState();
 
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState<Date | null>(null);
@@ -50,6 +50,8 @@ export default function ActivitySearch() {
         selectedCityCode={selectedCityCode}
         setCitySearchQuery={setCitySearchQuery}
         setSelectedCityCode={setSelectedCityCode}
+        setSelectedCityLat={setSelectedCityLat}
+        setSelectedCityLong={setSelectedCityLong}
       />
 
       <Text>Select arrival date</Text>
@@ -70,9 +72,12 @@ export default function ActivitySearch() {
           const params: any = {
             selectedCityCode,
             fromDate: fromDate.toISOString().split("T")[0],
+            longitude: selectedCityLong,
+            latitude: selectedCityLat,
           };
           if (toDate) {
             params.toDate = toDate.toISOString().split("T")[0];
+            console.log(params, "<==== params being passed in");
           }
           router.push({
             pathname: "/activity-results",

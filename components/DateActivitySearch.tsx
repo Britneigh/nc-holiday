@@ -1,38 +1,46 @@
-import { useState } from 'react';
-import { StyleSheet, View, TextInput, Pressable, Platform } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  Pressable,
+  Platform,
+  Text,
+} from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
-export default function DateActivitySearch({date, setDate}: any) {
-  
+export default function DateActivitySearch({ date, setDate }: any) {
   const [show, setShow] = useState(false);
 
   const onChange = (event: any, selectedDate: Date | undefined) => {
     setShow(false);
-    if (selectedDate) {
+    if (selectedDate && selectedDate.getTime() !== date.getTime()) {
       setDate(selectedDate);
     }
   };
 
   const webOnChange = (event: any) => {
     const webDateValue = event.target.value;
-    setDate(new Date(webDateValue));
+    const newDate = new Date(webDateValue);
+    if (!isNaN(newDate.getTime())) {
+      setDate(newDate);
+    }
   };
 
-  
-const formattedDate = date ? date.toISOString().split('T')[0] : ''
+  const formattedDate = date ? date.toISOString().split("T")[0] : "";
 
   return (
     <View style={styles.container}>
-      {Platform.OS === 'web' ? (
-        <input 
-          type='date'
-          value={formattedDate}
-          onChange={webOnChange}
-        />
+      {Platform.OS === "web" ? (
+        <>
+          <label>
+            <input type="date" value={formattedDate} onChange={webOnChange} />
+          </label>
+        </>
       ) : (
         <>
           <Pressable onPress={() => setShow(true)}>
-            <TextInput 
+            <TextInput
               value={formattedDate}
               editable={false}
               pointerEvents="none"
@@ -43,7 +51,7 @@ const formattedDate = date ? date.toISOString().split('T')[0] : ''
             <DateTimePicker
               value={date ?? new Date()}
               mode="date"
-              display={Platform.OS === 'ios' ? 'inline' : 'default'}
+              display={Platform.OS === "ios" ? "inline" : "default"}
               onChange={onChange}
             />
           )}
@@ -59,7 +67,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     padding: 12,
     borderRadius: 8,
   },

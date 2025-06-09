@@ -1,68 +1,115 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, ScrollView } from "react-native";
-import { router } from "expo-router";
-import { testCityData } from "@/test-data/testCityData";
-import ActivityCitySearch from "@/components/ActivityCitySearch";
-import { useQueryClient } from "@tanstack/react-query";
-import { useIsFocused } from "@react-navigation/native";
+import React from "react";
+import {
+  View,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+} from "react-native";
 
-export default function ActivitySearch() {
-  const [citySearchQuery, setCitySearchQuery] = useState("");
-  const [selectedCityCode, setSelectedCityCode] = useState("");
+interface City {
+  city: string;
+  code: string;
+  lat: number;
+  lon: number;
+}
 
-  const [cityLat, setCityLat] = useState<number | null>(null);
-  const [cityLong, setCityLong] = useState<number | null>(null);
+interface ActivityCitySearchProps {
+  cityData?: City[];
+  citySearchQuery: string;
+  selectedCityCode: string;
+  setCitySearchQuery: (query: string) => void;
+  setSelectedCityCode: (code: string) => void;
+  setSelectedCityLat: (lat: number) => void;
+  setSelectedCityLong: (lon: number) => void;
+}
 
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState<Date | null>(null);
-  // const [numberOfAdults, setNumberOfAdults] = useState(1);
+export default function ActivityCitySearch({
+  cityData = [],
+  citySearchQuery,
+  selectedCityCode,
+  setCitySearchQuery,
+  setSelectedCityCode,
+  setSelectedCityLat,
+  setSelectedCityLong,
+}: ActivityCitySearchProps) {
+  // Filter cities based on search query (case-insensitive)
+  const filteredCities = citySearchQuery.length
+    ? cityData.filter((city) =>
+        city.city.toLowerCase().includes(citySearchQuery.toLowerCase())
+      )
+    : [];
 
-  const queryClient = useQueryClient();
-  const isFocused = useIsFocused();
-
-  useEffect(() => {
-    if (isFocused) {
-      queryClient.removeQueries("activities");
-    }
-  }, [isFocused]);
-
-  useEffect(() => {
-    setCitySearchQuery("");
-    setSelectedCityCode("");
-    setCityLat(null);
-    setCityLong(null);
-    // setFromDate(null);
-    // setToDate(null);
-  }, []);
-
-  const placeholderData = [{ key: "dummyData" }];
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const arrivalDay = new Date(fromDate);
-  arrivalDay.setHours(0, 0, 0, 0);
+  // Handle city selection
+  const onSelectCity = (city: City) => {
+    setSelectedCityCode(city.code);
+    setCitySearchQuery(city.city);
+    setSelectedCityLat(city.lat);
+    setSelectedCityLong(city.lon);
+  };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text>Where are you heading to?</Text>
-      <ActivityCitySearch
-        cityData={testCityData}
-        citySearchQuery={citySearchQuery}
-        selectedCityCode={selectedCityCode}
-        setCitySearchQuery={setCitySearchQuery}
-        setSelectedCityCode={setSelectedCityCode}
-        cityLat={cityLat}
-        setCityLat={setCityLat}
-        cityLong={cityLong}
-        setCityLong={setCityLong}
+    <View style={styles.container}>
+      <TextInput
+        value={citySearchQuery}
+        onChangeText={setCitySearchQuery}
+        placeholder="Search cities"
+        style={styles.input}
+        autoCorrect={false}
+        autoCapitalize="none"
       />
-    </ScrollView>
+      {filteredCities.length > 0 && (
+        <ScrollView
+          style={styles.resultsContainer}
+          keyboardShouldPersistTaps="handled"
+        >
+          {filteredCities.map((city) => (
+            <TouchableOpacity
+              key={city.code}
+              onPress={() => onSelectCity(city)}
+              style={[
+                styles.cityItem,
+                city.code === selectedCityCode && styles.selectedCityItem,
+              ]}
+            >
+              <Text style={styles.cityText}>
+                {city.city} ({city.code})
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: 16,
+    marginVertical: 12,
+  },
+  input: {
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    fontSize: 16,
+  },
+  resultsContainer: {
+    maxHeight: 200,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderTopWidth: 0,
+    borderRadius: 4,
+  },
+  cityItem: {
+    padding: 12,
+    backgroundColor: "white",
+  },
+  selectedCityItem: {
+    backgroundColor: "#e0e0e0",
+  },
+  cityText: {
+    fontSize: 16,
   },
 });
