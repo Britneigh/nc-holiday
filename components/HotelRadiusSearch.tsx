@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 
-export default function HotelQueries(){
-
-    const [radius, setRadius] = useState(5)
-
+export default function HotelRadiusSearch({radius, setRadius}){
 
     const increment = () => {
         setRadius(radius + 1);
@@ -19,7 +16,6 @@ export default function HotelQueries(){
 
     return (
         <View style={styles.container}>
-            <Text>How far are you willing to travel?</Text>
             <View >
                 <Text>{radius}KM</Text>
                 <TouchableOpacity onPress={decrement}>

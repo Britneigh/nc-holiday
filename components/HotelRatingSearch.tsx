@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-export default function HotelRatingSearch() {
-    const [rating, setRating] = useState(1);
-    
+export default function HotelRatingSearch({rating, setRating}) {
+        
     const handleStarPress = (index: number) => {
         setRating(index + 1);
+        setRating()
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>Select hotel rating:</Text>
             <View style={styles.starRow}>
                 {[0, 1, 2, 3, 4].map((i) => (
                     <TouchableOpacity

@@ -2,29 +2,20 @@ import React, { useState } from 'react';
 import { View, FlatList, Text, Pressable, StyleSheet } from 'react-native';
 
 const amenities = [
-  'SWIMMING_POOL', 'SPA', 'FITNESS_CENTER', 'AIR_CONDITIONING', 'RESTAURANT',
-  'PARKING', 'PETS_ALLOWED', 
-  'DISABLED_FACILITIES', 'MEETING_ROOMS', 'NO_KID_ALLOWED', 'TENNIS',
-  'GOLF', 'KITCHEN', 'ANIMAL_WATCHING', 'BABY-SITTING', 'BEACH', 'CASINO',
-  'JACUZZI', 'SAUNA', 'SOLARIUM', 'MASSAGE', 'VALET_PARKING', 'BAR or LOUNGE',
-  'KIDS_WELCOME', 'NO_PORN_FILMS', 'MINIBAR', 'TELEVISION', 
-  'ROOM_SERVICE'
+  'DISABLED_FACILITIES', 'SWIMMING_POOL', 'SPA', 'FITNESS_CENTER', 'AIR_CONDITIONING', 'PARKING', 'PETS_ALLOWED', 
+  'BEACH', 'ROOM_SERVICE'
 ];
 
-export default function HotelAmeneties() {
+export default function HotelAmenities({selectedAmenities, setSelectedAmenities}) {
 
-    const formatLabel = (value: string) => {
-        value = value[0] + value.slice(1,).toLowerCase()
-        value = value.replace(/_/g, ' ') // Replace underscores with spaces
-        return value
-    };
-
-  
-
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-
+  const formatLabel = (value: string) => {
+      value = value[0] + value.slice(1,).toLowerCase()
+      value = value.replace(/_/g, ' ') // Replace underscores with spaces
+      return value
+  };
+    
   const toggleSelection = (item: string) => {
-    setSelectedItems(prev =>
+    setSelectedAmenities(prev =>
       prev.includes(item)
         ? prev.filter(i => i !== item)
         : [...prev, item]
@@ -32,7 +23,7 @@ export default function HotelAmeneties() {
   };
 
   const renderItem = ({ item }: { item: string }) => {
-    const isSelected = selectedItems.includes(item);
+    const isSelected = selectedAmenities.includes(item);
     return (
       <Pressable
         onPress={() => toggleSelection(item)}
@@ -51,7 +42,7 @@ export default function HotelAmeneties() {
         renderItem={renderItem}
       />
       <Text style={styles.selectedText}>
-        Selected: {JSON.stringify(selectedItems, null, 2)}
+        Selected: {JSON.stringify(selectedAmenities, null, 2)}
       </Text>
     </View>
   );
