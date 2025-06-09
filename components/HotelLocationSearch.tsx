@@ -3,11 +3,11 @@ import { StyleSheet, Text, View, TextInput, FlatList, Pressable } from 'react-na
 import {testAirportData} from '@/test-data/testAirportData'
 
 
-export default function HotelLocationSearch(){
+export default function HotelLocationSearch({selectedLocationCode, setSelectedLocationCode}){
 
     const [locationSearchQuery, setLocationSearchQuery] = useState('')
     const [selectedLocation, setSelectedLocation] = useState('')
-    const [selectedLocationCode, setSelectedLocationCode] = useState('')
+    
 
     
     const filteredLocationResults = useMemo(()=>{
