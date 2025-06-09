@@ -10,6 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "test": "jest"
+    
   },
   "jest": {
     "preset": "jest-expo"
@@ -22,7 +23,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@fortawesome/react-native-fontawesome": "^0.3.2",
-    "@react-native-community/datetimepicker": "^8.4.1",
+    "@react-native-community/datetimepicker": "^8.3.0",
+    "@react-native-picker/picker": "2.11.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.10",
@@ -31,7 +33,7 @@
     "axios": "^1.9.0",
     "datetimepicker": "^0.1.39",
     "dotenv": "^16.5.0",
-    "expo": "^53.0.10",
+    "expo": "^53.0.11",
     "expo-blur": "^14.1.5",
     "expo-constants": "~17.1.6",
     "expo-font": "~13.3.1",
@@ -56,11 +58,10 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "^4.11.1",
-    "react-native-svg": "^15.12.0",
+    "react-native-svg": "^15.11.2",
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "~0.20.0",
-    "react-native-webview": "13.13.5",
-    "@react-native-picker/picker": "2.11.0"
+    "react-native-webview": "13.13.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

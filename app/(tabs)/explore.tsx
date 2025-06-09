@@ -14,6 +14,10 @@ export default function Explore() {
                 title="Search Hotels"
                 onPress={() => router.navigate('/hotel-search')}
             />
+             <Button
+                title="Search Activities"
+                onPress={() => router.navigate('/activity-search')}
+            />
         </View>
     );
 }

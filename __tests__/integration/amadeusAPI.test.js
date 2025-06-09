@@ -24,13 +24,7 @@ describe("Amadeus Flight Inspirations API - cheapest fligth destinations from gi
 
     return getAccessToken(clientId, clientSecret)
       .then((token) => {
-        return getFlightDestinations(
-          token,
-          "PAR",
-          "LON",
-          "2025-07-01",
-          1
-        );
+        return getFlightDestinations(token, "PAR", "LON", "2025-07-01", 1);
       })
       .then((flightDestinations) => {
         expect(flightOffers).toHaveProperty("data");
@@ -68,7 +62,6 @@ describe("Amadeus Flight Inspirations API - cheapest fligth destinations from gi
       });
   });
 });
-
 
 ///-----
 
@@ -142,6 +135,7 @@ describe("Amadeus Hotels List", () => {
         return getHotelList(token, "MIA");
       })
       .then((hotelList) => {
+        console.log(hotelList.data, "<=== hotel list.data");
         expect(hotelList).toHaveProperty("data");
         expect(Array.isArray(hotelList.data)).toBe(true);
         expect(hotelList.data.length).toBeGreaterThan(0);
@@ -174,7 +168,7 @@ describe("Amadeus Hotels List", () => {
 
 ///-------
 
-describe("Amadeus Hotels Search", () => {
+describe.only("Amadeus Hotels Search", () => {
   test("successfully fetches list of available hotels when passed array of hotel codes", () => {
     const clientId = process.env.AMADEUS_CLIENT_ID;
     const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
@@ -243,7 +237,7 @@ describe("Amadeus Hotels Search", () => {
 
 ///--------------------------
 
-describe("Amadeus Activities and Tours List", () => {
+describe.only("Amadeus Activities and Tours List", () => {
   test("successfully fetches list of activites and tour given longitude and latitude", () => {
     const clientId = process.env.AMADEUS_CLIENT_ID;
     const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
@@ -292,7 +286,7 @@ describe("Amadeus Activities and Tours List", () => {
 // To retrieve:
 // const savedResults = JSON.parse(fs.readFileSync('holidayData.json', 'utf-8'));
 
-describe.only("Amadeus Get Hotels and experiences initial departure and maxPrice", () => {
+describe("Amadeus Get Hotels and experiences initial departure and maxPrice", () => {
   test("Given a flight dep/dest/date/passengers, returns nested array with results", () => {
     const clientId = process.env.AMADEUS_CLIENT_ID;
     const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
