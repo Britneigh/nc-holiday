@@ -474,25 +474,20 @@ export const getHolidayDataTest = (
 //-------
 
 export const extractFlightInfo = (flightOffer) => {
-  // Get first itinerary (usually main trip)
+
   const itinerary = flightOffer.itineraries[0];
 
-  // Get first and last segment to find overall departure and arrival
   const firstSegment = itinerary.segments[0];
   const lastSegment = itinerary.segments[itinerary.segments.length - 1];
 
-  // Departure info
   const departureAirport = firstSegment.departure.iataCode;
   const departureTime = firstSegment.departure.at;
 
-  // Arrival info
   const arrivalAirport = lastSegment.arrival.iataCode;
   const arrivalTime = lastSegment.arrival.at;
 
-  // Airline code (from first segment)
   const airlineCode = firstSegment.carrierCode;
 
-  // Total price
   const totalPrice = flightOffer.price.total;
   const currency = flightOffer.price.currency;
 
@@ -526,27 +521,23 @@ const flightText = (flight) => {
 //------
 
 function extractHotelInfo(hotelOffer) {
-  // The main hotel info is inside hotelOffer.hotel
+ 
   const hotel = hotelOffer.hotel;
 
-  // Hotel basic info
   const name = hotel.name;
-  const starRating = hotel.rating; // usually a string like "4"
-
-  // Take first offer from offers array for room and price details
+  const starRating = hotel.rating; 
+  
   const offer = hotelOffer.offers && hotelOffer.offers[0];
 
-  // Room type and price info
   const roomType = offer?.room?.type || "N/A";
   const totalPrice = offer?.price?.total || "N/A";
   const currency = offer?.price?.currency || "";
   const checkInDate = offer?.checkInDate || "N/A";
   const checkOutDate = offer?.checkOutDate || "N/A";
 
-  // Extract a thumbnail image URL (first image if exists)
   let thumbnail = "No image available";
   if (hotel.media && hotel.media.length > 0) {
-    // Usually media is an array of objects with 'uri' or 'url'
+    
     thumbnail = hotel.media[0].uri || hotel.media[0].url || thumbnail;
   }
 
