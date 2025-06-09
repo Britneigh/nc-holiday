@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
+const fs = require("fs");
 
 import {
   getAccessToken,
@@ -12,6 +13,64 @@ import {
 } from "../../api";
 
 jest.setTimeout(100000);
+
+describe("Amadeus Flight Inspirations API - cheapest fligth destinations from given city", () => {
+  test("successfully fetches flight offers when given correct parameter", () => {
+    const clientId = process.env.AMADEUS_CLIENT_ID;
+    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+
+    expect(clientId).toBeTruthy();
+    expect(clientSecret).toBeTruthy();
+
+    return getAccessToken(clientId, clientSecret)
+      .then((token) => {
+        return getFlightDestinations(
+          token,
+          "PAR",
+          "LON",
+          "2025-07-01",
+          1
+        );
+      })
+      .then((flightDestinations) => {
+        expect(flightOffers).toHaveProperty("data");
+        expect(Array.isArray(flightOffers.data)).toBe(true);
+        expect(flightOffers.data.length).toBeGreaterThan(0);
+      })
+      .catch((error) => {
+        console.error(
+          "ERROR - Error fetching flight offers:",
+          error.response?.data || error.message
+        );
+        throw error;
+      });
+  });
+  test("Returns 400 when given incorrect parameter(s)", () => {
+    const clientId = process.env.AMADEUS_CLIENT_ID;
+    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+
+    expect(clientId).toBeTruthy();
+    expect(clientSecret).toBeTruthy();
+
+    return getAccessToken(clientId, clientSecret)
+      .then((token) => {
+        return getFlightSearchWithDestination(
+          token,
+          "XXX",
+          "XXX",
+          "2025-07-01",
+          1
+        );
+      })
+      .catch((error) => {
+        console.log("API Error:", error.data.message);
+        expect(error.status).toBe(400);
+      });
+  });
+});
+
+
+///-----
 
 describe("Amadeus Flight Offers API", () => {
   test("successfully fetches flight offers when given correct parameters", () => {
@@ -167,7 +226,7 @@ describe("Amadeus Hotels Search", () => {
 
     return getAccessToken(clientId, clientSecret)
       .then((token) => {
-        const ret = getHotelSearch(token, ["fuckoff"]);
+        const ret = getHotelSearch(token, ["hsdhjhad"]);
         return ret;
       })
       .then((ret) => {
@@ -241,25 +300,34 @@ describe.only("Amadeus Get Hotels and experiences initial departure and maxPrice
     expect(clientId).toBeTruthy();
     expect(clientSecret).toBeTruthy();
 
+    console.log("Making Amadeus API call with key:", clientId);
+
     return getAccessToken(clientId, clientSecret)
       .then((token) => {
         return getHolidayDataTest(token, "PAR", "LON", "2025-07-01", 1); // Correct usage
       })
       .then((results) => {
-      fs.writeFileSync('holidayData.json', JSON.stringify(results, null, 2));})
+        // Save results to file
+        fs.writeFileSync("holidayData.json", JSON.stringify(results, null, 2));
 
-      .then((destinationList) => {
-        console.log(destinationList, "<===array returned to test")
-        expect(Array.isArray(destinationList)).toBe(true);
-        // Optionally test more about the structure/content of destinationList here
+        // Also log results
+        console.log(results, "<=== array returned to test");
+
+        // Perform test assertion
+        expect(Array.isArray(results)).toBe(true);
+
+        // Optionally check array length or structure:
+        // expect(results.length).toBeGreaterThan(0);
+        // expect(results[0]).toHaveProperty('flight');
+        // expect(results[0]).toHaveProperty('hotels');
       })
       .catch((error) => {
         console.error(
-          "ERROR - Error fetching data in test",
-          JSON.stringify(error, null, 2)
+          "ERROR - Error fetching data in test:",
+          error && (error.response?.data || error.message || error.toString()),
+          error?.stack
         );
-        throw error;
+        throw error; // rethrow so Jest sees the test failed
       });
   });
 });
-

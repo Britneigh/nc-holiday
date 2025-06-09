@@ -381,7 +381,6 @@ export const getHolidayData = (
 };
 
 //--------------------------
-
 export const getHolidayDataTest = (
   token,
   origin,
@@ -391,6 +390,11 @@ export const getHolidayDataTest = (
 ) => {
   const results = [];
 
+  console.log(
+    "Making Amadeus API call with key:",
+    process.env.AMADEUS_CLIENT_ID
+  );
+
   return rateLimitedRequest(getFlightSearchWithDestination, [
     token,
     origin,
@@ -399,70 +403,70 @@ export const getHolidayDataTest = (
     passengers,
   ])
     .then((flightsResponse) => {
-      const flights = (flightsResponse?.data || []).slice(0, 2);
+      const flights = (flightsResponse?.data || []).slice(0, 1); // <= 1 flight only
 
-      return flights.reduce((flightChain, flight) => {
-        return flightChain.then(() => {
-          const flightResult = {
-            flight,
-            text: flightText(flight),
-            hotels: [],
-          };
+      // Fetch hotels once for the destination
+      return rateLimitedRequest(getHotelList, [token, destination]).then(
+        (hotelsResponse) => {
+          const hotels = (hotelsResponse?.data || []).slice(0, 1); // <= 1 hotel only
 
-          return rateLimitedRequest(getHotelList, [token, destination])
-            .then((hotelsResponse) => {
-              const hotels = (hotelsResponse?.data || []).slice(0, 2);
+          // For each flight, map to flightResult with same hotels data
+          return flights.reduce((flightChain, flight) => {
+            return flightChain.then(() => {
+              const flightResult = {
+                flight,
+                text: flightText(flight),
+                hotels: [],
+              };
 
-              return hotels.reduce((hotelChain, hotel) => {
-                return hotelChain
-                  .then(() => delay(500))
-                  .then(() =>
-                    rateLimitedRequest(getToursAndActivities, [
-                      token,
-                      hotel.latitude,
-                      hotel.longitude,
-                    ])
-                      .then((toursResponse) => {
-                        const tours = (toursResponse?.data || [])
-                          .slice(0, 2)
-                          .map((tour) => ({
-                            tour,
-                            text: tourText(tour), // Add the text field here
-                          }));
-                        flightResult.hotels.push({
-                          text: hotelText(hotel),
-                          hotel,
-                          tours,
-                        });
-                      })
-                      .catch((error) => {
-                        console.error(
-                          `Error fetching tours for hotel ${hotel.name}:`,
-                          error
-                        );
-                        flightResult.hotels.push({
-                          hotel,
-                          tours: [],
-                        });
-                      })
-                  );
-              }, Promise.resolve());
-            })
-            .catch((error) => {
-              console.error(
-                `Error fetching hotels for flight to ${destination}:`,
-                error
-              );
-            })
-            .then(() => {
-              results.push(flightResult);
+              // For each hotel, get tours and activities with delay
+              return hotels
+                .reduce((hotelChain, hotel) => {
+                  return hotelChain
+                    .then(() => delay(1000)) // safer delay between tour calls
+                    .then(() =>
+                      rateLimitedRequest(getToursAndActivities, [
+                        token,
+                        hotel.latitude,
+                        hotel.longitude,
+                      ])
+                        .then((toursResponse) => {
+                          const tours = (toursResponse?.data || [])
+                            .slice(0, 1) // <= 1 tour only
+                            .map((tour) => ({
+                              tour,
+                              text: tourText(tour),
+                            }));
+
+                          flightResult.hotels.push({
+                            text: hotelText(hotel),
+                            hotel,
+                            tours,
+                          });
+                        })
+                        .catch((error) => {
+                          console.error(
+                            `Error fetching tours for hotel ${hotel.name}:`,
+                            error
+                          );
+                          flightResult.hotels.push({
+                            hotel,
+                            tours: [],
+                          });
+                        })
+                    );
+                }, Promise.resolve())
+                .then(() => {
+                  results.push(flightResult);
+                });
             });
-        });
-      }, Promise.resolve());
+          }, Promise.resolve());
+        }
+      );
     })
     .catch((error) => {
       console.error(
-        `Error fetching flights from ${origin} to ${destination}:`,
+        `Error fetching flights or hotels from ${origin} to ${destination}:`,
         error
       );
     })
@@ -471,10 +475,10 @@ export const getHolidayDataTest = (
     });
 };
 
+
 //-------
 
 export const extractFlightInfo = (flightOffer) => {
-
   const itinerary = flightOffer.itineraries[0];
 
   const firstSegment = itinerary.segments[0];
@@ -521,12 +525,11 @@ const flightText = (flight) => {
 //------
 
 function extractHotelInfo(hotelOffer) {
- 
   const hotel = hotelOffer.hotel;
 
   const name = hotel.name;
-  const starRating = hotel.rating; 
-  
+  const starRating = hotel.rating;
+
   const offer = hotelOffer.offers && hotelOffer.offers[0];
 
   const roomType = offer?.room?.type || "N/A";
@@ -537,7 +540,6 @@ function extractHotelInfo(hotelOffer) {
 
   let thumbnail = "No image available";
   if (hotel.media && hotel.media.length > 0) {
-    
     thumbnail = hotel.media[0].uri || hotel.media[0].url || thumbnail;
   }
 

@@ -1,14 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  getAccessToken,
-  getHolidayData,
-} from "../api"; 
+import { getAccessToken, getHolidayData } from "../api";
 
-// Types from your snippet
 type TripType = {
   id: string;
   name: string;
-  // add more trip details as needed
 };
 
 type HotelType = {
@@ -27,7 +22,7 @@ type FlightType = {
 interface HolidayDataContextType {
   flights: FlightType[];
   setFlights: React.Dispatch<React.SetStateAction<FlightType[]>>;
-  fetchHolidayData: (
+  getHolidayDataTest: (
     origin: string,
     destination: string,
     date: string,
@@ -40,7 +35,7 @@ interface HolidayDataContextType {
 const defaultHolidayDataContext: HolidayDataContextType = {
   flights: [],
   setFlights: () => {},
-  fetchHolidayData: async () => {},
+  getHolidayDataTest: async () => {},
   loading: false,
   error: null,
 };
@@ -57,7 +52,6 @@ export const HolidayDataProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  // Fetch access token on mount
   useEffect(() => {
     getAccessToken()
       .then((accessToken) => {
@@ -68,8 +62,7 @@ export const HolidayDataProvider: React.FC<{ children: React.ReactNode }> = ({
       });
   }, []);
 
-  // Function to fetch holiday data and update flights state
-  const fetchHolidayData = useCallback(
+  const getHolidayDataTest = useCallback(
     async (
       origin: string,
       destination: string,
@@ -86,11 +79,10 @@ export const HolidayDataProvider: React.FC<{ children: React.ReactNode }> = ({
 
       try {
         const data = await getHolidayData(token, origin, destination, date, passengers);
-        // Assuming `data` is an array of FlightType (or transform it accordingly)
         setFlights(data);
-        setLoading(false);
       } catch (err: any) {
         setError(err);
+      } finally {
         setLoading(false);
       }
     },
@@ -99,7 +91,7 @@ export const HolidayDataProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <HolidayDataContext.Provider
-      value={{ flights, setFlights, fetchHolidayData, loading, error }}
+      value={{ flights, setFlights, getHolidayDataTest, loading, error }}
     >
       {children}
     </HolidayDataContext.Provider>
