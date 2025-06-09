@@ -456,3 +456,5 @@ Multiple projectIds are not recommended in single project mode. Requested projec
 Multiple projectIds are not recommended in single project mode. Requested project ID emulator-id, but the emulator is configured for nc-travel. To opt-out of single project mode add/set the '"singleProjectMode": false' property in the firebase.json emulators config.
 Multiple projectIds are not recommended in single project mode. Requested project ID mock-project-id, but the emulator is configured for nc-travel. To opt-out of single project mode add/set the '"singleProjectMode": false' property in the firebase.json emulators config.
 Multiple projectIds are not recommended in single project mode. Requested project ID emulator-id, but the emulator is configured for nc-travel. To opt-out of single project mode add/set the '"singleProjectMode": false' property in the firebase.json emulators config.
+*** shutting down gRPC server since JVM is shutting down
+*** server shut down
