@@ -1,68 +1,97 @@
-import React from "react";
-import { StyleSheet, View, ScrollView, Text } from "react-native";
-import { useQuery } from "@tanstack/react-query";
-import { getAccessToken, getToursAndActivities } from "../../api"
-import { useLocalSearchParams } from "expo-router";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, Button, ScrollView } from "react-native";
+import { router } from "expo-router";
+import { testCityData } from "@/test-data/testCityData";
+import ActivityCitySearch from "@/components/ActivityCitySearch";
+import DateActivitySearch from "@/components/DateActivitySearch";
+import { useQueryClient } from "@tanstack/react-query";
+import { useIsFocused } from "@react-navigation/native";
 
-export default function ActivitySearchResults() {
-  const { selectedCityCode, fromDate, toDate, lat, long } =
-  useLocalSearchParams();
-    useLocalSearchParams();
+export default function ActivitySearch() {
+  const [citySearchQuery, setCitySearchQuery] = useState("");
+  const [selectedCityCode, setSelectedCityCode] = useState("");
+  const [selectedCityLong, setSelectedCityLong] = useState();
+  const [selectedCityLat, setSelectedCityLat] = useState();
 
-  const activitiesQuery = useQuery({
-    queryKey: ["activities", selectedCityCode, fromDate, toDate, lat, long],
-    queryFn: () => {
-      return getAccessToken()
-        .then((token) => {
-          console.log("TOKEN RECEIVED");
-          return getToursAndActivities(
-            {
-              cityCode: selectedCityCode as string,
-              fromDate: fromDate as string,
-              toDate: toDate as string | undefined,
-              latitude: lat as string | undefined,
-              longitude: long as string | undefined,
-            },
-            token
-          );
-        })
-        .catch((error) => {
-          console.log("Error in queryFn:", error);
-          throw error; // important: rethrow so React Query knows it's an error
-        });
-    },
-    enabled: !!selectedCityCode && !!fromDate,
-  });
+  const [fromDate, setFromDate] = useState(new Date());
+  const [toDate, setToDate] = useState<Date | null>(null);
 
-  if (activitiesQuery.isLoading) {
-    return <Text>Loading...</Text>;
-  }
+  const queryClient = useQueryClient();
+  const isFocused = useIsFocused();
 
-  if (activitiesQuery.isError) {
-    return <Text>Error: {(activitiesQuery.error as Error).message}</Text>;
-  }
+  useEffect(() => {
+    if (isFocused) {
+      queryClient.removeQueries("activities");
+    }
+  }, [isFocused]);
+
+  useEffect(() => {
+    setCitySearchQuery("");
+    setSelectedCityCode("");
+    //   setFromDate(null);
+    //   setToDate(null);
+  }, []);
+
+  const placeholderData = [{ key: "dummyData" }];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const fromDay = new Date(fromDate);
+  fromDay.setHours(0, 0, 0, 0);
+  const toDay = new Date(fromDate);
+  toDay.setHours(0, 0, 0, 0);
 
   return (
-    <ScrollView style={styles.container}>
-      {activitiesQuery.data?.map((activity: any, index: number) => (
-        <View key={index} style={styles.card}>
-          <Text>{activity.name}</Text>
-          {/* Render other activity details here */}
-        </View>
-      ))}
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text>Where are you heading to?</Text>
+      <ActivityCitySearch
+        cityData={testCityData}
+        citySearchQuery={citySearchQuery}
+        selectedCityCode={selectedCityCode}
+        setCitySearchQuery={setCitySearchQuery}
+        setSelectedCityCode={setSelectedCityCode}
+        setSelectedCityLat={setSelectedCityLat}
+        setSelectedCityLong={setSelectedCityLong}
+      />
+
+      <Text>Select arrival date</Text>
+      <DateActivitySearch date={fromDate} setDate={setFromDate} />
+      {fromDay < today ? (
+        <Text>Selected departure date is in the past!</Text>
+      ) : null}
+      <Text>Select return date</Text>
+      <DateActivitySearch date={fromDate} setDate={setFromDate} />
+      {toDate && toDate < fromDate ? (
+        <Text>From date is before to date!</Text>
+      ) : null}
+
+      <Button
+        title="Search for activities"
+        disabled={toDate && toDate < fromDate ? true : false}
+        onPress={() => {
+          const params: any = {
+            selectedCityCode,
+            fromDate: fromDate.toISOString().split("T")[0],
+            longitude: selectedCityLong,
+            latitude: selectedCityLat,
+          };
+          if (toDate) {
+            params.toDate = toDate.toISOString().split("T")[0];
+            console.log(params, "<==== params being passed in");
+          }
+          router.push({
+            pathname: "/activity-results",
+            params,
+          });
+        }}
+      />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flexGrow: 1,
     padding: 16,
-  },
-  card: {
-    marginBottom: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "black",
-    borderRadius: 8,
   },
 });
