@@ -27,36 +27,72 @@ export default function SignUp() {
 
     return (
         <View style={styles.container}>
-            <TextInput placeholder="Enter your email here" value={username} onChangeText={setUsername} autoCapitalize='none' style={styles.input} />
-            <TextInput placeholder="Enter your password here" value={password} onChangeText={setPassword} secureTextEntry={true} autoCapitalize='none' style={styles.input} />
-            {showPassword ? <Text>{password}</Text> : null}
-            <TextInput placeholder="Confirm your password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry={true} autoCapitalize='none' style={styles.input} />
-            {showPassword ? <Text>{confirmPassword}</Text> : null}
+
+            <Text style={styles.header}>Sign Up</Text>
+
+            <TextInput
+                placeholder="Enter your email here"
+                value={username}
+                onChangeText={setUsername}
+                autoCapitalize='none'
+                style={styles.input} />
+
+
+            <TextInput
+                placeholder="Enter your password here"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={true}
+                autoCapitalize='none'
+                style={styles.input} />
+
+
+            {showPassword ? <Text style={styles.showPasswordText}>{password}</Text> : null}
+
+
+            <TextInput
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry={true}
+                autoCapitalize='none'
+                style={styles.input} />
+
+
+            {showPassword ? <Text style={styles.showPasswordText}>{confirmPassword}</Text> : null}
+
+
             {confirmPassword !== password ? <Text>Passwords do not match.</Text> : null}
-            <Text>Show Password?</Text>
-            <Switch
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={showPassword ? '#f5dd4b' : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={toggleSwitch}
-                value={showPassword}
-            />
-            {signupError ? <Text>An issue occured when trying to sign up.</Text> : null }
+
+            <View style={styles.toggleContainer}>
+                <Text>Show Password?</Text>
+                <Switch
+                    trackColor={{ false: '#269fc12e', true: '#2891D9' }}
+                    thumbColor={showPassword ? 'white' : 'white'}
+                    ios_backgroundColor="#269fc12e"
+                    onValueChange={toggleSwitch}
+                    value={showPassword}
+                />
+            </View>
+
+            {signupError ? <Text>An issue occured when trying to sign up.</Text> : null}   {/* add error styling */}
+
+
             <Button
-            disabled={username && password ? false: true}
+                disabled={username && password ? false : true}
                 onPress={() => {
                     handleSignup(username, password)
-                    .then(()=>{
-                        router.navigate('/login');
-                    })
-                    .catch((error)=>{
-                        setSignupError(true)
-                    })                   
+                        .then(() => {
+                            router.navigate('/login');
+                        })
+                        .catch((error) => {
+                            setSignupError(true)
+                        })
                 }}
                 title='Sign Up'
             />
             <Pressable onPress={() => router.replace('/login')}>
-                <Text>Already have an account? Log In</Text>
+                <Text style={styles.link}>Already have an account? Log In</Text>
             </Pressable>
         </View>
     );
@@ -65,10 +101,50 @@ export default function SignUp() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        padding: 16,
+        backgroundColor: '#FFF',
+        justifyContent: 'center',
+
+    },
+    header: {
+        fontSize: 24,
+        fontWeight: '600',
+        color: '#333',
+        textAlign: 'center',
+        marginBottom: 30
     },
     input: {
-        padding: 5,
-        borderColor: "red",
-        borderWidth: 2
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginTop: 20,
+        marginBottom: 20,
+        marginLeft: 30,
+        marginRight: 30,
+        padding: 10,
+        fontSize: 16,
+        backgroundColor: '#fff',
+    },
+    toggleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        padding: 20
+    },
+    showPasswordText: {
+        fontSize: 16,
+        fontWeight: '400',
+        marginBottom: 10,
+        marginLeft: 30,
+        color: '#333',
+    },
+    link: {
+        fontSize: 12,
+        fontWeight: '400',
+        marginBottom: 8,
+        color: '#2579CA',
+        textDecorationLine: 'underline',
+        marginTop: 20,
+        textAlign: 'center'
     }
 });

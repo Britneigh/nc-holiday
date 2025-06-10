@@ -14,7 +14,7 @@ const onPress = () => {
   return (
     <View>
         <Text style={styles.text}>Trip added!</Text>
-        <Text style={styles.text}>You can view all your added trips in "View Trips"</Text>
+        <Text style={styles.text}>You can view all your added trips in the "Trips" tab at the bottom.</Text>
         <Button title='Back to Home' onPress={onPress}/>
     </View>
     

@@ -44,5 +44,45 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         padding: 16,
+        backgroundColor: '#FFF'
+    },
+    header: {
+        fontSize: 24,
+        fontWeight: '600',
+        color: '#333',
+        textAlign: 'center',
+        marginBottom: 30
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: '600',
+        marginBottom: 8,
+        color: '#333',
+    },
+    searchComponent: {
+        marginTop: 10,
+        marginBottom: 15
+    },
+    error: {
+        fontSize: 12,
+        fontWeight: '400',
+        margin: 5,
+        marginLeft: 20,
+        color: 'red',
+    },
+    buttonContainer: {
+        marginBottom: 40
+    },
+    input: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginTop: 20,
+        marginBottom: 20,
+        marginLeft: 30,
+        marginRight: 30,
+        padding: 10,
+        fontSize: 16,
+        backgroundColor: '#fff',
     },
 });
