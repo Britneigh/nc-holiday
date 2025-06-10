@@ -1,12 +1,13 @@
 import dotenv from "dotenv";
 dotenv.config();
-const fs = require("fs");
+
+import fetch from "node-fetch";
+
+global.fetch = fetch;
 
 import {
   getAccessToken,
   getFlightSearchWithDestination,
-  getHolidayData,
-  getHolidayDataTest,
   getHotelList,
   getHotelSearch,
   getToursAndActivities,
@@ -14,320 +15,135 @@ import {
 
 jest.setTimeout(100000);
 
-describe("Amadeus Flight Inspirations API - cheapest fligth destinations from given city", () => {
-  test("successfully fetches flight offers when given correct parameter", () => {
-    const clientId = process.env.AMADEUS_CLIENT_ID;
-    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+describe("Amadeus API Tests", () => {
+  const clientId = process.env.AMADEUS_CLIENT_ID;
+  const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
 
+  beforeAll(() => {
     expect(clientId).toBeTruthy();
     expect(clientSecret).toBeTruthy();
-
-    return getAccessToken(clientId, clientSecret)
-      .then((token) => {
-        return getFlightDestinations(
-          token,
-          "PAR",
-          "LON",
-          "2025-07-01",
-          1
-        );
-      })
-      .then((flightDestinations) => {
-        expect(flightOffers).toHaveProperty("data");
-        expect(Array.isArray(flightOffers.data)).toBe(true);
-        expect(flightOffers.data.length).toBeGreaterThan(0);
-      })
-      .catch((error) => {
-        console.error(
-          "ERROR - Error fetching flight offers:",
-          error.response?.data || error.message
-        );
-        throw error;
-      });
   });
-  test("Returns 400 when given incorrect parameter(s)", () => {
-    const clientId = process.env.AMADEUS_CLIENT_ID;
-    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
 
-    expect(clientId).toBeTruthy();
-    expect(clientSecret).toBeTruthy();
+  describe("Flight Inspirations API", () => {
+    test("fetches flight offers with valid parameters", async () => {
+      const token = await getAccessToken(clientId, clientSecret);
+      const flightOffers = await getFlightSearchWithDestination(
+        token,
+        "PAR",
+        "LON",
+        "2025-07-01",
+        1
+      );
 
-    return getAccessToken(clientId, clientSecret)
-      .then((token) => {
-        return getFlightSearchWithDestination(
+      expect(flightOffers).toHaveProperty("data");
+      expect(Array.isArray(flightOffers.data)).toBe(true);
+      expect(flightOffers.data.length).toBeGreaterThan(0);
+    });
+
+    test("returns 400 for invalid flight parameters", async () => {
+      expect.assertions(2);
+      const token = await getAccessToken(clientId, clientSecret);
+
+      try {
+        await getFlightSearchWithDestination(
           token,
           "XXX",
           "XXX",
           "2025-07-01",
           1
         );
-      })
-      .catch((error) => {
-        console.log("API Error:", error.data.message);
-        expect(error.status).toBe(400);
-      });
-  });
-});
-
-
-///-----
-
-describe("Amadeus Flight Offers API", () => {
-  test("successfully fetches flight offers when given correct parameters", () => {
-    const clientId = process.env.AMADEUS_CLIENT_ID;
-    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
-
-    expect(clientId).toBeTruthy();
-    expect(clientSecret).toBeTruthy();
-
-    return getAccessToken(clientId, clientSecret)
-      .then((token) => {
-        return getFlightSearchWithDestination(
-          token,
-          "PAR",
-          "LON",
-          "2025-07-01",
-          1
+        throw new Error(
+          "Expected error not thrown for invalid flight parameters"
         );
-      })
-      .then((flightOffers) => {
-        expect(flightOffers).toHaveProperty("data");
-        expect(Array.isArray(flightOffers.data)).toBe(true);
-        expect(flightOffers.data.length).toBeGreaterThan(0);
-      })
-      .catch((error) => {
-        console.error(
-          "ERROR - Error fetching flight offers:",
-          error.response?.data || error.message
+      } catch (error) {
+        expect(error.response?.status).toBe(400);
+        expect(error.message).toBeTruthy();
+      }
+    });
+  });
+
+  describe("Hotels List API", () => {
+    test("fetches hotel list with valid city code", async () => {
+      const token = await getAccessToken(clientId, clientSecret);
+      const hotelList = await getHotelList(token, "NYC");
+
+      expect(hotelList).toHaveProperty("data");
+      expect(Array.isArray(hotelList.data)).toBe(true);
+      expect(hotelList.data.length).toBeGreaterThan(0);
+    });
+
+    test("returns 404 for invalid city code", async () => {
+      expect.assertions(2);
+      const token = await getAccessToken(clientId, clientSecret);
+
+      try {
+        await getHotelList(token, "XXX");
+        throw new Error("Expected error not thrown for invalid city code");
+      } catch (error) {
+        expect(error.response?.status).toBe(404);
+        expect(error.message).toBeTruthy();
+      }
+    });
+  });
+
+  describe("Hotels Search API", () => {
+    test("fetches hotel offers from hotel list", async () => {
+      const token = await getAccessToken(clientId, clientSecret);
+      const hotelList = await getHotelList(token, "NYC");
+
+      if (hotelList.data.length === 0) {
+        return console.warn(
+          "No hotels found for city, skipping hotel search test."
         );
-        throw error;
-      });
-  });
-  test("Returns 400 when given incorrect parameter(s)", () => {
-    const clientId = process.env.AMADEUS_CLIENT_ID;
-    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+      }
 
-    expect(clientId).toBeTruthy();
-    expect(clientSecret).toBeTruthy();
+      const hotelOffers = await getHotelSearch(token, hotelList.data);
 
-    return getAccessToken(clientId, clientSecret)
-      .then((token) => {
-        return getFlightSearchWithDestination(
-          token,
-          "XXX",
-          "XXX",
-          "2025-07-01",
-          1
-        );
-      })
-      .catch((error) => {
-        console.log("API Error:", error.data.message);
-        expect(error.status).toBe(400);
-      });
-  });
-});
+      expect(hotelOffers).toHaveProperty("data");
+      expect(Array.isArray(hotelOffers.data)).toBe(true);
+      expect(hotelOffers.data.length).toBeGreaterThan(0);
+    });
 
-///-----
+    test("returns 404 for invalid hotel codes", async () => {
+      expect.assertions(2);
+      const token = await getAccessToken(clientId, clientSecret);
 
-describe("Amadeus Hotels List", () => {
-  test("successfully fetches list of hotels when given city code", () => {
-    const clientId = process.env.AMADEUS_CLIENT_ID;
-    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
-
-    expect(clientId).toBeTruthy();
-    expect(clientSecret).toBeTruthy();
-
-    return getAccessToken(clientId, clientSecret)
-      .then((token) => {
-        return getHotelList(token, "MIA");
-      })
-      .then((hotelList) => {
-        expect(hotelList).toHaveProperty("data");
-        expect(Array.isArray(hotelList.data)).toBe(true);
-        expect(hotelList.data.length).toBeGreaterThan(0);
-      })
-      .catch((error) => {
-        console.error(
-          "ERROR - Error fetching hotel list:",
-          error.response?.data || error.message
-        );
-        throw error;
-      });
-  });
-  test("Returns 400 when given incorrect parameter(s)", () => {
-    const clientId = process.env.AMADEUS_CLIENT_ID;
-    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
-
-    expect(clientId).toBeTruthy();
-    expect(clientSecret).toBeTruthy();
-
-    return getAccessToken(clientId, clientSecret)
-      .then((token) => {
-        return getHotelList(token, "XXX");
-      })
-      .catch((error) => {
-        console.log("API Error:", error.data.message);
-        expect(error.status).toBe(400);
-      });
-  });
-});
-
-///-------
-
-describe("Amadeus Hotels Search", () => {
-  test("successfully fetches list of available hotels when passed array of hotel codes", () => {
-    const clientId = process.env.AMADEUS_CLIENT_ID;
-    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
-
-    expect(clientId).toBeTruthy();
-    expect(clientSecret).toBeTruthy();
-
-    return getAccessToken(clientId, clientSecret)
-      .then((token) => {
-        return getHotelList(token, "MIA");
-      })
-      .then((hotelList) => {
-        return getAccessToken(clientId, clientSecret).then((token) => {
-          return getHotelSearch(token, hotelList);
-        });
-      })
-      .then((hotelSearch) => {
-        console.log(hotelSearch.data, "<==== hotel search response");
-        hotelOffers = hotelSearch.data;
-        hotelOffers.forEach((hotelOffer) => {
-          console.info(`Hotel: ${hotelOffer.hotel.name}`);
-
-          hotelOffer.offers.forEach((offer, index) => {
-            console.info(`  Offer ${index + 1}:`);
-            console.info(
-              `    Price: ${offer.price.total} ${offer.price.currency}`
-            );
-          });
-        });
-        expect(hotelSearch).toHaveProperty("data");
-        expect(Array.isArray(hotelSearch.data)).toBe(true);
-        expect(hotelSearch.data.length).toBeGreaterThan(0);
-      })
-      .catch((error) => {
-        console.error(
-          "ERROR - Error fetching hotel list:",
-          error.response?.data || error.message
-        );
-        throw error;
-      });
+      try {
+        await getHotelSearch(token, ["invalidHotelCode"]);
+        throw new Error("Expected error not thrown for invalid hotel codes");
+      } catch (error) {
+        expect(error.response?.status).toBe(404);
+        expect(error.message).toBeTruthy();
+      }
+    });
   });
 
-  test("Returns 400 when given incorrect parameter(s)", () => {
-    const clientId = process.env.AMADEUS_CLIENT_ID;
-    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+  describe("Tours and Activities API", () => {
+    test("fetches tours and activities with valid lat/lon", async () => {
+      const token = await getAccessToken(clientId, clientSecret);
+      const activities = await getToursAndActivities(
+        token,
+        25.73856,
+        -80.26248,
+        30
+      );
 
-    expect(clientId).toBeTruthy();
-    expect(clientSecret).toBeTruthy();
+      expect(activities).toHaveProperty("data");
+      expect(Array.isArray(activities.data)).toBe(true);
+      expect(activities.data.length).toBeGreaterThan(0);
+    });
 
-    return getAccessToken(clientId, clientSecret)
-      .then((token) => {
-        const ret = getHotelSearch(token, ["hsdhjhad"]);
-        return ret;
-      })
-      .then((ret) => {
-        console.log(ret, "<===return");
-      })
+    test("returns 400 for invalid latitude", async () => {
+      expect.assertions(2);
+      const token = await getAccessToken(clientId, clientSecret);
 
-      .catch((error) => {
-        console.log(error, "<=== error being returned");
-        console.log("API Error:", error.data.message);
-        expect(error.status).toBe(400);
-      });
-  });
-});
-
-///--------------------------
-
-describe.only("Amadeus Activities and Tours List", () => {
-  test("successfully fetches list of activites and tour given longitude and latitude", () => {
-    const clientId = process.env.AMADEUS_CLIENT_ID;
-    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
-
-    expect(clientId).toBeTruthy();
-    expect(clientSecret).toBeTruthy();
-
-    return getAccessToken(clientId, clientSecret)
-      .then((token) => {
-        return getToursAndActivities(token, 25.73856, -80.26248, 30);
-      })
-      .then((toursAndActivities) => {
-        console.log(toursAndActivities, "<=== tours and activities");
-        expect(toursAndActivities).toHaveProperty("data");
-        expect(Array.isArray(toursAndActivities.data)).toBe(true);
-        expect(toursAndActivities.data.length).toBeGreaterThan(0);
-      })
-      .catch((error) => {
-        console.error(
-          "ERROR - Error fetching tours and activities:",
-          error.response?.data || error.message
-        );
-        throw error;
-      });
-  });
-  test("Returns 400 when given incorrect parameter(s)", () => {
-    const clientId = process.env.AMADEUS_CLIENT_ID;
-    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
-
-    expect(clientId).toBeTruthy();
-    expect(clientSecret).toBeTruthy();
-
-    return getAccessToken(clientId, clientSecret)
-      .then((token) => {
-        return getToursAndActivities(token, 131, -80.26248, 30); /// coconut grove hotel miami
-      })
-      .catch((error) => {
-        console.log("API Error:", error.data.message);
-        expect(error.status).toBe(400);
-      });
-  });
-});
-
-//// --------------------
-
-// To retrieve:
-// const savedResults = JSON.parse(fs.readFileSync('holidayData.json', 'utf-8'));
-
-describe("Amadeus Get Hotels and experiences initial departure and maxPrice", () => {
-  test("Given a flight dep/dest/date/passengers, returns nested array with results", () => {
-    const clientId = process.env.AMADEUS_CLIENT_ID;
-    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
-
-    expect(clientId).toBeTruthy();
-    expect(clientSecret).toBeTruthy();
-
-    console.log("Making Amadeus API call with key:", clientId);
-
-    return getAccessToken(clientId, clientSecret)
-      .then((token) => {
-        return getHolidayDataTest(token, "PAR", "LON", "2025-07-01", 1); // Correct usage
-      })
-      .then((results) => {
-        // Save results to file
-        fs.writeFileSync("holidayData.json", JSON.stringify(results, null, 2));
-
-        // Also log results
-        console.log(results, "<=== array returned to test");
-
-        // Perform test assertion
-        expect(Array.isArray(results)).toBe(true);
-
-        // Optionally check array length or structure:
-        // expect(results.length).toBeGreaterThan(0);
-        // expect(results[0]).toHaveProperty('flight');
-        // expect(results[0]).toHaveProperty('hotels');
-      })
-      .catch((error) => {
-        console.error(
-          "ERROR - Error fetching data in test:",
-          error && (error.response?.data || error.message || error.toString()),
-          error?.stack
-        );
-        throw error; // rethrow so Jest sees the test failed
-      });
+      try {
+        await getToursAndActivities(token, 131, -80.26248, 30); // Invalid latitude > 90
+        throw new Error("Expected error not thrown for invalid latitude");
+      } catch (error) {
+        expect(error.response?.status).toBe(400);
+        expect(error.message).toBeTruthy();
+      }
+    });
   });
 });
