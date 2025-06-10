@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { getAuth } from 'firebase/auth';
 
-console.log('Current user token:', await getAuth().currentUser?.getIdToken());
+// console.log('Current user token:', await getAuth().currentUser?.getIdToken());
 
 
 const queryClient = new QueryClient();
