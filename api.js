@@ -243,37 +243,13 @@ export const getHotelSearch = (
 
 ///---------------------
 
-export const getToursAndActivities = (
-  token,
-  latitude,
-  longitude,
-  radius = 10
-) => {
-  const params = {
-    latitude,
-    longitude,
-    radius,
-  };
-
+export const getToursAndActivities = (token, latitude, longitude, radius = 10) => {
   return axios
     .get("https://test.api.amadeus.com/v1/shopping/activities", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params,
+      headers: { Authorization: `Bearer ${token}` },
+      params: { latitude, longitude, radius },
     })
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      const normalizedError = {
-        status: error.response?.status || 500,
-        data: error.response?.data || {
-          message: error.message || "Unknown error",
-        },
-      };
-      throw normalizedError;
-    });
+    .then(response => response.data.data);
 };
 
 //-----------------------------------

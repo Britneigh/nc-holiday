@@ -243,7 +243,7 @@ describe("Amadeus Hotels Search", () => {
 
 ///--------------------------
 
-describe("Amadeus Activities and Tours List", () => {
+describe.only("Amadeus Activities and Tours List", () => {
   test("successfully fetches list of activites and tour given longitude and latitude", () => {
     const clientId = process.env.AMADEUS_CLIENT_ID;
     const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
@@ -292,7 +292,7 @@ describe("Amadeus Activities and Tours List", () => {
 // To retrieve:
 // const savedResults = JSON.parse(fs.readFileSync('holidayData.json', 'utf-8'));
 
-describe.only("Amadeus Get Hotels and experiences initial departure and maxPrice", () => {
+describe("Amadeus Get Hotels and experiences initial departure and maxPrice", () => {
   test("Given a flight dep/dest/date/passengers, returns nested array with results", () => {
     const clientId = process.env.AMADEUS_CLIENT_ID;
     const clientSecret = process.env.AMADEUS_CLIENT_SECRET;

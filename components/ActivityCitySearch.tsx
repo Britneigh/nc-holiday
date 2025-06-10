@@ -11,8 +11,8 @@ import {
 interface City {
   city: string;
   code: string;
-  lat: number;
-  lon: number;
+  latitude: number;
+  longitude: number;
 }
 
 interface ActivityCitySearchProps {
@@ -21,8 +21,8 @@ interface ActivityCitySearchProps {
   selectedCityCode: string;
   setCitySearchQuery: (query: string) => void;
   setSelectedCityCode: (code: string) => void;
-  setSelectedCityLat: (lat: number) => void;
-  setSelectedCityLong: (lon: number) => void;
+  setSelectedCityLat: (latitude: number) => void;
+  setSelectedCityLong: (longitude: number) => void;
 }
 
 export default function ActivityCitySearch({
@@ -45,8 +45,8 @@ export default function ActivityCitySearch({
   const onSelectCity = (city: City) => {
     setSelectedCityCode(city.code);
     setCitySearchQuery(city.city);
-    setSelectedCityLat(city.lat);
-    setSelectedCityLong(city.lon);
+    setSelectedCityLat(city.latitude);
+    setSelectedCityLong(city.longitude);
   };
 
   return (
