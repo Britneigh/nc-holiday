@@ -2,8 +2,10 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, Button, View, Image, Alert, ImageBackground } from 'react-native';
 import { router } from 'expo-router';
 import { deleteTrip } from '@/firestoreService/trip/deleteTrip';
+import { useTheme } from '../app/ThemeContext';
 
 export default function TripCard({trip, refreshTrips}: any) {
+const { mode }: any = useTheme();
 
 const deleteImage = (tripId: string) => {
     deleteTrip(tripId)
@@ -17,12 +19,11 @@ const deleteImage = (tripId: string) => {
 }
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => router.push({ pathname: '/trip-info', params: { id: trip.id } })}>
+        <TouchableOpacity style={[styles.container, { backgroundColor: mode.background }]} onPress={() => router.push({ pathname: '/trip-info', params: { id: trip.id } })}>
 
-            <View style={styles.card}>
-
+            <View style={[styles.card, { backgroundColor: mode.background }]}>
                 <View style={styles.flightCardHeader}>
-                    <Text style={styles.label}>{trip.tripName}</Text>
+                    <Text style={[styles.label, {color: mode.text}]}>{trip.tripName}</Text>
                 </View>
 
                 <View style={styles.cardDataContainer}>
@@ -34,12 +35,11 @@ const deleteImage = (tripId: string) => {
                     // }}
                     />
                     <View style={styles.cardData}>
-                        <Text>{trip.location}</Text>
-                        <Text>Start Date: {trip.startDate.toDate().toLocaleDateString()}</Text>
-                        <Text>End Date: {trip.endDate.toDate().toLocaleDateString()}</Text>
-                        <Text>Created at: {trip.createdAt.toDate().toLocaleDateString()}</Text>
+                        <Text style={{ color: mode.text }}>{trip.location}</Text>
+                        <Text style={{ color: mode.text }}>Start Date: {trip.startDate.toDate().toLocaleDateString()}</Text>
+                        <Text style={{ color: mode.text }}>End Date: {trip.endDate.toDate().toLocaleDateString()}</Text>
+                        <Text style={{ color: mode.text }}>Created at: {trip.createdAt.toDate().toLocaleDateString()}</Text>
                         <Button title="Delete" onPress={() => deleteImage(trip.id)}></Button>
-                        {/*Trip's first uploaded image Background here, trip.image[0] */}
                     </View>
 
                 </View>
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     cardData: {
-        marginLeft: 20
+        marginLeft: 20,
     },
     label: {
         fontSize: 16,

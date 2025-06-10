@@ -3,9 +3,10 @@ import { StyleSheet, View, ScrollView, Text, Button } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { getAccessToken, getHotelList, getHotelSearch} from '../../api';
 import { useLocalSearchParams } from 'expo-router';
-
+import { useTheme } from '../ThemeContext';
 
 export default function HotelSearchResults(){
+    const { mode }: any = useTheme();
     const [token, setToken] = useState('')
 
     const { 
@@ -29,7 +30,7 @@ export default function HotelSearchResults(){
     })
 
     if (hotelsQuery.isLoading) {
-        return <Text>Loading</Text>
+        return <Text style={{ color: mode.text }}>Loading</Text>
     };
 
     return (

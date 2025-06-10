@@ -10,7 +10,7 @@ import {
 import { db, auth } from "../../firebaseConfig";
 import { type Trip, type TripData } from "../types";
 
-export function getTrips(): Promise<Trip[] | null> {
+export function getTrips(): Promise<Trip[]> {
 
   const currentUser = auth.currentUser;
 
@@ -36,6 +36,6 @@ export function getTrips(): Promise<Trip[] | null> {
     })
     .catch((error: any) => {
       console.error("Error getting trips: ", error);
-      return null;
+      return [];
     });
 }

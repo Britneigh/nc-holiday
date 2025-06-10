@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View, TextInput, FlatList, Pressable } from 'react-native';
-
+import { useTheme } from '../app/ThemeContext';
 
 export default function DepartureFlightSearch({ flightData, departureSearchQuery, selectedDepartureCode, setDepartureSearchQuery, setSelectedDepartureCode }: any) {
+    const { mode }: any = useTheme();
 
     const filteredResults = useMemo(() => {
         if (!departureSearchQuery) {
@@ -18,16 +19,11 @@ export default function DepartureFlightSearch({ flightData, departureSearchQuery
 
     return (
         <View style={styles.container}>
-
-
-
-
             <View style={styles.airportCodeSelection}>
-                <Text style={styles.labelDescription}>Selected Airport Code:</Text>
+                <Text style={[styles.labelDescription, {color: mode.text}]}>Selected Airport Code:</Text>
                 {selectedDepartureCode ? <View style={styles.airportResultCodeContainer}>
                     <Text style={styles.airportResultCode}>{selectedDepartureCode}</Text>
                 </View>
-
                     :
                     <Text style={styles.label}>no departure code selected</Text>
                 }

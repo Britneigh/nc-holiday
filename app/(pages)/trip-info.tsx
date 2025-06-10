@@ -4,8 +4,11 @@ import { useLocalSearchParams } from 'expo-router';
 import { Trip } from '@/firestoreService/types';
 import { getTripById } from '@/firestoreService/trip/getTripById';
 import GoBackHeader from '@/components/GoBackHeader';
+import { useTheme } from '../ThemeContext';
 
 export default function ActivityInfo() {
+  const { mode }: any = useTheme();
+
   const { id } = useLocalSearchParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [trip, setTrip] = useState<Trip | null>(null);
@@ -28,11 +31,11 @@ export default function ActivityInfo() {
     return (
       <>
       <GoBackHeader></GoBackHeader>
-  <View style={styles.container}>
-    {isLoading && <Text>Loading trip...</Text>}
+  <View style={[styles.container, { backgroundColor: mode.background }]}>
+    {isLoading && <Text style={{ color: mode.text }}>Loading trip...</Text>}
     {error && <Text>{error}</Text>}
     {!trip && (
-      <Text>No trip data available</Text>
+      <Text style={{ color: mode.text }}>No trip data available</Text>
     )}
     {trip && (
       <>
@@ -42,12 +45,12 @@ export default function ActivityInfo() {
                 //     uri: '',
                 // }}
               />
-        <Text style={styles.header}>{trip.tripName}</Text>
-        <Text style={styles.text}>{trip.location}</Text>
-        <Text>Start Date: {trip.startDate.toDate().toLocaleDateString()}</Text>
-        <Text>End Date: {trip.endDate.toDate().toLocaleDateString()}</Text>
-        <Text style={styles.sections}>Saved Flights:</Text>
-        <Text style={styles.sections}>Saved Hotels:</Text>
+        <Text style={[styles.header, {color: mode.text}]}>{trip.tripName}</Text>
+        <Text style={[styles.text, {color: mode.text}]}>{trip.location}</Text>
+        <Text style={{ color: mode.text }}>Start Date: {trip.startDate.toDate().toLocaleDateString()}</Text>
+        <Text style={{ color: mode.text }}>End Date: {trip.endDate.toDate().toLocaleDateString()}</Text>
+        <Text style={[styles.sections, {color: mode.text}]}>Saved Flights:</Text>
+        <Text style={[styles.sections, {color: mode.text}]}>Saved Hotels:</Text>
       </>
     )}
   </View>

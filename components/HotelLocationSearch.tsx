@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, FlatList, Pressable } from 'react-native';
 import {testAirportData} from '@/test-data/testAirportData'
+import { useTheme } from '../app/ThemeContext';
 
-
-export default function HotelLocationSearch({selectedLocationCode, setSelectedLocationCode}){
-
+export default function HotelLocationSearch({selectedLocationCode, setSelectedLocationCode}: any){
+    const { mode }: any = useTheme();
     const [locationSearchQuery, setLocationSearchQuery] = useState('')
     const [selectedLocation, setSelectedLocation] = useState('')
     
@@ -26,7 +26,7 @@ export default function HotelLocationSearch({selectedLocationCode, setSelectedLo
 
     return (
         <View style={styles.container}>
-            <Text style={{ fontSize: 16, color: 'black', marginTop: 8 }}>
+            <Text style={{ fontSize: 16, color: mode.text, marginTop: 8 }}>
             {selectedLocationCode
                 ? `Selected Location: ${selectedLocation} - ${selectedLocationCode}`
                 : 'No location selected'}
@@ -42,7 +42,7 @@ export default function HotelLocationSearch({selectedLocationCode, setSelectedLo
             <TextInput
                 placeholder='Search for cities or airports...'
                 clearButtonMode='always'
-                style={styles.input}
+                style={[styles.input, {color: mode.text}]}
                 autoCorrect={false}
                 autoCapitalize='words'
                 value={locationSearchQuery}

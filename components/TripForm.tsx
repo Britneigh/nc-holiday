@@ -4,8 +4,10 @@ import TripDates from './TripDates';
 import { TripPictures } from './TripPictures';
 import { router } from 'expo-router';
 import { addTrip } from '../firestoreService/trip/addTrip';
+import { useTheme } from '../app/ThemeContext';
 
 export default function TripForm({ tripName, setTripName, location, setLocation, startDate, setStartDate, endDate, setEndDate, tripPictures, setTripPictures }: any) {
+const { mode }: any = useTheme();
 
 const onPress = () => {
   if (typeof document !== 'undefined' && document.activeElement instanceof HTMLElement) {
@@ -34,29 +36,34 @@ const onPress = () => {
     });
 }
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const startDay = new Date(startDate);
+  startDay.setHours(0, 0, 0, 0);
+
     return (
-        <View style={styles.container}>
-            <Text>Trip Name:</Text>
+        <View style={[styles.container, { backgroundColor: mode.background }]}>
+            <Text style={{ color: mode.text }}>Trip Name:</Text>
             <TextInput
                 placeholder='Input trip name here...'
                 clearButtonMode='always'
-                style={styles.input}
+                style={[styles.input, {color: mode.text}]}
                 autoCorrect={false}
                 value={tripName}
                 onChangeText={setTripName}
             />
-            <Text>Location:</Text>
+            <Text style={{ color: mode.text }}>Location:</Text>
             <TextInput
                 placeholder='Where are you going?'
                 clearButtonMode='always'
-                style={styles.input}
+                style={[styles.input, {color: mode.text}]}
                 autoCorrect={false}
                 value={location}
                 onChangeText={setLocation}
             />
         <TripDates startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate}/>
         <TripPictures tripPictures={tripPictures} setTripPictures={setTripPictures}/>
-        <Button title="Add Trip" onPress={onPress} disabled={!tripName.trim() || !location.trim()}/>
+        <Button title="Add Trip" onPress={onPress} disabled={!tripName.trim() || !location.trim() || startDate > endDate || startDay < today}/>
     </View>
     );
 }

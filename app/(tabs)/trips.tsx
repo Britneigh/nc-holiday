@@ -4,10 +4,10 @@ import { router } from 'expo-router';
 import TripCard from '@/components/TripCard';
 import { getTrips } from '../../firestoreService/trip/getTrips';
 import { Trip } from '../../firestoreService/types';
-
-
+import { useTheme } from '../ThemeContext';
 
 export default function Trips() {
+    const { mode }: any = useTheme();
     const [displayFutureTripsStyle, setDisplayFutureTripsStyle] = useState(true)
     const [trips, setTrips] = useState<Trip[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -36,13 +36,13 @@ const displayPastTrips = () => {
 useEffect(() => {
 fetchTrips()
 
-}, [displayFutureTrips, displayPastTrips]); 
+}, []); 
 
 const today = new Date()
 
     return (
         <>
-            <View style={styles.tripsDisplaysContainer}>
+            <View style={[styles.tripsDisplaysContainer, { backgroundColor: mode.background }]}>
                 <Pressable
                     onPress={displayFutureTrips}
                     style={[styles.optionalChoiceContainer, displayFutureTripsStyle && styles.optionalChoiceContainerSelected]}>
@@ -59,7 +59,7 @@ const today = new Date()
                     <Text style={styles.optionalChoice}>Add New Trip</Text>
                 </Pressable>
             </View >
-            <ScrollView style={styles.scrollContainer}>
+            <ScrollView style={[styles.scrollContainer, { backgroundColor: mode.background }]}>
                 {/* <View style={styles.container}>
                     <Text style={styles.header}>Trips</Text>
                 </View> */}

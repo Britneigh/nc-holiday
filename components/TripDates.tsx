@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useTheme } from '../app/ThemeContext';
 
 export default function TripDates({ startDate, setStartDate, endDate, setEndDate}: any) {
-
+  const { mode }: any = useTheme();
   const [showStart, setShowStart] = useState(false);
   const [showEnd, setShowEnd] = useState(false);
 
@@ -37,7 +38,7 @@ export default function TripDates({ startDate, setStartDate, endDate, setEndDate
 
     return (
     <>
-        <Text>Start Date:</Text>
+        <Text style={{ color: mode.text }}>Start Date:</Text>
             <View style={styles.container}>
             {Platform.OS === 'web' ? (
                 <input 
@@ -66,7 +67,7 @@ export default function TripDates({ startDate, setStartDate, endDate, setEndDate
         </>
         )}
         </View>
-        <Text>End Date:</Text>
+        <Text style={{ color: mode.text }}>End Date:</Text>
             <View style={styles.container}>
             {Platform.OS === 'web' ? (
                 <input 

@@ -3,6 +3,7 @@ import { StyleSheet, Button, Text, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useIsFocused } from '@react-navigation/native';
+import { useTheme } from '../ThemeContext';
 
 import HotelLocationSearch from '@/components/HotelLocationSearch'
 import HotelRatingSearch from '@/components/HotelRatingSearch';
@@ -11,7 +12,8 @@ import HotelAmeneties from '@/components/HotelAmenities';
 
 
 export default function hotelSearch(){
-    
+    const { mode }: any = useTheme();
+
     const [selectedLocationCode, setSelectedLocationCode] = useState('')
     const [radius, setRadius] = useState(5)
     const [rating, setRating] = useState([1]);
@@ -22,7 +24,7 @@ export default function hotelSearch(){
     
     useEffect(() => {
         if (isFocused) {
-            queryClient.removeQueries('flights');
+            queryClient.removeQueries('hotels');
         }
     }, [isFocused]);
     
@@ -30,22 +32,22 @@ export default function hotelSearch(){
 
     return (
     
-        <ScrollView style={styles.container}>
-            <Text>Required: Choose a location:</Text>
+        <ScrollView style={[styles.container, { backgroundColor: mode.background }]}>
+            <Text style={{ color: mode.text }}>Required: Choose a location:</Text>
                 <HotelLocationSearch 
                     selectedLocationCode={selectedLocationCode} setSelectedLocationCode={setSelectedLocationCode} 
                 />
-            <Text>Optional: Choose a rating:</Text>
+            <Text style={{ color: mode.text }}>Optional: Choose a rating:</Text>
                 <HotelRatingSearch 
                     rating={rating}
                     setRating={setRating}
                 />
-            <Text>Optional: How far are you willing to travel?</Text>
+            <Text style={{ color: mode.text }}>Optional: How far are you willing to travel?</Text>
                 <HotelRadiusSearch
                     radius={radius}
                     setRadius={setRadius}
                 />
-            <Text>Optional: Choose your amenities:</Text>
+            <Text style={{ color: mode.text }}>Optional: Choose your amenities:</Text>
                 <HotelAmeneties
                     selectedAmenities={selectedAmenities}
                     setSelectedAmenities={setSelectedAmenities}

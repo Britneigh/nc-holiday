@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, FlatList, Text, Pressable, StyleSheet } from 'react-native';
+import { useTheme } from '../app/ThemeContext';
 
 const amenities = [
   'DISABLED_FACILITIES', 'SWIMMING_POOL', 'SPA', 'FITNESS_CENTER', 'AIR_CONDITIONING', 'PARKING', 'PETS_ALLOWED', 
   'BEACH', 'ROOM_SERVICE'
 ];
 
-export default function HotelAmenities({selectedAmenities, setSelectedAmenities}) {
+export default function HotelAmenities({selectedAmenities, setSelectedAmenities}: any) {
+  const { mode }: any = useTheme();
 
   const formatLabel = (value: string) => {
       value = value[0] + value.slice(1,).toLowerCase()
@@ -29,7 +31,7 @@ export default function HotelAmenities({selectedAmenities, setSelectedAmenities}
         onPress={() => toggleSelection(item)}
         style={[styles.item, isSelected && styles.selectedItem]}
       >
-        <Text style={styles.text}>{isSelected ? '☑' : '☐'} {formatLabel(item)}</Text>
+        <Text style={[styles.text, {color: mode.text}]}>{isSelected ? '☑' : '☐'} {formatLabel(item)}</Text>
       </Pressable>
     );
   };
@@ -41,7 +43,7 @@ export default function HotelAmenities({selectedAmenities, setSelectedAmenities}
         keyExtractor={item => item}
         renderItem={renderItem}
       />
-      <Text style={styles.selectedText}>
+      <Text style={[styles.selectedText, {color: mode.text}]}>
         Selected: {JSON.stringify(selectedAmenities, null, 2)}
       </Text>
     </View>

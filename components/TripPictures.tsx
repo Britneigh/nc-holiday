@@ -3,8 +3,10 @@ import { StyleSheet, Text, View, Button, Image, TouchableOpacity, ScrollView } f
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSquareXmark } from '@fortawesome/free-solid-svg-icons';
+import { useTheme } from '../app/ThemeContext';
 
 export const TripPictures = ({tripPictures, setTripPictures} : any) => {
+    const { mode }: any = useTheme();
     const [isUploading, setIsUpLoading] = useState(false);
 
     const deleteIcon = <FontAwesomeIcon icon={faSquareXmark}></FontAwesomeIcon>
@@ -42,7 +44,7 @@ export const TripPictures = ({tripPictures, setTripPictures} : any) => {
 
   return (
     <View style={styles.container}>
-    <Text>Trip Pictures:</Text>
+    <Text style={{ color: mode.text }}>Trip Pictures:</Text>
     <Button title="Upload an image" onPress={selectImage} disabled={isUploading}/>
     <ScrollView horizontal={true}>
     {tripPictures.length > 0 &&

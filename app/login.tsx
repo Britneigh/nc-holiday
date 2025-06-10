@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, View, Button, Pressable, Switch } from 'react-native';
 import { handleSignin } from '../firebase/signIn';
 import { router } from 'expo-router';
+import { useTheme } from './ThemeContext';
 
 export const Input = (props: any) => (
     <TextInput
@@ -13,6 +14,7 @@ export const Input = (props: any) => (
 );
 
 export default function Login() {
+    const { mode }: any = useTheme();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -23,30 +25,27 @@ export default function Login() {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: mode.background }]}>
 
-            <Text style={styles.header}>Log In To Start</Text>
+            <Text style={[styles.header, {color: mode.text}]}>Log In To Start</Text>
 
             {loginError ? <Text style={styles.loginError}>No existing user matches those details. Please check your credentials or sign up.</Text> : null}
 
             <TextInput
                 placeholder="Enter your email here"
                 value={username} onChangeText={setUsername}
-                autoCapitalize='none' style={styles.input} />
-
-
+                autoCapitalize='none'
+                style={[styles.input, {color: mode.text, backgroundColor: mode.background}]} />
             <TextInput
                 placeholder="Enter your password here"
                 value={password} onChangeText={setPassword}
                 secureTextEntry={true} autoCapitalize='none'
-                style={styles.input} />
+                style={[styles.input, {color: mode.text, backgroundColor: mode.background}]} />
 
-
-
-            {showPassword ? <Text style={styles.showPasswordText}>{password}</Text> : null}
+            {showPassword ? <Text style={[styles.showPasswordText, {color: mode.text}]}>{password}</Text> : null}
 
             <View style={styles.toggleContainer}>
-                <Text>Show Password?</Text>
+                <Text style={{color: mode.text}}>Show Password?</Text>
                 <Switch
                     trackColor={{ false: '#269fc12e', true: '#2891D9' }}
                     thumbColor={showPassword ? 'white' : 'white'}
@@ -54,9 +53,7 @@ export default function Login() {
                     onValueChange={toggleSwitch}
                     value={showPassword}
                 />
-
             </View>
-
 
             <Button
                 disabled={username && password ? false : true}

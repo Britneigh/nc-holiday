@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { useTheme } from '../app/ThemeContext';
 
-
-export default function HotelRadiusSearch({radius, setRadius}){
+export default function HotelRadiusSearch({radius, setRadius}: any){
+    const { mode }: any = useTheme();
 
     const increment = () => {
         setRadius(radius + 1);
@@ -17,12 +18,12 @@ export default function HotelRadiusSearch({radius, setRadius}){
     return (
         <View style={styles.container}>
             <View >
-                <Text>{radius}KM</Text>
+                <Text style={{ color: mode.text }}>{radius}KM</Text>
                 <TouchableOpacity onPress={decrement}>
-                    <Text>−</Text>
+                    <Text style={{ color: mode.text }}>−</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={increment}>
-                    <Text>+</Text>
+                    <Text style={{ color: mode.text }}>+</Text>
                 </TouchableOpacity>
             </View>
         

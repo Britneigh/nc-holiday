@@ -16,14 +16,18 @@ const deleteImage = (tripId: string) => {
     })
 }
 
+const startDate = trip.startDate.toDate().toLocaleDateString();
+const endDate = trip.endDate.toDate().toLocaleDateString();
+const createdAt = trip.createdAt.toDate().toLocaleDateString();
+
     return (
         <View style={styles.container}>
-        <TouchableOpacity style={styles.touchable} onPress={() => router.push({ pathname: '/activity-info', params: { id: trip.id } })}>
+        <TouchableOpacity style={styles.touchable} onPress={() => router.push({ pathname: '/trip-info', params: { id: trip.id } })}>
             <Text style={styles.text}>{trip.tripName}</Text>
             <Text style={styles.text}>({trip.location})</Text>
-            <Text>Start Date: {trip.startDate.toDate().toLocaleDateString()}</Text>
-            <Text>End Date: {trip.endDate.toDate().toLocaleDateString()}</Text>
-            <Text>Created at: {trip.createdAt.toDate().toLocaleDateString()}</Text>
+            <Text>Start Date: {startDate}</Text>
+            <Text>End Date: {endDate}</Text>
+            <Text>Created at: {createdAt}</Text>
             <Button title="Delete" onPress={() => deleteImage(trip.id)}></Button>
             {/*Trip's first uploaded image Background here, trip.image[0] */}
         </TouchableOpacity>

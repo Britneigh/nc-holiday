@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { StyleSheet, View, TextInput, Pressable, Platform, Text } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useTheme } from '../app/ThemeContext';
 
 export default function DateFlightSearch({ date, setDate }: any) {
-
+  const { mode }: any = useTheme();
   const [show, setShow] = useState(false);
 
   const onChange = (event: any, selectedDate: any) => {
@@ -27,7 +28,7 @@ export default function DateFlightSearch({ date, setDate }: any) {
     <View style={styles.container}>
       {Platform.OS === 'web' ? (
         <>
-          <Text style={styles.labelDescription}>Selected Date:</Text>
+          <Text style={[styles.labelDescription, {color: mode.text}]}>Selected Date:</Text>
           <input
             type='date'
             value={formattedDate}
@@ -36,7 +37,7 @@ export default function DateFlightSearch({ date, setDate }: any) {
         </>
       ) : (
         <>
-          <Text style={styles.labelDescription}>Selected Date:</Text>
+          <Text style={[styles.labelDescription, {color: mode.text}]}>Selected Date:</Text>
           <Pressable onPress={() => setShow(true)}>
             <TextInput
               value={formattedDate}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, View, Button, Pressable, Switch } from 'react-native';
 import { handleSignup } from '../../firebase/signUp';
 import { useRouter } from 'expo-router';
+import { useTheme } from '../ThemeContext';
 
 export const Input = (props: any) => (
     <TextInput
@@ -14,6 +15,8 @@ export const Input = (props: any) => (
 
 
 export default function SignUp() {
+    const { mode }: any = useTheme();
+
     const router = useRouter();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -26,16 +29,16 @@ export default function SignUp() {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: mode.background }]}>
 
-            <Text style={styles.header}>Sign Up</Text>
+            <Text style={[styles.header, {color: mode.text}]}>Sign Up</Text>
 
             <TextInput
                 placeholder="Enter your email here"
                 value={username}
                 onChangeText={setUsername}
                 autoCapitalize='none'
-                style={styles.input} />
+                style={[styles.input, {color: mode.text, backgroundColor: mode.background}]} />
 
 
             <TextInput
@@ -44,10 +47,10 @@ export default function SignUp() {
                 onChangeText={setPassword}
                 secureTextEntry={true}
                 autoCapitalize='none'
-                style={styles.input} />
+                style={[styles.input, {color: mode.text, backgroundColor: mode.background}]} />
 
 
-            {showPassword ? <Text style={styles.showPasswordText}>{password}</Text> : null}
+            {showPassword ? <Text style={[styles.showPasswordText, {color: mode.text}]}>{password}</Text> : null}
 
 
             <TextInput
@@ -56,16 +59,16 @@ export default function SignUp() {
                 onChangeText={setConfirmPassword}
                 secureTextEntry={true}
                 autoCapitalize='none'
-                style={styles.input} />
+                style={[styles.input, {color: mode.text, backgroundColor: mode.background}]} />
 
 
-            {showPassword ? <Text style={styles.showPasswordText}>{confirmPassword}</Text> : null}
+            {showPassword ? <Text style={[styles.showPasswordText, {color: mode.text}]}>{confirmPassword}</Text> : null}
 
 
             {confirmPassword !== password ? <Text>Passwords do not match.</Text> : null}
 
             <View style={styles.toggleContainer}>
-                <Text>Show Password?</Text>
+                <Text style={{ color: mode.text }}>Show Password?</Text>
                 <Switch
                     trackColor={{ false: '#269fc12e', true: '#2891D9' }}
                     thumbColor={showPassword ? 'white' : 'white'}

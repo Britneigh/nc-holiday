@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import  { StyleSheet, Text, ScrollView } from 'react-native';
 import TripForm from '@/components/TripForm';
+import { useTheme } from '../ThemeContext';
 
 export default function addTrip() {
+    const { mode }: any = useTheme();
 
     const [tripName, setTripName] = useState('');
     const [location, setLocation] = useState('');
@@ -28,8 +30,8 @@ useEffect(() => {
 }, []);
 
     return (
-        <ScrollView style={styles.container}>
-            <Text>Add a trip to the itinerary:</Text>
+        <ScrollView style={[styles.container, { backgroundColor: mode.background }]}>
+            <Text style={{ color: mode.text }}>Add a trip to the itinerary:</Text>
             <TripForm 
                 tripName={tripName} setTripName={setTripName}
                 location={location} setLocation={setLocation}
