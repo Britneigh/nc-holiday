@@ -5,6 +5,9 @@ import { AuthProvider } from "@/context/UserContext";
 import { router } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { getAuth } from 'firebase/auth';
+
+console.log('Current user token:', await getAuth().currentUser?.getIdToken());
 
 const queryClient = new QueryClient();
 export default function RootLayout() {
