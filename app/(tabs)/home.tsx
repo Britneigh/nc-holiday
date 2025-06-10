@@ -7,28 +7,27 @@ export default function Home() {
     const { currentUser } = useAuth();
     return (
         <ScrollView style={styles.container}>
-            <View style={styles.block}>
-                <View style={styles.rowBlock}><Text>{currentUser ? `Welcome ${currentUser.email}` : "Welcome"}</Text></View>
-                <View style={styles.rowBlock}><Text>Weather info</Text></View>
+            <View style={styles.welcomeMessage}><Text>{currentUser ? `Welcome back ${currentUser.email}` : "Welcome"}</Text></View>
+            <View style={styles.weatherContainer}>
+                <View style={styles.rowBlock}><Text>The weather for your next trip:</Text></View>
+                <View style={styles.rowBlock}><Text>☀️🌧️</Text></View>
             </View>
             <View style={styles.largeBlock}>
                 <Text>Info on next or current trip</Text>
+            </View>
+            {/* <View style={styles.buttonView}>
+                <Button
+                    title="View list itinerary"
+                    onPress={() => router.push('/list-itinerary')}
+                />
             </View>
             <View style={styles.buttonView}>
                 <Button
                     title="View calendar itinerary"
                     onPress={() => router.push('/calendar-itinerary')}
                 />
-            </View>
-            <View style={styles.buttonView}>
-                <Button
-                    title="View list itinerary"
-                    onPress={() => router.push('/list-itinerary')}
-                />
-            </View>
-            <View style={styles.mediumBlock}>
-                <Text>Form for search</Text>
-            </View>
+            </View> */}
+
         </ScrollView>
     );
 }
@@ -36,42 +35,35 @@ export default function Home() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#ffffff'
     },
-    block: {
-        height: 100,
-        borderColor: 'red',
-        borderWidth: 2,
+    welcomeMessage: {
+
+        margin: 30,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    weatherContainer: {
+        height: 60,
         justifyContent: 'space-around',
         alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 10,
         flexDirection: 'row'
     },
     rowBlock: {
-        borderColor: 'red',
-        borderWidth: 2,
+
     },
     largeBlock: {
         height: 400,
-        borderColor: 'red',
-        borderWidth: 2,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 25,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 10
-    },
-    mediumBlock: {
-        height: 250,
-        borderColor: 'red',
-        borderWidth: 2,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 10
+        margin: 15,
     },
     buttonView: {
-        marginTop: 10,
-        marginBottom: 10,
+        marginTop: 20,
+        marginBottom: 20,
 
     }
 });
