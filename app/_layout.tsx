@@ -7,7 +7,19 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { getAuth } from 'firebase/auth';
 
-console.log('Current user token:', await getAuth().currentUser?.getIdToken());
+async function logCurrentUserToken() {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (user) {
+    const token = await user.getIdToken();
+    console.log('Current user token:', token);
+  } else {
+    console.log('No user is signed in.'};
+  }
+}
+
+logCurrentUserToken();
 
 const queryClient = new QueryClient();
 export default function RootLayout() {
