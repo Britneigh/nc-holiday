@@ -12,33 +12,33 @@ export default function Trips() {
     const [trips, setTrips] = useState<Trip[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-  const fetchTrips = () => {
-    setIsLoading(true)
-    getTrips()
-    .then((fetchedTrips) => {
-    if (fetchedTrips) {
-        setIsLoading(false)
-        setTrips(fetchedTrips.filter(trip => trip.startDate.toDate() > today).sort((a, b) => a.startDate.toDate().getTime() - b.startDate.toDate().getTime()));
+    const fetchTrips = () => {
+        setIsLoading(true)
+        getTrips()
+            .then((fetchedTrips) => {
+                if (fetchedTrips) {
+                    setIsLoading(false)
+                    setTrips(fetchedTrips.filter(trip => trip.startDate.toDate() > today).sort((a, b) => a.startDate.toDate().getTime() - b.startDate.toDate().getTime()));
+                }
+            })
     }
-    })
-  }
 
-const displayFutureTrips = () => {
-    setDisplayFutureTripsStyle(true)
-    setTrips(trips.filter(trip => trip.startDate.toDate() > today).sort((a, b) => a.startDate.toDate().getTime() - b.startDate.toDate().getTime()))
-}
+    const displayFutureTrips = () => {
+        setDisplayFutureTripsStyle(true)
+        setTrips(trips.filter(trip => trip.startDate.toDate() > today).sort((a, b) => a.startDate.toDate().getTime() - b.startDate.toDate().getTime()))
+    }
 
-const displayPastTrips = () => {
-    setDisplayFutureTripsStyle(false)
-    setTrips(trips.filter(trip => trip.endDate.toDate() < today).sort((a, b) => b.endDate.toDate().getTime() - a.endDate.toDate().getTime()))
-}
+    const displayPastTrips = () => {
+        setDisplayFutureTripsStyle(false)
+        setTrips(trips.filter(trip => trip.endDate.toDate() < today).sort((a, b) => b.endDate.toDate().getTime() - a.endDate.toDate().getTime()))
+    }
 
-useEffect(() => {
-fetchTrips()
+    useEffect(() => {
+        fetchTrips()
 
-}, [displayFutureTrips, displayPastTrips]); 
+    }, []);
 
-const today = new Date()
+    const today = new Date()
 
     return (
         <>
@@ -65,7 +65,7 @@ const today = new Date()
                 </View> */}
                 {trips.map((trip) => (
                     <TripCard key={trip.id} trip={trip} refreshTrips={fetchTrips} />
-                      ))}
+                ))}
             </ScrollView>
         </>
     );
