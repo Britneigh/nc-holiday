@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Trip } from '@/firestoreService/types';
 import { getTripById } from '@/firestoreService/trip/getTripById';
+import GoBackHeader from '@/components/GoBackHeader';
 
 export default function ActivityInfo() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -25,8 +26,9 @@ export default function ActivityInfo() {
   }, [id]);
 
     return (
+      <>
+      <GoBackHeader></GoBackHeader>
   <View style={styles.container}>
-    <Text style={styles.text}>Activity Info</Text>
     {isLoading && <Text>Loading trip...</Text>}
     {error && <Text>{error}</Text>}
     {!trip && (
@@ -34,8 +36,14 @@ export default function ActivityInfo() {
     )}
     {trip && (
       <>
-        <Text style={styles.text}>{trip.tripName}</Text>
-        <Text style={styles.text}>Trip Location: {trip.location}</Text>
+          <Image
+              style={styles.cardImg}
+                // source={{
+                //     uri: '',
+                // }}
+              />
+        <Text style={styles.header}>{trip.tripName}</Text>
+        <Text style={styles.text}>{trip.location}</Text>
         <Text>Start Date: {trip.startDate.toDate().toLocaleDateString()}</Text>
         <Text>End Date: {trip.endDate.toDate().toLocaleDateString()}</Text>
         <Text style={styles.sections}>Saved Flights:</Text>
@@ -43,21 +51,39 @@ export default function ActivityInfo() {
       </>
     )}
   </View>
+      </>
+
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        margin: 30,
-        alignItems: 'center',
-        textAlign: 'center',
-        gap: 10,
+        backgroundColor: '#ffffff',
+        alignItems: 'center'
+
     },
-    sections: {
+    header: {
+        fontSize: 24,
+        fontWeight: '600',
+        color: '#333',
+        textAlign: 'center',
+        marginBottom: 30
+    },
+    cardImg: {
+        width: 150,
+        height: 150,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        marginBottom: 30
+    },
+     sections: {
         marginTop: 30,
     },
     text: {
         fontWeight: 600,
     },
 });
+
+
