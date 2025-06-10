@@ -1,6 +1,6 @@
 import { doc, getDoc, DocumentSnapshot } from 'firebase/firestore';
-import { db } from "../firebaseConfig";
-import { type Trip, type TripData } from "./types"
+import { db } from "../../firebaseConfig";
+import { type Trip, type TripData } from "../types"
 
 export function getTripById(tripId: string) {
     const tripDocRef = doc(db ,"trips", tripId);
