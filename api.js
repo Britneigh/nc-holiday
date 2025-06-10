@@ -475,7 +475,6 @@ export const getHolidayDataTest = (
     });
 };
 
-
 //-------
 
 export const extractFlightInfo = (flightOffer) => {

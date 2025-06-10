@@ -1,28 +1,36 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "target": "es2017", // Or es2015, esnext, etc.
+    "target": "es2017", // Or esnext, etc. (keep this based on your needs)
     "lib": [
       "dom",
       "es2017"
-    ], // Ensure "es2015" or a later version is here
-    "module": "esnext", // Or commonjs
-    "moduleResolution": "bundler",
+    ],
+    "module": "esnext", // Keep as esnext for modern JavaScript modules
+    "moduleResolution": "node", // <--- CHANGE THIS from "bundler" to "node"
     "strict": true,
     "noEmit": false,
+    "allowJs": true,           // <--- ADD THIS: Allow TypeScript to process JavaScript files
+    "esModuleInterop": true,   // <--- ADD THIS: Crucial for better import/export compatibility
+    "forceConsistentCasingInFileNames": true, // <--- ADD THIS: Good practice for cross-platform
+    "skipLibCheck": true,      // <--- ADD THIS: Often helpful in mixed JS/TS projects
     "paths": {
       "@/*": [
         "./*"
       ]
     },
-     "jsx": "react-native",
+    "jsx": "react-native",
     "outDir": "./dist"
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "**/*.js",       // <--- ADD THIS: Include all JavaScript files
+    "**/*.jsx",      // <--- ADD THIS: If you have JS files with JSX syntax
     "test-data",
     "node_modules/@tanstack/react-query"
   ],
-   "outDir": "./dist",
+  "exclude": [ // <--- ADD OR ENSURE THIS BLOCK EXISTS TO PREVENT UNNECESSARY PROCESSING
+    "node_modules"
+  ]
 }

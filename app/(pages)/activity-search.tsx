@@ -1,11 +1,12 @@
 import React from "react";
 import { StyleSheet, View, ScrollView, Text } from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import { getAccessToken, getToursAndActivities } from "../../api";
+import { getAccessToken, getToursAndActivities } from "../../api"
 import { useLocalSearchParams } from "expo-router";
 
 export default function ActivitySearchResults() {
   const { selectedCityCode, fromDate, toDate, lat, long } =
+  useLocalSearchParams();
     useLocalSearchParams();
 
   const activitiesQuery = useQuery({
