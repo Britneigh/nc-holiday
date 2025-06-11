@@ -23,7 +23,7 @@ export function getActivitiesByTrip(tripId: string): Promise<Activity[] | null> 
             console.log(`Found ${activities.length} activities for trip ID ${tripId}:`, activities);
             return activities;
         })
-        .catch((error: any) => {
+        .catch((error) => {
             console.error(`Error getting activities for trip ID ${tripId}:`, error);
             return null;
         });

@@ -23,7 +23,7 @@ export function getFlightsByTrip(tripId: string): Promise<Flight[] | null> {
             console.log(`Found ${flights.length} flights for trip ID ${tripId}:`, flights);
             return flights;
         })
-        .catch((error: any) => {
+        .catch((error) => {
             console.error(`Error getting flights for trip ID ${tripId}:`, error);
             return null;
         });

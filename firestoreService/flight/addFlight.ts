@@ -31,14 +31,22 @@ export function addFlight(
 
   const newFlightData: FlightData = {
     ...flightDetails,
-    tripId: tripId,
+    tripId: tripId
+    airline: flightDetails.airline,
     userId: currentUser.uid,
+    flightCode: flightDetails.flightCode,
     departureTime: departureTimestamp,
     arrivalTime: arrivalTimestamp,
     isBooked: flightDetails.isBooked || false,
+    cost: flightDetails.cost,
+    departureLocation: flightDetails.departureLocation,
+    arrivalLocation: flightDetails.arrivalLocation,
+    stops: flightDetails.stops,
+    bookingLink: flightDetails.bookingLink,
     createdAt: serverTimestamp() as Timestamp,
     updatedAt: serverTimestamp() as Timestamp,
   };
+
 
   const flightsColRef = collection(db, "flights");
 
