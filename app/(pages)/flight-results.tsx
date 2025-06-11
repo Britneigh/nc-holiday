@@ -8,6 +8,7 @@ import { Timestamp } from 'firebase/firestore';
 import TimeZonePicker from '@/components/TimeZonePicker';
 import { timeZoneOptions } from '@/app-data/time-zone-options';
 import { formatDateTime } from '@/utils/format-date-and-time';
+import AddPlanToTrip from '@/components/AddPlanToTrip';
 
 export default function FlightSearchResults() {
 
@@ -179,6 +180,17 @@ export default function FlightSearchResults() {
                                         {!isRoundTrip && <Text style={styles.price}>{`Total: ${price} ${flight.price.currency}`}</Text>}
                                     </View>
                                 </View>
+                                {!isRoundTrip && <AddPlanToTrip typeOfPlan={'flight'} planData={{
+                                    cost: outboundDetails.cost,
+                                    departureTime: outboundDetails.departureTime,
+                                    arrivalTime: outboundDetails.arrivalTime,
+                                    departureLocation: outboundDetails.departureLocation,
+                                    arrivalLocation: outboundDetails.arrivalLocation,
+                                    stops: outboundDetails.stops,
+                                    bookingLink: '',
+                                    isBooked: false
+
+                                }}></AddPlanToTrip>}
 
                                 {/* Return */}
                                 {returnDetails && (
@@ -204,6 +216,7 @@ export default function FlightSearchResults() {
                                     </View>
                                 )}
                                 {isRoundTrip && <Text style={styles.price}>{`Total: ${price} ${flight.price.currency}`}</Text>}
+                                {isRoundTrip && <AddPlanToTrip typeOfPlan={'flight'} planData={returnDetails}></AddPlanToTrip>}
                             </View>
                         );
                     }
