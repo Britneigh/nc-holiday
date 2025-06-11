@@ -1,5 +1,6 @@
 node_modules
-expo-env.d.ts
-app-example
+# expo-env.d.ts
+# app-example
 .env
-package-lock.json
+# package-lock.json
+node_modules

@@ -1,10 +1,9 @@
 import { collection, addDoc, serverTimestamp, Timestamp } from "firebase/firestore";
-import { db, auth } from "../firebaseConfig";
-import { type TripData, type ActivityData } from "./types";
+import { db, auth } from "../../firebaseConfig";
+import { type TripData, type ActivityData } from "../types";
 
 export function addTrip(
-  tripDetails: Omit<TripData, 'userId' | 'createdAt' | 'updatedAt' | 'activities'> & {
-    activities?: ActivityData[];
+  tripDetails: Omit<TripData, 'userId' | 'createdAt' | 'updatedAt' | 'cost'> & {
     startDate: Date | Timestamp;
     endDate: Date | Timestamp;
   }
@@ -28,9 +27,9 @@ export function addTrip(
     userId: currentUser.uid,
     startDate: startDateTimestamp,
     endDate: endDateTimestamp,
-    activities: tripDetails.activities || [],
     createdAt: serverTimestamp() as Timestamp,
     updatedAt: serverTimestamp() as Timestamp,
+    cost: 0,
   };
 
   const tripsColRef = collection(db, "trips");

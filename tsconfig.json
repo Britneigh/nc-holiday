@@ -14,14 +14,22 @@
       "@/*": [
         "./*"
       ]
+    }
+  },
+  "ts-node": {
+    "esm": true,
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "esnext"
     },
-     "jsx": "react-native", // 👈 Add this line
-    "outDir": "./dist"
+    "experimentalSpecifierResolution": "node"
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "test-data"
-  ],
-   "outDir": "./dist",
+, "jest.config.js"  ],
+  "exclude": [ 
+    "node_modules"
+  ]
 }

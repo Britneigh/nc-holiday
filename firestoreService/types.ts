@@ -1,17 +1,5 @@
 import { Timestamp } from "firebase/firestore";
 
-export interface ActivityData {
-    userId: string;
-    location: string;
-    startTime?: Timestamp;
-    endTime?: Timestamp;
-    description: string;
-    cost?: number;
-    bookingLink?: string;
-    isBooked: boolean;
-    pictures?: string[];
-}
-
 export interface TripData {
     userId: string;
     tripName: string;
@@ -19,26 +7,33 @@ export interface TripData {
     cost: number;
     startDate: Timestamp;
     endDate: Timestamp;
-    activities: ActivityData[];
     createdAt: Timestamp;
     updatedAt: Timestamp;
+    pictures?: string[],
 }
 
 export interface AccomData {
     userId: string;
+    tripId: string,
     name: string;
     location: string;
     cost: number;
     startDate?: Timestamp;
     endDate?: Timestamp;
-    rooms: number;
-    beds: number;
+    rooms?: number;
+    beds?: number;
     stars: number;
     description: string;
+    bookingLink?: string,
+    isBooked: boolean,
+    pictures?: string[],
+    createdAt: Timestamp,
+    updatedAt: Timestamp,
 }
 
 export interface FlightData {
     userId: string;
+    tripId: string,
     cost: number;
     departureTime: Timestamp;
     arrivalTime: Timestamp;
@@ -47,6 +42,27 @@ export interface FlightData {
     stops: string[];
     bookingLink?: string;
     isBooked: boolean;
+    pictures?: string[],
+    createdAt: Timestamp,
+    updatedAt: Timestamp,
+    airline?: string,
+    flightNumber?: string,
+}
+
+
+export interface ActivityData {
+    userId: string;
+    tripId: string,
+    location: string;
+    startTime?: Timestamp;
+    endTime?: Timestamp;
+    description: string;
+    cost?: number;
+    bookingLink?: string;
+    isBooked: boolean;
+    pictures?: string[];
+    createdAt: Timestamp,
+    updatedAt: Timestamp,
 }
 
 export interface Trip extends TripData {
