@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getAccessToken, getToursAndActivities } from "@/api"; // update path as needed
 import { useLocalSearchParams } from "expo-router";
 import ActivityCard from "@/components/ActivityCard"; // update path if needed
+import AddPlanToTrip from "@/components/AddPlanToTrip";
+import { testCityData } from "@/test-data/testCityData";
 
 type Activity = {
   id: string;
@@ -115,10 +117,50 @@ export default function ActivitySearchResults() {
 
   return (
     <ScrollView style={styles.container}>
-      {activities.map((activity) => (
-        <ActivityCard key={activity.id} activity={activity} />
-      ))}
-    </ScrollView>
+
+
+
+      {/* {activities.map((activity) => (
+        <>
+          <ActivityCard key={activity.id} activity={activity} />
+        </>
+
+      ))} */}
+
+
+      {activities.map((activity) => {
+
+        const match = testCityData.find(
+          (obj) =>
+            obj.latitude === activity.geoCode.latitude &&
+            obj.longitude === activity.geoCode.longitude
+        );
+
+        const cityName = match ? match.city : "Unknown";
+        return (
+          <>
+            <ActivityCard key={activity.id} activity={activity} />
+            <AddPlanToTrip
+              typeOfPlan={"activity"}
+              planData={{
+                location: cityName,
+                startTime: '',
+                endTime: '',
+                description: activity.description,
+                cost: typeof activity.price === "object" && activity.price?.amount
+                  ? Number(activity.price.amount)
+                  : undefined,
+                bookingLink: activity.bookingLink,
+                isBooked: false,
+                pictures: ''
+              }}
+            ></AddPlanToTrip >
+          </>
+        );
+      })}
+
+
+    </ScrollView >
   );
 }
 

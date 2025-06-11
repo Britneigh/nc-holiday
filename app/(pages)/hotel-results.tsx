@@ -9,6 +9,7 @@ import {
 import { getAccessToken, getHotelList, getHotelSearch } from "../../api";
 import { useLocalSearchParams } from "expo-router";
 import GoBackHeader from "@/components/GoBackHeader";
+import AddPlanToTrip from "@/components/AddPlanToTrip";
 
 export default function HotelSearchResults() {
   const [hotelData, setHotelData] = useState([]);
@@ -123,6 +124,22 @@ export default function HotelSearchResults() {
                 <Text
                   style={styles.price}
                 >{`Total: ${hotelObj.offers[0].price.total} ${hotelObj.offers[0].price.currency}`}</Text>
+              </View>
+              <View>
+                <AddPlanToTrip
+                  typeOfPlan={"hotel"}
+                  planData={{
+                    startDate: hotelObj.offers[0].checkInDate,
+                    endDate: hotelObj.offers[0].checkOutDate,
+                    name: hotelObj.hotel.name,
+                    location: hotelObj.hotel.cityCode,
+                    cost: hotelObj.offers[0].price.total,
+                    rooms: "",
+                    beds: "",
+                    stars: rating[0],
+                    description: "",
+                  }}
+                ></AddPlanToTrip>
               </View>
             </View>
           ))}

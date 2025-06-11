@@ -182,6 +182,8 @@ export default function FlightSearchResults() {
                                 </View>
                                 {!isRoundTrip && <AddPlanToTrip typeOfPlan={'flight'} planData={{
                                     cost: outboundDetails.cost,
+                                    airline: outboundDetails.airline,
+                                    flightCode: outboundDetails.flightNumber,
                                     departureTime: outboundDetails.departureTime,
                                     arrivalTime: outboundDetails.arrivalTime,
                                     departureLocation: outboundDetails.departureLocation,

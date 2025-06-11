@@ -23,7 +23,7 @@ export function getAccomsByTrip(tripId: string): Promise<Accom[] | null> {
             console.log(`Found ${accommodations.length} accommodations for trip ID ${tripId}:`, accommodations);
             return accommodations;
         })
-        .catch((error: any) => {
+        .catch((error) => {
             console.error(`Error getting accommodations for trip ID ${tripId}:`, error);
             return null;
         });
