@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, ScrollView, Text, Image } from "react-native";
+import { StyleSheet, View, ScrollView, Text } from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import {
-  getAccessToken,
-  getToursAndActivities,
-} from "/home/garym350/NORTHCODERS/NC_TRAVEL_PROJECT/nc-holiday/api.js";
+import { getAccessToken, getToursAndActivities } from "@/api"; // update path as needed
 import { useLocalSearchParams } from "expo-router";
+import ActivityCard from "@/components/ActivityCard"; // update path if needed
 
 type Activity = {
   id: string;
@@ -26,12 +24,9 @@ type Activity = {
 };
 
 export default function ActivitySearchResults() {
-  const { selectedCityCode, fromDate, toDate, latitude, longitude } =
-    useLocalSearchParams();
+  const { selectedCityCode, fromDate, toDate, latitude, longitude } = useLocalSearchParams();
 
-  const parseDateParam = (
-    dateParam: string | string[] | undefined
-  ): Date | undefined => {
+  const parseDateParam = (dateParam: string | string[] | undefined): Date | undefined => {
     if (typeof dateParam === "string" && dateParam.length > 0) {
       return new Date(dateParam);
     }
@@ -41,9 +36,7 @@ export default function ActivitySearchResults() {
     return undefined;
   };
 
-  const parseNumberParam = (
-    numParam: string | string[] | undefined
-  ): number | undefined => {
+  const parseNumberParam = (numParam: string | string[] | undefined): number | undefined => {
     let numString: string | undefined;
     if (typeof numParam === "string") {
       numString = numParam.trim();
@@ -68,8 +61,7 @@ export default function ActivitySearchResults() {
     radius: 10,
   };
 
-  const isQueryEnabled =
-    typeof parsedLat === "number" && typeof parsedLong === "number";
+  const isQueryEnabled = typeof parsedLat === "number" && typeof parsedLong === "number";
 
   const [searchAttempted, setSearchAttempted] = useState(false);
 
@@ -79,10 +71,7 @@ export default function ActivitySearchResults() {
     }
   }, [isQueryEnabled, searchAttempted]);
 
-  const activitiesQuery = useQuery<
-    { data: Activity[] },
-    Error
-  >({
+  const activitiesQuery = useQuery<{ data: Activity[] }, Error>({
     queryKey: [
       "activities",
       selectedCityCode,
@@ -92,15 +81,10 @@ export default function ActivitySearchResults() {
       parsedLong,
       paramsForApiCall.radius,
     ],
-    queryFn: () => {
-      return getAccessToken()
-        .then((token) => {
-          return getToursAndActivities(token, parsedLat!, parsedLong!, 10);
-        })
-        .catch((error) => {
-          return Promise.reject(error);
-        });
-    },
+    queryFn: () =>
+      getAccessToken().then((token) =>
+        getToursAndActivities(token, parsedLat!, parsedLong!, 10)
+      ),
     enabled: isQueryEnabled,
     retry: 1,
     staleTime: 5 * 60 * 1000,
@@ -122,7 +106,6 @@ export default function ActivitySearchResults() {
 
   if (activities.length === 0) {
     const cityName = selectedCityCode || "the selected location";
-
     return (
       <Text style={styles.noResultsText}>
         No activities found for {cityName}. Try different coordinates or dates!
@@ -132,43 +115,8 @@ export default function ActivitySearchResults() {
 
   return (
     <ScrollView style={styles.container}>
-      {activities.map((activity, index) => (
-        <View key={activity.id ?? index} style={styles.card}>
-          {activity.images && activity.images.length > 0 && (
-            <Image
-              source={{ uri: activity.images[0] }}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          )}
-          <Text style={styles.activityName}>{activity.name}</Text>
-          {activity.description && (
-            <Text style={styles.description} numberOfLines={3}>
-              {activity.description}
-            </Text>
-          )}
-          {activity.category && (
-            <Text style={styles.category}>Category: {activity.category}</Text>
-          )}
-          {activity.startTimes && activity.startTimes.length > 0 && (
-            <Text style={styles.startTimes}>
-              Start Times: {activity.startTimes.join(", ")}
-            </Text>
-          )}
-          {typeof activity.rating === "number" && (
-            <Text style={styles.rating}>
-              Rating: {activity.rating.toFixed(1)}
-            </Text>
-          )}
-          {activity.price && (
-            <Text style={styles.price}>
-              Price:{" "}
-              {typeof activity.price === "object"
-                ? `${activity.price.amount} ${activity.price.currency}`
-                : activity.price}
-            </Text>
-          )}
-        </View>
+      {activities.map((activity) => (
+        <ActivityCard key={activity.id} activity={activity} />
       ))}
     </ScrollView>
   );
@@ -178,57 +126,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 12,
-    backgroundColor: "#eef6f9", // light blue background
-  },
-  card: {
-    marginBottom: 10,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#a1c4d7",
-    borderRadius: 8,
-    backgroundColor: "#ffffff",
-    shadowColor: "#20435c",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.15,
-    shadowRadius: 2,
-    elevation: 3,
-  },
-  image: {
-    width: "100%",
-    height: 120,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  activityName: {
-    fontSize: 17,
-    fontWeight: "700",
-    marginBottom: 6,
-    color: "#1b3a57", // dark blue
-  },
-  description: {
-    fontSize: 14,
-    color: "#3a3a3a",
-    marginBottom: 6,
-  },
-  category: {
-    fontSize: 13,
-    color: "#5a8fbd", // medium blue
-    marginBottom: 4,
-  },
-  startTimes: {
-    fontSize: 13,
-    color: "#5a8fbd",
-    marginBottom: 4,
-  },
-  rating: {
-    fontSize: 13,
-    color: "#2a9d8f", // teal green
-    marginBottom: 4,
-  },
-  price: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#e76f51", // coral orange
+    backgroundColor: "#eef6f9",
   },
   loadingText: {
     padding: 20,
