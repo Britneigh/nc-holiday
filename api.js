@@ -298,87 +298,6 @@ export const rateLimitedRequest = (fn, args = [], retries = 5, attempt = 1) => {
   });
 };
 
-// export const getHolidayData = (
-//   token,
-//   origin,
-//   destination,
-//   date,
-//   passengers = 1
-// ) => {
-//   const results = [];
-
-//   return rateLimitedRequest(getFlightSearchWithDestination, [
-//     token,
-//     origin,
-//     destination,
-//     date,
-//     passengers,
-//   ])
-//     .then((flightsResponse) => {
-//       const flights = (flightsResponse?.data || []).slice(0, 5);
-
-//       return flights.reduce((flightChain, flight) => {
-//         return flightChain.then(() => {
-//           const flightResult = {
-//             flight,
-//             hotels: [],
-//           };
-
-//           return rateLimitedRequest(getHotelList, [token, destination])
-//             .then((hotelsResponse) => {
-//               const hotels = (hotelsResponse?.data || []).slice(0, 5);
-
-//               return hotels.reduce((hotelChain, hotel) => {
-//                 return hotelChain
-//                   .then(() => delay(500))
-//                   .then(() =>
-//                     rateLimitedRequest(getToursAndActivities, [
-//                       token,
-//                       hotel.latitude,
-//                       hotel.longitude,
-//                     ])
-//                       .then((toursResponse) => {
-//                         const tours = (toursResponse?.data || []).slice(0, 5);
-//                         flightResult.hotels.push({
-//                           hotel,
-//                           tours,
-//                         });
-//                       })
-//                       .catch((error) => {
-//                         console.error(
-//                           `Error fetching tours for hotel ${hotel.name}:`,
-//                           error
-//                         );
-//                         flightResult.hotels.push({
-//                           hotel,
-//                           tours: [],
-//                         });
-//                       })
-//                   );
-//               }, Promise.resolve());
-//             })
-//             .catch((error) => {
-//               console.error(
-//                 `Error fetching hotels for flight to ${destination}:`,
-//                 error
-//               );
-//             })
-//             .then(() => {
-//               results.push(flightResult);
-//             });
-//         });
-//       }, Promise.resolve());
-//     })
-//     .catch((error) => {
-//       console.error(
-//         `Error fetching flights from ${origin} to ${destination}:`,
-//         error
-//       );
-//     })
-//     .then(() => {
-//       return results;
-//     });
-// };
 
 //--------------------------
 export const getHolidayDataTest = (
@@ -405,12 +324,12 @@ export const getHolidayDataTest = (
     .then((flightsResponse) => {
       const flights = (flightsResponse?.data || []).slice(0, 1); // <= 1 flight only
 
-      // Fetch hotels once for the destination
+    
       return rateLimitedRequest(getHotelList, [token, destination]).then(
         (hotelsResponse) => {
           const hotels = (hotelsResponse?.data || []).slice(0, 1); // <= 1 hotel only
 
-          // For each flight, map to flightResult with same hotels data
+          
           return flights.reduce((flightChain, flight) => {
             return flightChain.then(() => {
               const flightResult = {
