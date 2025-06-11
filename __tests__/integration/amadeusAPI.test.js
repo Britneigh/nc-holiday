@@ -4,7 +4,6 @@ dotenv.config();
 import {
   getAccessToken,
   getFlightSearchWithDestination,
-  // getFlightDestinations,
   getHotelList,
   getHotelSearch,
   getToursAndActivities,
@@ -20,7 +19,6 @@ const getToken = async () => {
   return await getAccessToken(clientId, clientSecret);
 };
 
-// Flight Destinations
 
 describe("Amadeus Flight Inspirations API", () => {
   test("fetches cheapest destinations successfully", async () => {
@@ -43,7 +41,6 @@ describe("Amadeus Flight Inspirations API", () => {
   });
 });
 
-// Flight Offers
 
 describe("Amadeus Flight Offers API", () => {
   test("fetches flight offers successfully", async () => {
@@ -56,7 +53,7 @@ describe("Amadeus Flight Offers API", () => {
   });
 });
 
-// Hotel List
+
 
 describe("Amadeus Hotel List", () => {
   test("fetches list of hotels by city code", async () => {
@@ -79,7 +76,6 @@ describe("Amadeus Hotel List", () => {
   });
 });
 
-// Hotel Search
 
 describe("Amadeus Hotel Search", () => {
   test("fetches available hotel offers", async () => {
@@ -103,7 +99,7 @@ describe("Amadeus Hotel Search", () => {
   });
 });
 
-// Tours & Activities
+
 
 describe("Amadeus Tours & Activities", () => {
   test("fetches tours and activities by coordinates", async () => {
@@ -126,47 +122,3 @@ describe("Amadeus Tours & Activities", () => {
   });
 });
 
-//// --------------------
-
-// // To retrieve:
-// // const savedResults = JSON.parse(fs.readFileSync('holidayData.json', 'utf-8'));
-
-// describe.only("Amadeus Get Hotels and experiences initial departure and maxPrice", () => {
-//   test("Given a flight dep/dest/date/passengers, returns nested array with results", () => {
-//     const clientId = process.env.AMADEUS_CLIENT_ID;
-//     const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
-
-//     expect(clientId).toBeTruthy();
-//     expect(clientSecret).toBeTruthy();
-
-//     console.log("Making Amadeus API call with key:", clientId);
-
-//     return getAccessToken(clientId, clientSecret)
-//       .then((token) => {
-//         return getHolidayDataTest(token, "PAR", "LON", "2025-07-01", 1); // Correct usage
-//       })
-//       .then((results) => {
-//         // Save results to file
-//         fs.writeFileSync("holidayData.json", JSON.stringify(results, null, 2));
-
-//         // Also log results
-//         console.log(results, "<=== array returned to test");
-
-//         // Perform test assertion
-//         expect(Array.isArray(results)).toBe(true);
-
-//         // Optionally check array length or structure:
-//         // expect(results.length).toBeGreaterThan(0);
-//         // expect(results[0]).toHaveProperty('flight');
-//         // expect(results[0]).toHaveProperty('hotels');
-//       })
-//       .catch((error) => {
-//         console.error(
-//           "ERROR - Error fetching data in test:",
-//           error && (error.response?.data || error.message || error.toString()),
-//           error?.stack
-//         );
-//         throw error; // rethrow so Jest sees the test failed
-//       });
-//   });
-// });
