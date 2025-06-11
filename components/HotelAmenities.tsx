@@ -41,9 +41,6 @@ export default function HotelAmenities({selectedAmenities, setSelectedAmenities}
         keyExtractor={item => item}
         renderItem={renderItem}
       />
-      <Text style={styles.selectedText}>
-        Selected: {JSON.stringify(selectedAmenities, null, 2)}
-      </Text>
     </View>
   );
 }
