@@ -3,10 +3,12 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Trip } from '@/firestoreService/types';
 import { getTripById } from '@/firestoreService/trip/getTripById';
-import { getAccommodationsByTripId } from '@/firestoreService/accom/getAccomsByTrip';
+// import { getAccommodationsByTripId } from '@/firestoreService/accom/getAccomsByTrip';
+import { getAccomsByTrip } from '@/firestoreService';
 import GoBackHeader from '@/components/GoBackHeader';
-import { getFlightsByTripId } from '@/firestoreService/flight/getFlightsByTrip';
-import { getActivitiesByTripId } from '@/firestoreService/activity/getActivitiesByTrip';
+// import { getFlightsByTripId } from '@/firestoreService/flight/getFlightsByTrip';
+import { getFlightsByTrip } from '@/firestoreService'
+import { getActivitiesByTrip } from '@/firestoreService';
 
 export default function TripInfo() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,17 +26,17 @@ export default function TripInfo() {
       .then((fetchedTrip) => {
         if (!fetchedTrip) throw new Error("Trip not found");
         setTrip(fetchedTrip);
-        return getAccommodationsByTripId(id);
+        return getAccomsByTrip(id);
       })
       .then((res) => {
         console.log(id, res, "<------ IS THIS HOTELS");
         setHotels(res || []);
-        return getFlightsByTripId(id)
+        return getFlightsByTrip(id)
       })
       .then((res) => {
         console.log(id, res, "<------ IS THIS FLIGHTS");
         setFlights(res || []);
-        return getActivitiesByTripId(id)
+        return getActivitiesByTrip(id)
 
       })
       .then((res) => {
