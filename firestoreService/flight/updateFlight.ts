@@ -4,7 +4,7 @@ import { type FlightData } from "../types";
 
 export type UpdatableFlightFields = Partial<Omit<FlightData, 'userId'>>;
 
-export function updateTripDetails( flightId: string, updates: UpdatableFlightFields ): Promise<boolean> {
+export function updateFlightDetails( flightId: string, updates: UpdatableFlightFields ): Promise<boolean> {
   const flightDocRef = doc(db, "flights", flightId);
 
   const dataToUpdate = {
