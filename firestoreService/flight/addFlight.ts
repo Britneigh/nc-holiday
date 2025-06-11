@@ -31,7 +31,7 @@ export function addFlight(
 
   const newFlightData: FlightData = {
     ...flightDetails,
-    tripId: tripId
+    tripId: tripId,
     airline: flightDetails.airline,
     userId: currentUser.uid,
     flightCode: flightDetails.flightCode,
