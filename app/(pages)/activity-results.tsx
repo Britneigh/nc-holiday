@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, ScrollView, Text } from "react-native";
+import { StyleSheet, ScrollView, Text } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { getAccessToken, getToursAndActivities } from "@/api"; // update path as needed
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import ActivityCard from "@/components/ActivityCard"; // update path if needed
 
 type Activity = {
@@ -24,6 +24,7 @@ type Activity = {
 };
 
 export default function ActivitySearchResults() {
+  const router = useRouter();
   const { selectedCityCode, fromDate, toDate, latitude, longitude } = useLocalSearchParams();
 
   const parseDateParam = (dateParam: string | string[] | undefined): Date | undefined => {
@@ -116,7 +117,11 @@ export default function ActivitySearchResults() {
   return (
     <ScrollView style={styles.container}>
       {activities.map((activity) => (
-        <ActivityCard key={activity.id} activity={activity} />
+        <ActivityCard
+          key={activity.id}
+          activity={activity}
+          onPress={() => router.push(`/activity-info?id=${activity.id}`)}
+        />
       ))}
     </ScrollView>
   );

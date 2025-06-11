@@ -28,11 +28,14 @@ type Activity = {
 
 type Props = {
   activity: Activity;
+  onPress?: () => void;  // <-- added optional onPress prop
 };
 
-export default function ActivityCard({ activity }: Props) {
+export default function ActivityCard({ activity, onPress }: Props) {
   const handlePress = () => {
-    if (activity.bookingLink) {
+    if (onPress) {
+      onPress();
+    } else if (activity.bookingLink) {
       Linking.openURL(activity.bookingLink).catch(() =>
         alert("Failed to open link.")
       );
@@ -68,9 +71,7 @@ export default function ActivityCard({ activity }: Props) {
         )}
 
         {typeof activity.rating === "number" && (
-          <Text style={styles.rating}>
-            ⭐ {activity.rating.toFixed(1)} / 5
-          </Text>
+          <Text style={styles.rating}>⭐ {activity.rating.toFixed(1)} / 5</Text>
         )}
 
         {activity.price && (
