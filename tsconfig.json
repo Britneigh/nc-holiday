@@ -14,15 +14,22 @@
       "@/*": [
         "./*"
       ]
+    }
+  },
+  "ts-node": {
+    "esm": true,
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "esnext"
     },
-     "jsx": "react-native",
-    "outDir": "./dist"
+    "experimentalSpecifierResolution": "node"
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "test-data",
-    "node_modules/@tanstack/react-query"
-  ],
-   "outDir": "./dist",
+    "test-data"
+, "jest.config.js"  ],
+  "exclude": [ 
+    "node_modules"
+  ]
 }

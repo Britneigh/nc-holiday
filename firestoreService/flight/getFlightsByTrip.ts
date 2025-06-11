@@ -7,10 +7,10 @@ import {
   QueryDocumentSnapshot,
   DocumentData
 } from 'firebase/firestore';
-import { db } from "../firebaseConfig";
-import { type Flight, type FlightData } from "./types";
+import { db } from "../../firebaseConfig";
+import { type Flight, type FlightData } from "../types";
 
-export function getFlightsByTripId(tripId: string): Promise<Flight[] | null> {
+export function getFlightsByTrip(tripId: string): Promise<Flight[] | null> {
     const flightsColRef = collection(db, "flights");
     const q = query(flightsColRef, where("tripId", "==", tripId));
     
