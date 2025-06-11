@@ -1,144 +1,146 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View, Button, Pressable, Switch, ScrollView } from 'react-native';
-// import { Auth } from 'firebase/auth';
-// import { getAuth } from 'firebase/auth';
-// import axios from 'axios'
+import { StyleSheet, Text, TextInput, View, Button, ScrollView, Pressable, ActivityIndicator } from 'react-native';
+import { getAuth, User, onAuthStateChanged } from 'firebase/auth';
+import axios from 'axios';
+import { getTrips } from '@/firestoreService/trip/getTrips';
 
-
-
+// Define the "shape" of a message object for TypeScript
+type Message = {
+  id: string;
+  message: string;
+  sentByUser: boolean;
+  isError?: boolean;
+};
 
 export default function Chatbot() {
 
-    // const [token, setToken] = useState("")
+  const [authStatus, setAuthStatus] = useState<'LOADING' | 'AUTHENTICATED' | 'NO_USER'>('LOADING');
+  const [token, setToken] = useState<string>("");
+  const [tripData, setTripData] = useState<any[]>([]);
+  
+  const [messageHistory, setMessageHistory] = useState<Message[]>([]);
+  const [messageToSend, setMessageToSend] = useState('');
+  const [currentConversation, setCurrentConversation] = useState(false);
+  const [error, setError] = useState<string | boolean>(false);
 
-    // const auth = getAuth()
-    // const user = auth.currentUser
+  const scrollViewRef = useRef<ScrollView>(null);
 
-    // if (user) {
-    //     user.getIdToken()
-    //         .then((token) => {
-    //             setToken(token)
-    //             console.log("Current user token: ", token)
-    //         })
-    // }
-    // else {
-    //     console.log("No user signed in")
-    // }
-
-
-
-    const scrollViewRef = useRef()
-
-    const [currentConversation, setCurrentConversation] = useState(false)
-    const [messageToSend, setMessageToSend] = useState('');
-    const [messageHistory, setMessageHistory] = useState([]);
-
-    const [error, setError] = useState(false)
-    const [emptyInputError, setEmptyInputError] = useState(false)
-
-    useEffect(() => {
-        if (scrollViewRef.current) {
-            scrollViewRef.current.scrollToEnd({ animated: true })
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log("Auth state: User is signed in.");
+        try {
+          const idToken = await user.getIdToken(true);
+          setToken(idToken);
+          const trips = await getTrips();
+          setTripData(trips);
+          setAuthStatus('AUTHENTICATED');
+        } catch (err) {
+          console.error("Error during setup:", err);
+          setAuthStatus('NO_USER');
         }
-    }, [messageHistory])
+      } else {
+        console.log("Auth state: No user signed in.");
+        setToken("");
+        setTripData([]);
+        setAuthStatus('NO_USER');
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
-    function handleMessageSubmit() {
-        setEmptyInputError(false)
+  useEffect(() => {
+    scrollViewRef.current?.scrollToEnd({ animated: true });
+  }, [messageHistory]);
 
-        if (messageToSend.trim() === '') {
-            setEmptyInputError(true)
-            return
-        }
+  const agentSubmit = () => {
 
-        const newMessage = {
-            id: messageHistory.length + 1,
-            message: messageToSend,
-            sentByUser: true
-        }
+    if (messageToSend.trim() === '' || authStatus !== 'AUTHENTICATED') return;
 
+    const userMessage: Message = { id: `user-${Date.now()}`, message: messageToSend, sentByUser: true };
+    const updatedHistory = [...messageHistory, userMessage];
+    
+    setMessageHistory(updatedHistory);
+    setMessageToSend('');
 
-        setMessageHistory((previousHis) => [...previousHis, newMessage])
-        setMessageToSend('')
+    const dataForApi = {
+      messages: updatedHistory.map(msg => ({ content: msg.message, role: msg.sentByUser ? 'user' : 'assistant' })).slice(-20),
+      trips: tripData,
+    };
 
-        // const data = {
-        //     "messages": messageHistory.map((message) => ({
-        //         content: message.message,
-        //         role: message.sentByUser ? 'human' : 'ai'
-        //     }))
-        //         .slice(-10)
-        // }
+    axios.post("http://127.0.0.1:8002/api/agent", dataForApi, {
+      headers: { "Authorization": `Bearer ${token}` }
+    }).then(response => {
+      if (response.data && response.data.response) {
+        const aiMessage: Message = { id: `ai-${Date.now()}`, message: response.data.response, sentByUser: false };
+        setMessageHistory(prev => [...prev, aiMessage]);
+      }
+    }).catch(apiError => {
+      console.error("Error calling backend API:", apiError);
+      setError("An error occurred, please try again.");
+      const errorMessage: Message = { id: `error-${Date.now()}`, message: "Error: Could not get a response.", sentByUser: false, isError: true };
+      setMessageHistory(prev => [...prev, errorMessage]);
+    });
+  };
 
-        // return axios.post("http://localhost:8002/api/chat", data, { headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } })
-
-
-    }
-
+  if (authStatus === 'LOADING') {
     return (
-        currentConversation ? (
-            <View style={styles.container}>
-                {/* <Text style={styles.header}>Chatbot</Text> */}
-
-                <View style={styles.messageHistoryContainer}>
-                    <ScrollView ref={scrollViewRef}
-                    >
-                        {messageHistory.map((message, index) => {
-
-                            return (
-                                <View key={message.id}
-                                    style={[
-                                        message.sentByUser ? styles.userBubbleContainer : styles.chatbotBubbleContainer
-                                    ]}
-                                >
-                                    <View
-                                        style={[
-                                            message.sentByUser ? styles.userBubble : styles.chatbotBubble
-                                        ]}
-                                    >
-                                        <Text style={[
-                                            message.sentByUser ? styles.userBubbleText : styles.chatbotBubbleText
-                                        ]}>{message.message}</Text>
-                                    </View>
-
-                                </View>
-
-                            )
-
-                        }
-                        )}
-
-                    </ScrollView>
-                </View>
-
-
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        placeholder="Type here."
-                        value={messageToSend}
-                        onChangeText={setMessageToSend}
-                        autoCapitalize="sentences"
-                        style={styles.input}
-                        onSubmitEditing={handleMessageSubmit}
-                    />
-                    <Pressable
-                        onPress={handleMessageSubmit}>
-                        <View style={styles.submitContainer}>
-                            <Text style={styles.submitArrow} >↑</Text>
-                        </View>
-                    </Pressable>
-                </View>
-                {emptyInputError && <Text style={styles.error}>Please enter a message before submitting.</Text>}
-                {error && <Text style={styles.error}>An error occurred, please try again.</Text>}
-            </View>
-        )
-            :
-            (
-                <View style={styles.container}>
-                    <Button title="Start a chat" onPress={() => { setCurrentConversation(!currentConversation) }} />
-                </View>
-            )
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#2891D9" />
+        <Text style={{ marginTop: 10, color: '#333' }}>Authenticating...</Text>
+      </View>
     );
+  }
 
+  if (authStatus === 'NO_USER') {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.error}>Please sign in to use the travel agent.</Text>
+      </View>
+    );
+  }
 
+  return (
+    currentConversation ? (
+      <View style={styles.container}>
+        <View style={styles.messageHistoryContainer}>
+          <ScrollView ref={scrollViewRef}>
+            {messageHistory.map((message) => (
+              <View key={message.id} style={message.sentByUser ? styles.userBubbleContainer : styles.chatbotBubbleContainer}>
+                <View style={message.sentByUser ? styles.userBubble : styles.chatbotBubble}>
+                  <Text style={message.sentByUser ? styles.userBubbleText : styles.chatbotBubbleText}>
+                    {message.message}
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Type here."
+            value={messageToSend}
+            onChangeText={setMessageToSend}
+            autoCapitalize="sentences"
+            style={styles.input}
+            onSubmitEditing={agentSubmit}
+          />
+          <Pressable onPress={agentSubmit}>
+            <View style={styles.submitContainer}>
+              <Text style={styles.submitArrow}>↑</Text>
+            </View>
+          </Pressable>
+        </View>
+        {error && <Text style={styles.error}>{error.toString()}</Text>}
+      </View>
+    ) : (
+      <View style={styles.container}>
+        <Button title="Start a chat with your Travel Agent" onPress={() => setCurrentConversation(true)} />
+      </View>
+    )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -147,20 +149,10 @@ const styles = StyleSheet.create({
         padding: 16,
         backgroundColor: '#FFF',
         justifyContent: 'center',
-
     },
-    // header: {
-    //     fontSize: 24,
-    //     fontWeight: '600',
-    //     color: '#333',
-    //     textAlign: 'center',
-    //     marginBottom: 30
-    // },
     messageHistoryContainer: {
         flex: 1,
         justifyContent: 'flex-end',
-        // borderColor: '#ccc',
-        // borderWidth: 1,
         borderRadius: 8,
         margin: 10,
         padding: 10
@@ -188,7 +180,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         margin: 20,
         color: 'red',
-
+        textAlign: 'center'
     },
     userBubbleContainer: {
         alignItems: 'flex-end',
@@ -209,7 +201,6 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
         maxWidth: '70%',
-
     },
     chatbotBubble: {
         backgroundColor: '#2891D9',
@@ -220,7 +211,6 @@ const styles = StyleSheet.create({
     userBubbleText: {
         fontSize: 16,
         color: '#2891D9',
-
     },
     chatbotBubbleText: {
         fontSize: 16,
@@ -239,4 +229,4 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 20
     }
-})
+});
