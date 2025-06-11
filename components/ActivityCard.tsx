@@ -1,57 +1,134 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, Button, View, Alert, ImageBackground } from 'react-native';
-import { router } from 'expo-router';
-import { deleteTrip } from '@/firestoreService/trip/deleteTrip';
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
 
-export default function ActivityCard({trip, refreshTrips}: any) {
+type Activity = {
+  id: string;
+  name: string;
+  description?: string;
+  duration?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+    cityCode: string;
+  };
+  price?: { amount: number; currency: string } | string;
+  category?: string;
+  rating?: number;
+  images?: string[];
+  bookingLink?: string;
+  startTimes?: string[];
+};
 
-const deleteImage = (tripId: string) => {
-    deleteTrip(tripId)
-    .then(() => {
-        refreshTrips(); 
-    })
-    .catch((error) => {
-        Alert.alert("There was an error deleting your trip. Please try again.")
-        throw error;
-    })
-}
+type Props = {
+  activity: Activity;
+};
 
-    return (
-        <View style={styles.container}>
-        <TouchableOpacity style={styles.touchable} onPress={() => router.push({ pathname: '/activity-info', params: { id: trip.id } })}>
-            <Text style={styles.text}>{trip.tripName}</Text>
-            <Text style={styles.text}>({trip.location})</Text>
-            <Text>Start Date: {trip.startDate.toDate().toLocaleDateString()}</Text>
-            <Text>End Date: {trip.endDate.toDate().toLocaleDateString()}</Text>
-            <Text>Created at: {trip.createdAt.toDate().toLocaleDateString()}</Text>
-            <Button title="Delete" onPress={() => deleteImage(trip.id)}></Button>
-            {/*Trip's first uploaded image Background here, trip.image[0] */}
-        </TouchableOpacity>
-        </View>
-    );
+export default function ActivityCard({ activity }: Props) {
+  const handlePress = () => {
+    if (activity.bookingLink) {
+      Linking.openURL(activity.bookingLink).catch(() =>
+        alert("Failed to open link.")
+      );
+    }
+  };
+
+  return (
+    <TouchableOpacity style={styles.card} onPress={handlePress}>
+      {activity.images?.length > 0 && (
+        <Image
+          source={{ uri: activity.images[0] }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      )}
+      <View style={styles.content}>
+        <Text style={styles.title}>{activity.name || "Unnamed Activity"}</Text>
+
+        {activity.description && (
+          <Text style={styles.description} numberOfLines={2}>
+            {activity.description}
+          </Text>
+        )}
+
+        {activity.category && (
+          <Text style={styles.meta}>Category: {activity.category}</Text>
+        )}
+
+        {activity.startTimes?.length > 0 && (
+          <Text style={styles.meta}>
+            Start Times: {activity.startTimes.join(", ")}
+          </Text>
+        )}
+
+        {typeof activity.rating === "number" && (
+          <Text style={styles.rating}>
+            ⭐ {activity.rating.toFixed(1)} / 5
+          </Text>
+        )}
+
+        {activity.price && (
+          <Text style={styles.price}>
+            Price:{" "}
+            {typeof activity.price === "object"
+              ? `${activity.price.amount} ${activity.price.currency}`
+              : activity.price}
+          </Text>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        height: 150,
-        borderColor: 'red',
-        borderWidth: 2,
-        marginTop: 10,
-        marginBottom: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        margin: 20,
-        padding: 20,
-    },
-    touchable: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center', 
-        gap: 10,
-    },
-    text: {
-        fontWeight: 600,
-    }
+  card: {
+    marginBottom: 16,
+    borderRadius: 10,
+    backgroundColor: "#ffffff",
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  image: {
+    width: "100%",
+    height: 160,
+  },
+  content: {
+    padding: 12,
+  },
+  title: {
+    fontSize: 17,
+    fontWeight: "bold",
+    marginBottom: 6,
+    color: "#1b3a57",
+  },
+  description: {
+    fontSize: 14,
+    color: "#333",
+    marginBottom: 6,
+  },
+  meta: {
+    fontSize: 13,
+    color: "#5a8fbd",
+    marginBottom: 4,
+  },
+  rating: {
+    fontSize: 13,
+    color: "#2a9d8f",
+    marginBottom: 4,
+  },
+  price: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#e76f51",
+  },
 });
