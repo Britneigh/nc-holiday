@@ -3,3 +3,4 @@ node_modules
 # app-example
 .env
 # package-lock.json
+node_modules
