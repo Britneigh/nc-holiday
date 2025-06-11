@@ -5,7 +5,7 @@ import { type FlightData } from "../types";
 export function addFlight(
   tripId: string,
   flightDetails: Omit<FlightData, 'userId'> & {
-    departureTime: Date | Timestamp; 
+    departureTime: Date | Timestamp;
     arrivalTime: Date | Timestamp;
   }
 ): Promise<boolean> {
@@ -21,9 +21,11 @@ export function addFlight(
 
   const newFlight: Omit<FlightData, 'userId'> = {
     ...flightDetails,
+    airline: flightDetails.airline,
+    flightCode: flightDetails.flightCode,
     departureTime: departureTimestamp,
     arrivalTime: arrivalTimestamp,
-    isBooked: flightDetails.isBooked || false, 
+    isBooked: flightDetails.isBooked || false,
     cost: flightDetails.cost,
     departureLocation: flightDetails.departureLocation,
     arrivalLocation: flightDetails.arrivalLocation,
@@ -35,12 +37,12 @@ export function addFlight(
     flights: arrayUnion(newFlight),
     updatedAt: serverTimestamp()
   })
-  .then(() => {
-    console.log(`Flight added to trip ID: ${tripId}`);
-    return true;
-  })
-  .catch((error) => {
-    console.error(`Error adding flight to trip ID ${tripId}: `, error);
-    return false;
-  });
+    .then(() => {
+      console.log(`Flight added to trip ID: ${tripId}`);
+      return true;
+    })
+    .catch((error) => {
+      console.error(`Error adding flight to trip ID ${tripId}: `, error);
+      return false;
+    });
 }
