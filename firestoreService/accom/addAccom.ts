@@ -36,12 +36,12 @@ export function addAccom(
     accommodations: arrayUnion(newAccom),
     updatedAt: serverTimestamp()
   })
-  .then(() => {
-    console.log(`Accommodation added to trip ID: ${tripId}`);
-    return true;
-  })
-  .catch((error) => {
-    console.error(`Error adding accommodation to trip ID ${tripId}: `, error);
-    return false;
-  });
+    .then(() => {
+      console.log(`Accommodation added to trip ID: ${tripId}`);
+      return true;
+    })
+    .catch((error) => {
+      console.error(`Error adding accommodation to trip ID ${tripId}: `, error);
+      return false;
+    });
 }

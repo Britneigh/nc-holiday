@@ -37,8 +37,11 @@ export interface AccomData {
     description: string;
 }
 
+// add airline and flightcode
 export interface FlightData {
     userId: string;
+    airline: string;
+    flightCode: string;
     cost: number;
     departureTime: Timestamp;
     arrivalTime: Timestamp;
