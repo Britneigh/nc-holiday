@@ -8,50 +8,60 @@ import { Trip } from '../../firestoreService/types';
 
 
 export default function Trips() {
-    const [displayFutureTripsStyle, setDisplayFutureTripsStyle] = useState(true)
+    const [displayUpcomingTripsStyle, setDisplayUpcomingTripsStyle] = useState(true)
+    const [allTrips, setAllTrips] = useState<Trip[]>([]);
     const [trips, setTrips] = useState<Trip[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-  const fetchTrips = () => {
-    setIsLoading(true)
-    getTrips()
-    .then((fetchedTrips) => {
-    if (fetchedTrips) {
-        setIsLoading(false)
-        setTrips(fetchedTrips.filter(trip => trip.startDate.toDate() > today).sort((a, b) => a.startDate.toDate().getTime() - b.startDate.toDate().getTime()));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+
+    const fetchTrips = () => {
+        setIsLoading(true)
+        getTrips()
+            .then((fetchedTrips) => {
+                if (fetchedTrips) {
+                    const upcomingTrips = fetchedTrips.filter(trip => trip.endDate.toDate() >= today);
+                    setAllTrips(fetchedTrips);
+                    setTrips(upcomingTrips.sort((a, b) => a.startDate.toDate().getTime() - b.startDate.toDate().getTime()));
+                    setIsLoading(false);
+                }
+            })
     }
-    })
-  }
 
-const displayFutureTrips = () => {
-    setDisplayFutureTripsStyle(true)
-    setTrips(trips.filter(trip => trip.startDate.toDate() > today).sort((a, b) => a.startDate.toDate().getTime() - b.startDate.toDate().getTime()))
-}
+    const displayUpcomingTrips = () => {
+        setDisplayUpcomingTripsStyle(true)
+        setTrips(allTrips
+            .filter(trip => trip.endDate.toDate() >= today)
+            .sort((a, b) => a.startDate.toDate().getTime() - b.startDate.toDate().getTime()))
+    }
 
-const displayPastTrips = () => {
-    setDisplayFutureTripsStyle(false)
-    setTrips(trips.filter(trip => trip.endDate.toDate() < today).sort((a, b) => b.endDate.toDate().getTime() - a.endDate.toDate().getTime()))
-}
+    const displayPastTrips = () => {
+        setDisplayUpcomingTripsStyle(false)
+        setTrips(allTrips
+            .filter(trip => trip.endDate.toDate() < today)
+            .sort((a, b) => b.endDate.toDate().getTime() - a.endDate.toDate().getTime()))
+    }
 
-useEffect(() => {
-fetchTrips()
+    useEffect(() => {
+        fetchTrips()
 
-}, [displayFutureTrips, displayPastTrips]); 
+    }, []);
 
-const today = new Date()
 
     return (
         <>
             <View style={styles.tripsDisplaysContainer}>
                 <Pressable
-                    onPress={displayFutureTrips}
-                    style={[styles.optionalChoiceContainer, displayFutureTripsStyle && styles.optionalChoiceContainerSelected]}>
-                    <Text style={[styles.optionalChoice, displayFutureTripsStyle && styles.optionalChoiceSelected]}>Future Trips</Text>
+                    onPress={displayUpcomingTrips}
+                    style={[styles.optionalChoiceContainer, displayUpcomingTripsStyle && styles.optionalChoiceContainerSelected]}>
+                    <Text style={[styles.optionalChoice, displayUpcomingTripsStyle && styles.optionalChoiceSelected]}>Upcoming Trips</Text>
                 </Pressable>
                 <Pressable
                     onPress={displayPastTrips}
-                    style={[styles.optionalChoiceContainer, !displayFutureTripsStyle && styles.optionalChoiceContainerSelected]}>
-                    <Text style={[styles.optionalChoice, !displayFutureTripsStyle && styles.optionalChoiceSelected]}>Past Trips</Text>
+                    style={[styles.optionalChoiceContainer, !displayUpcomingTripsStyle && styles.optionalChoiceContainerSelected]}>
+                    <Text style={[styles.optionalChoice, !displayUpcomingTripsStyle && styles.optionalChoiceSelected]}>Past Trips</Text>
                 </Pressable>
                 <Pressable
                     onPress={() => router.push('/trip-add')}
@@ -60,12 +70,9 @@ const today = new Date()
                 </Pressable>
             </View >
             <ScrollView style={styles.scrollContainer}>
-                {/* <View style={styles.container}>
-                    <Text style={styles.header}>Trips</Text>
-                </View> */}
                 {trips.map((trip) => (
-                    <TripCard key={trip.id} trip={trip} refreshTrips={fetchTrips} />
-                      ))}
+                    <TripCard key={trip.id} trip={trip} refreshTrips={fetchTrips} setDisplayUpcomingTripsStyle={setDisplayUpcomingTripsStyle} />
+                ))}
             </ScrollView>
         </>
     );

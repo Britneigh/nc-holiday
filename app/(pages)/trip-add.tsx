@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import  { StyleSheet, Text, ScrollView } from 'react-native';
+import { StyleSheet, Text, ScrollView } from 'react-native';
 import TripForm from '@/components/TripForm';
+import GoBackHeader from '@/components/GoBackHeader';
 
 export default function addTrip() {
 
@@ -8,35 +9,41 @@ export default function addTrip() {
     const [location, setLocation] = useState('');
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
-    const [tripPictures, setTripPictures] = useState<string[]>([]);
+    const [tripPicture, setTripPicture] = useState('');
 
-useEffect(() => {
-  setTripName('');
-  setLocation('');
-  setStartDate(new Date());
-  setEndDate(new Date());
-  setTripPictures([]);
+    useEffect(() => {
+        setTripName('');
+        setLocation('');
+        setStartDate(new Date());
+        setEndDate(new Date());
+        setTripPicture('');
 
-    return () => {
-        if (
-        typeof document !== 'undefined' &&
-        document.activeElement instanceof HTMLElement
-        ) {
-        document.activeElement.blur();
-        }
-    };
-}, []);
+        return () => {
+            if (
+                typeof document !== 'undefined' &&
+                document.activeElement instanceof HTMLElement
+            ) {
+                document.activeElement.blur();
+            }
+        };
+    }, []);
+
+
 
     return (
-        <ScrollView style={styles.container}>
-            <Text>Add a trip to the itinerary:</Text>
-            <TripForm 
-                tripName={tripName} setTripName={setTripName}
-                location={location} setLocation={setLocation}
-                startDate={startDate} setStartDate={setStartDate}
-                endDate={endDate} setEndDate={setEndDate}
-                tripPictures={tripPictures} setTripPictures={setTripPictures}/>
-        </ScrollView>
+        <>
+            <GoBackHeader />
+            <ScrollView style={styles.container}>
+                <Text style={styles.header}>Add a trip to the itinerary:</Text>
+                <TripForm
+                    tripName={tripName} setTripName={setTripName}
+                    location={location} setLocation={setLocation}
+                    startDate={startDate} setStartDate={setStartDate}
+                    endDate={endDate} setEndDate={setEndDate}
+                    tripPicture={tripPicture} setTripPicture={setTripPicture}
+                />
+            </ScrollView>
+        </>
     );
 }
 
