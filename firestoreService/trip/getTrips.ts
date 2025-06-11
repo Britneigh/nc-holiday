@@ -7,11 +7,10 @@ import {
   QuerySnapshot, 
   QueryDocumentSnapshot 
 } from 'firebase/firestore';
-import { db, auth } from "../../firebaseConfig";
-import { type Trip, type TripData } from "../types";
+import { db, auth } from "../../firebaseConfig"; 
+import { type Trip, type TripData } from "../types"
 
 export function getTrips(): Promise<Trip[] | null> {
-
   const currentUser = auth.currentUser;
 
   if (!currentUser) {

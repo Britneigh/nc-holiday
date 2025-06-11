@@ -2,6 +2,7 @@ import { doc, updateDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { type TripData } from "../types";
 
+
 export type UpdatableTripFields = Partial<Omit<TripData, 'userId' | 'createdAt' | 'updatedAt'>>;
 
 export function updateTripDetails( tripId: string, updates: UpdatableTripFields ): Promise<boolean> {
