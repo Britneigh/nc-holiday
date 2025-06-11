@@ -16,7 +16,7 @@ async function logCurrentUserToken() {
     const token = await user.getIdToken();
     console.log('Current user token:', token);
   } else {
-    console.log('No user is signed in.'};
+    console.log('No user is signed in.');
   }
 }
 

@@ -5,7 +5,7 @@ import { type AccomData } from "../types";
 export type UpdatableAccomFields = Partial<Omit<AccomData, 'userId' >>;
 
 export function updateAccomDetails( accomId: string, updates: UpdatableAccomFields ): Promise<boolean> {
-  const accomDocRef = doc(db, "Accommodation", accomId);
+  const accomDocRef = doc(db, "accommodation", accomId);
 
   const dataToUpdate = {
     ...updates,

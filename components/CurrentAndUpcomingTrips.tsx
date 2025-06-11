@@ -3,6 +3,8 @@ import { StyleSheet, ScrollView, TouchableOpacity, View, Text, Pressable } from 
 import { getTrips } from '@/firestoreService/trip/getTrips';
 import { Trip } from '@/firestoreService/types';
 import { addFlight } from '@/firestoreService/flight/addFlight';
+import { addAccom } from "@/firestoreService/accom/addAccom";
+import { addActivity } from '@/firestoreService/activity/addActivity';
 
 export default function CurrentAndUpcomingTrips({
     typeOfPlan,
@@ -101,30 +103,56 @@ export default function CurrentAndUpcomingTrips({
                                         </View>
                                     )}
 
-                                    {/* HOTELS
+                                    {/* HOTELS  */}
 
-                                    {typeOfPlan === 'hotel' && addPlanButton && selectedTrip === trip.id && (
-                                        <View style={styles.pressablePositioning}>
-                                            <Pressable
-                                                onPress={() => {
-                                                    //    addHotel
-                                                }}
-                                            >
-                                                <View style={styles.addContainer}>
-                                                    <Text style={styles.addText}>Add</Text>
-                                                </View>
-                                            </Pressable>
-                                        </View>
-                                    )} */}
+                                    {typeOfPlan === "hotel" &&
+                                        addPlanButton &&
+                                        selectedTrip === trip.id && (
+                                            <View style={styles.pressablePositioning}>
+                                                <Pressable
+                                                    onPress={() => {
+                                                        addAccom(trip.id, planData)
+                                                            .then((success) => {
+                                                                if (success) {
+                                                                    console.log("Hotel added successfully.");
+                                                                    setIsModalVisable(false);
+                                                                    setAddPlanButton(false);
+                                                                } else {
+                                                                    console.log("Failed to add hotel.");
+                                                                }
+                                                            })
+                                                            .catch((error) => {
+                                                                console.error("Error adding hotel:", error);
+                                                            });
+                                                    }}
+                                                >
+                                                    <View style={styles.addContainer}>
+                                                        <Text style={styles.addText}>Add</Text>
+                                                    </View>
+                                                </Pressable>
+                                            </View>
+                                        )}
 
 
-                                    {/* ACTIVITY
+                                    {/* ACTIVITY */}
 
                                     {typeOfPlan === 'activity' && addPlanButton && selectedTrip === trip.id && (
                                         <View style={styles.pressablePositioning}>
                                             <Pressable
                                                 onPress={() => {
-                                                    //    addActivity
+                                                    addActivity(trip.id, planData)
+                                                        .then((success) => {
+                                                            if (success) {
+                                                                console.log("Activity added successfully.");
+                                                                setIsModalVisable(false);
+                                                                setAddPlanButton(false);
+                                                            } else {
+                                                                console.log("Failed to add activity.");
+                                                            }
+                                                        })
+                                                        .catch((error) => {
+                                                            console.error("Error adding sctivity:", error);
+                                                        });
                                                 }}
                                             >
                                                 <View style={styles.addContainer}>
@@ -132,7 +160,7 @@ export default function CurrentAndUpcomingTrips({
                                                 </View>
                                             </Pressable>
                                         </View>
-                                    )} */}
+                                    )}
 
 
 

@@ -7,10 +7,10 @@ import {
   QueryDocumentSnapshot,
   DocumentData
 } from 'firebase/firestore';
-import { db } from "../firebaseConfig";
-import { type Activity, type ActivityData } from "./types"; // Ensure these types are defined
+import { db } from "../../firebaseConfig";
+import { type Activity, type ActivityData } from "../types"; // Ensure these types are defined
 
-export function getActivitiesByTripId(tripId: string): Promise<Activity[] | null> {
+export function getActivitiesByTrip(tripId: string): Promise<Activity[] | null> {
     const activitiesColRef = collection(db, "activities");
     const q = query(activitiesColRef, where("tripId", "==", tripId));
     
@@ -23,7 +23,7 @@ export function getActivitiesByTripId(tripId: string): Promise<Activity[] | null
             console.log(`Found ${activities.length} activities for trip ID ${tripId}:`, activities);
             return activities;
         })
-        .catch((error: any) => {
+        .catch((error) => {
             console.error(`Error getting activities for trip ID ${tripId}:`, error);
             return null;
         });
