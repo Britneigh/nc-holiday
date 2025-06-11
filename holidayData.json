@@ -34,7 +34,7 @@
                 "carrierCode": "A3"
               },
               "duration": "PT3H10M",
-              "id": "34",
+              "id": "38",
               "numberOfStops": 0,
               "blacklistedInEU": false
             },
@@ -57,7 +57,7 @@
                 "carrierCode": "A3"
               },
               "duration": "PT3H50M",
-              "id": "35",
+              "id": "39",
               "numberOfStops": 0,
               "blacklistedInEU": false
             }
@@ -107,7 +107,7 @@
           },
           "fareDetailsBySegment": [
             {
-              "segmentId": "34",
+              "segmentId": "38",
               "cabin": "ECONOMY",
               "fareBasis": "PNFLXLC",
               "brandedFare": "FLEX",
@@ -179,7 +179,7 @@
               ]
             },
             {
-              "segmentId": "35",
+              "segmentId": "39",
               "cabin": "ECONOMY",
               "fareBasis": "PNFLXLC",
               "brandedFare": "FLEX",

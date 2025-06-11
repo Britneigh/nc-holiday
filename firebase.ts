@@ -1,17 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"
-import Constants from 'expo-constants'
-
-interface FirebaseConfig {
-  apiKey: string;
-  authDomain: string;
-  projectId: string;
-  storageBucket: string;
-  messagingSenderId: string;
-  appId: string;
-  measurementId: string;
-}
+import { getFirestore } from "firebase/firestore";
+import Constants from 'expo-constants';
 
 const {
   FIREBASE_API_KEY,
@@ -23,8 +13,18 @@ const {
   FIREBASE_MEASUREMENT_ID,
 } = Constants.expoConfig?.extra ?? {};
 
+// Optional: Log to verify values loaded correctly
+console.log("Firebase config from Constants:", {
+  FIREBASE_API_KEY,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_APP_ID,
+  FIREBASE_MEASUREMENT_ID,
+});
 
-const firebaseConfig: FirebaseConfig = {
+const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
   authDomain: FIREBASE_AUTH_DOMAIN,
   projectId: FIREBASE_PROJECT_ID,
@@ -35,15 +35,6 @@ const firebaseConfig: FirebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app)
 
-console.log('Firebase config values:', {
-  FIREBASE_API_KEY,
-  FIREBASE_AUTH_DOMAIN,
-  FIREBASE_PROJECT_ID,
-  FIREBASE_STORAGE_BUCKET,
-  FIREBASE_MESSAGING_SENDER_ID,
-  FIREBASE_APP_ID,
-  FIREBASE_MEASUREMENT_ID,
-});
+export const auth = getAuth(app);
+export const db = getFirestore(app);
