@@ -6,7 +6,7 @@
       "dom",
       "es2017"
     ], // Ensure "es2015" or a later version is here
-    "module": "esnext", // Or commonjs, depending on your setup
+    "module": "esnext", // Or commonjs
     "moduleResolution": "bundler",
     "strict": true,
     "noEmit": false,
