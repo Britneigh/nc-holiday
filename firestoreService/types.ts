@@ -68,6 +68,15 @@ export interface ActivityData {
     updatedAt: Timestamp,
 }
 
+export interface MemoryData {
+    userId: string;
+    tripId: string,
+    location: string;
+    date: Timestamp;
+    description: string;
+    imgUrl: string;
+}
+
 export interface Trip extends TripData {
     id: string;
 }
@@ -81,5 +90,9 @@ export interface Activity extends ActivityData {
 }
 
 export interface Flight extends FlightData {
+    id: string;
+}
+
+export interface Memory extends MemoryData {
     id: string;
 }
