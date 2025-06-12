@@ -84,6 +84,7 @@ export interface MemoryData {
     userId: string;
     tripId: string,
     location: string;
+    name: string;
     date: Timestamp;
     description: string;
     imgUrl: string;

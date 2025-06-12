@@ -3,8 +3,8 @@ import { StyleSheet, Text, View, Image, ScrollView, Pressable } from 'react-nati
 import { useLocalSearchParams } from 'expo-router';
 import { Trip } from '@/firestoreService/types';
 import { getTripById } from '@/firestoreService/trip/getTripById';
-import { getAccomsByTrip, getFlightsByTrip, getActivitiesByTrip, deleteFlight, deleteAccom, deleteActivity } from '@/firestoreService';
-import { AccomData, FlightData, ActivityData } from '@/firestoreService/types';
+import { getAccomsByTrip, getFlightsByTrip, getActivitiesByTrip, deleteFlight, deleteAccom, deleteActivity, getMemoriesByTrip } from '@/firestoreService';
+import { AccomData, FlightData, ActivityData, MemoryData } from '@/firestoreService/types';
 import { Timestamp } from "firebase/firestore";
 import GoBackHeader from '@/components/GoBackHeader';
 import DeletePressable from '@/components/DeletePressable';
@@ -32,6 +32,7 @@ export default function TripInfo() {
   const [flights, setFlights] = useState<FlightData[]>([]);
   const [returnFlights, setReturnFlights] = useState<ReturnFlight[]>([]);
   const [activities, setActivities] = useState<ActivityData[]>([]);
+  const [memories, setMemories] = useState<MemoryData[]>([])
   const [expandedActivities, setExpandedActivities] = useState<Set<number>>(new Set());
   const [totalPrice, setTotalPrice] = useState<string>('0.00');
 
@@ -54,6 +55,10 @@ export default function TripInfo() {
       })
       .then((res) => {
         setActivities(res || []);
+        return getMemoriesByTrip(id)
+      })
+      .then((res) => {
+        setMemories(res || [])
       })
       .catch((error) => {
         console.error(error);
@@ -253,6 +258,12 @@ export default function TripInfo() {
               )}
             </View>
           ))}
+        </ScrollView>
+        <Text style={[styles.sections, { color: mode.text }]}>Pictures from my trip</Text>
+        <ScrollView horizontal={true}>
+          {memories.map((memory: any, index: number) => 
+            <Image style={styles.cardImg} source={{ uri: memory.imgUrl }} />
+          )}
         </ScrollView>
         {/* </>
         )} */}
