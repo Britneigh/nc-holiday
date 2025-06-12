@@ -126,23 +126,14 @@ export const getHotelList = (
   ratings,
   radius,
   amenities,
-  // radiusUnit = "KM",
-  // chainCodes = [],
-  // hotelSource = "ALL"
 ) => {
   const params = {
     cityCode,
     ratings,
     radius,
-    // radiusUnit,
-    // hotelSource,
   };
-  // params.ratings = ratings.join(",");
-  // if (amenities.length > 0) params.amenities = amenities.join(",");
   if (amenities.length === 0) delete params.amenities
 
-  // if (chainCodes.length > 0) params.chainCodes = chainCodes.join(",");
-  // if (rating.length > 0) params.rating = rating.join(",");
 
   return axios
     .get(
@@ -176,22 +167,13 @@ export const getHotelSearch = (
   checkOutDate,
   adults,
   hotelList,
-  // countryOfResidence,
-  // roomQuantity = 1,
-  // priceRange,
-  // currency,
-  // paymentPolicy = "NONE",
-  // boardType,
-  // includeClosed = false,
-  // bestRatesOnly = true,
-  // lang
 ) => {
   const hotelIds = Array.isArray(hotelList?.data)
-    ? hotelList.data.map((item) => item.hotelId).filter(Boolean)
+    ? hotelList.data.map((item) => item.hotelId).filter(Boolean).slice(0,30)
     : [];
 
     if (!checkInDate) {
-      const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+      const today = new Date().toISOString().split("T")[0]; 
       checkInDate = today;
     }
 
@@ -205,15 +187,6 @@ export const getHotelSearch = (
     checkInDate,
     checkOutDate,
     adults,
-    // countryOfResidence,
-    // roomQuantity,
-    // priceRange,
-    // currency,
-    // paymentPolicy,
-    // boardType,
-    // includeClosed,
-    // bestRatesOnly,
-    // lang,
   };
 
   params.hotelIds = hotelIds.join(",");

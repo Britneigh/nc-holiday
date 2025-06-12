@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
 import { useTheme } from '../app/ThemeContext';
+import { Image } from 'react-native';
+
 
 export default function Header() {
     const { mode }: any = useTheme();
@@ -9,10 +11,9 @@ export default function Header() {
     return (
         <View style={[styles.container, { backgroundColor: mode.background }]}>
             <TouchableOpacity style={styles.logo} onPress={() => router.navigate('/home')}>
-                <Text>
-                    <Text style={[styles.ncText, { color: mode.text }]} >NC </Text>
-                    <Text style={[styles.holidayText, { color: mode.text }]}>holiday</Text>
-                </Text>
+              <View style={{ backgroundColor: "white" }}>
+              <Image source={require("../test-data/Logo.png")} style={{}} />
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.settings} onPress={() => router.push('/settings')}>

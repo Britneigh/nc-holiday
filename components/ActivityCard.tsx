@@ -84,7 +84,7 @@ export default function ActivityCard({ activity }: Props) {
         {activity.price && (
           <Text style={styles.price}>
             {typeof activity.price === "object"
-              ? `Total: ${activity.price.amount} ${activity.price.currency}`
+              ? `Total: ${activity.price.amount} ${activity.price.currencyCode}`
               : `Price: ${activity.price}`}
           </Text>
         )}
