@@ -66,6 +66,7 @@ export default function TripInfo() {
       })
       .finally(() => {
         setIsLoading(false);
+        console.log("Memories for SE Asia: ", memories)
       });
   }, [id]);
 
