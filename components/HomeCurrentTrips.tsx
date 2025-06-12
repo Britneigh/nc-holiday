@@ -53,11 +53,14 @@ export default function HomeCurrentTrips({ setCurrentTripsLength }: any) {
                                 </View>
 
                                 <View style={styles.cardDataContainer}>
-                                    {/* {trip.pictures ? (
-                                    <Image style={styles.cardImg} source={{ uri: trip.pictures }} />
-                                ) : null} */}
-
-                                    <Image style={styles.cardImg} source={{ uri: '' }} />
+                                    {trip.pictures ?
+                                        (<Image
+                                            style={styles.cardImg}
+                                            source={{
+                                                uri: trip.pictures[0],
+                                            }}
+                                        />)
+                                        : null}
 
                                     <View style={styles.cardData}>
                                         <Text style={[styles.cardLocation, { color: mode.text }]}>{trip.location}</Text>

@@ -2,7 +2,7 @@ import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from "../../firebaseConfig";
 
 export function deleteAccom(accomId: string): Promise<boolean | null> {
-    const accomDocRef = doc(db, "accomodation", accomId);
+    const accomDocRef = doc(db, "accomodations", accomId);
 
     return deleteDoc(accomDocRef)
         .then(() => {

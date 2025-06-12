@@ -46,17 +46,17 @@ export default function TripCard({ trip, refreshTrips, setDisplayUpcomingTripsSt
                             (<Image
                                 style={styles.cardImg}
                                 source={{
-                                    uri: trip.pictures,
+                                    uri: trip.pictures[0],
                                 }}
                             />)
                             : null}
 
-                        <Image
+                        {/* <Image
                             style={styles.cardImg}
                             source={{
                                 uri: 'trip.pictures',
                             }}
-                        />
+                        /> */}
 
                         <View style={styles.cardData}>
                             <Text style={styles.cardLocation}>{trip.location}</Text>
