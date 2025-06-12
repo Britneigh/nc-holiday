@@ -263,11 +263,11 @@ export default function TripInfo() {
         <Text style={[styles.sections, { color: mode.text }]}>Pictures from my trip</Text>
         <ScrollView horizontal={true}>
           {memories.map((memory: any, index: number) =>
-            <Image style={styles.cardImg} source={{ uri: memory.imgUrl }} />
+            <Image key={`${trip?.tripName} : ${index}`} style={styles.cardImg} source={{ uri: memory.imgUrl }} />
           )}
         </ScrollView>
-        {/* </>
-        )} */}
+
+
       </ScrollView>
     </View >
   );

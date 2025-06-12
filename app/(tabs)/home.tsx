@@ -22,13 +22,13 @@ export default function Home() {
             <View style={styles.homeStructure}>
 
                 <Text style={styles.addNewTripText}>View your current trips:</Text>
-
                 <Pressable
                     onPress={() => router.push('/trip-add')}
                     style={styles.addNewTripContainer}
                 >
                     <Text style={styles.addNewTripText}>Add New Trip</Text>
                 </Pressable>
+
 
                 <View style={styles.largeBlock}>
                     <HomeCurrentTrips setCurrentTripsLength={setCurrentTripsLength} />

@@ -41,7 +41,7 @@ export default function TripCard({ trip, refreshTrips, setDisplayUpcomingTripsSt
                     </View>
 
                     <View style={styles.cardDataContainer}>
-                        {/* need to check if there is the ability to currently add pictures */}
+
                         {trip.pictures ?
                             (<Image
                                 style={styles.cardImg}
@@ -51,19 +51,12 @@ export default function TripCard({ trip, refreshTrips, setDisplayUpcomingTripsSt
                             />)
                             : null}
 
-                        {/* <Image
-                            style={styles.cardImg}
-                            source={{
-                                uri: 'trip.pictures',
-                            }}
-                        /> */}
-
                         <View style={styles.cardData}>
                             <Text style={styles.cardLocation}>{trip.location}</Text>
                             <Text style={styles.cardDate}>Start Date: {trip.startDate.toDate().toLocaleDateString()}</Text>
                             <Text style={styles.cardDate}>End Date: {trip.endDate.toDate().toLocaleDateString()}</Text>
                             <Text style={styles.cardDate}>Created at: {trip.createdAt.toDate().toLocaleDateString()}</Text>
-                            {/* <Button title="Delete" onPress={() => deleteImage(trip.id)} /> */}
+
                             <View style={styles.pressablePositioning}>
                                 <Pressable
                                     onPress={() => deleteImage(trip.id)}>
@@ -87,8 +80,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
     },
     currentTripWrapper: {
-        // marginTop: 4,
-        // marginBottom: 5,
         padding: 1,
         backgroundColor: '#fbe99f30',
         borderRadius: 20,
@@ -152,7 +143,6 @@ const styles = StyleSheet.create({
     },
     currentTripBadge: {
         marginRight: 10,
-        // backgroundColor: '#2891D9',
         backgroundColor: '#fbe99f',
         color: '846c5b',
         paddingVertical: 5,
