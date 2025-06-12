@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, View, Button, Pressable, Switch } from 'react-native';
 import { handleSignup } from '../../firebase/signUp';
 import { useRouter } from 'expo-router';
+import { useTheme } from '../ThemeContext';
 
 export const Input = (props: any) => (
     <TextInput
@@ -14,29 +15,60 @@ export const Input = (props: any) => (
 
 
 export default function SignUp() {
+    const { mode }: any = useTheme();
     const router = useRouter();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [signupError, setSignupError] = useState(false)
+    const [signupError, setSignupError] = useState(false);
+    const [isValid, setIsValid] = useState(true);
+    const [error, setError] = useState('');
+    const [emailTouched, setEmailTouched] = useState(false);
+
 
     const toggleSwitch = () => {
         setShowPassword(!showPassword)
     }
 
-    return (
-        <View style={styles.container}>
+    const handleEmailChange = (input: string) => {
+        setUsername(input);
 
-            <Text style={styles.header}>Sign Up</Text>
+        if (input.trim() === '') {
+            setError('');
+            setEmailTouched(false);
+        }
+    };
+
+    const isEmailValid = (email: string) => {
+        const regex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
+        return regex.test(email);
+    };
+
+    const handleEmailBlur = () => {
+        setEmailTouched(true);
+
+        if (!isEmailValid(username)) {
+            setError('This is not a valid email');
+        } else {
+            setError('');
+        }
+
+    };
+
+    return (
+        <View style={[styles.container, { backgroundColor: mode.background }]}>
+
+            <Text style={[styles.header, { color: mode.text }]}>Sign Up</Text>
 
             <TextInput
                 placeholder="Enter your email here"
                 value={username}
-                onChangeText={setUsername}
+                onChangeText={handleEmailChange}
+                onBlur={handleEmailBlur}
                 autoCapitalize='none'
-                style={styles.input} />
-
+                style={[styles.input, { color: mode.text, backgroundColor: mode.background }]} />
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
             <TextInput
                 placeholder="Enter your password here"
@@ -44,10 +76,10 @@ export default function SignUp() {
                 onChangeText={setPassword}
                 secureTextEntry={true}
                 autoCapitalize='none'
-                style={styles.input} />
+                style={[styles.input, { color: mode.text, backgroundColor: mode.background }]} />
 
 
-            {showPassword ? <Text style={styles.showPasswordText}>{password}</Text> : null}
+            {showPassword ? <Text style={[styles.showPasswordText, { color: mode.text }]}>{password}</Text> : null}
 
 
             <TextInput
@@ -56,16 +88,15 @@ export default function SignUp() {
                 onChangeText={setConfirmPassword}
                 secureTextEntry={true}
                 autoCapitalize='none'
-                style={styles.input} />
+                style={[styles.input, { color: mode.text, backgroundColor: mode.background }]} />
 
 
-            {showPassword ? <Text style={styles.showPasswordText}>{confirmPassword}</Text> : null}
+            {showPassword ? <Text style={[styles.showPasswordText, { color: mode.text }]}>{confirmPassword}</Text> : null}
 
-
-            {confirmPassword !== password ? <Text>Passwords do not match.</Text> : null}
+            {confirmPassword !== password ? <Text style={styles.errorText}>Passwords do not match.</Text> : null}
 
             <View style={styles.toggleContainer}>
-                <Text>Show Password?</Text>
+                <Text style={{ color: mode.text }}>Show Password?</Text>
                 <Switch
                     trackColor={{ false: '#269fc12e', true: '#2891D9' }}
                     thumbColor={showPassword ? 'white' : 'white'}
@@ -75,8 +106,7 @@ export default function SignUp() {
                 />
             </View>
 
-            {signupError ? <Text>An issue occured when trying to sign up.</Text> : null}   {/* add error styling */}
-
+            {signupError ? <Text style={styles.errorText}>An issue occured when trying to sign up.</Text> : null}
 
             <Button
                 disabled={username && password ? false : true}
@@ -146,5 +176,8 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         marginTop: 20,
         textAlign: 'center'
-    }
+    },
+    errorText: {
+        fontSize: 12, fontWeight: "400", marginTop: 8, color: "red",
+    },
 });

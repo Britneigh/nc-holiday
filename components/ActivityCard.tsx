@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  Image,
   TouchableOpacity,
   Linking,
 } from "react-native";
@@ -31,7 +30,9 @@ type Props = {
 };
 
 export default function ActivityCard({ activity }: Props) {
-  const handlePress = () => {
+  const [expanded, setExpanded] = useState(false);
+
+  const handleLinkPress = () => {
     if (activity.bookingLink) {
       Linking.openURL(activity.bookingLink).catch(() =>
         alert("Failed to open link.")
@@ -40,95 +41,108 @@ export default function ActivityCard({ activity }: Props) {
   };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={handlePress}>
-      {activity.images?.length > 0 && (
-        <Image
-          source={{ uri: activity.images[0] }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-      )}
-      <View style={styles.content}>
-        <Text style={styles.title}>{activity.name || "Unnamed Activity"}</Text>
+    <View style={styles.card}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.label}>{activity.name || "Unnamed Activity"}</Text>
+      </View>
 
+      <View style={styles.cardData}>
         {activity.description && (
-          <Text style={styles.description} numberOfLines={2}>
-            {activity.description}
-          </Text>
+          <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+            <Text
+              style={styles.cardText}
+              numberOfLines={expanded ? undefined : 2}
+            >
+              {activity.description.replace(/<[^>]*>/g, "")}
+            </Text>
+            <Text style={styles.expandToggle}>
+              {expanded ? "Show less ▲" : "Read more ▼"}
+            </Text>
+
+            {expanded && activity.bookingLink && (
+              <Text style={styles.linkText} onPress={handleLinkPress}>
+                {activity.bookingLink}
+              </Text>
+            )}
+          </TouchableOpacity>
         )}
 
         {activity.category && (
-          <Text style={styles.meta}>Category: {activity.category}</Text>
+          <Text style={styles.cardText}>Category: {activity.category}</Text>
         )}
 
         {activity.startTimes?.length > 0 && (
-          <Text style={styles.meta}>
+          <Text style={styles.cardText}>
             Start Times: {activity.startTimes.join(", ")}
           </Text>
         )}
 
         {typeof activity.rating === "number" && (
-          <Text style={styles.rating}>
-            ⭐ {activity.rating.toFixed(1)} / 5
-          </Text>
+          <Text style={styles.cardText}>⭐ {activity.rating.toFixed(1)} / 5</Text>
         )}
 
         {activity.price && (
           <Text style={styles.price}>
-            Price:{" "}
             {typeof activity.price === "object"
-              ? `${activity.price.amount} ${activity.price.currency}`
-              : activity.price}
+              ? `Total: ${activity.price.amount} ${activity.price.currency}`
+              : `Price: ${activity.price}`}
           </Text>
         )}
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 16,
-    borderRadius: 10,
     backgroundColor: "#ffffff",
-    overflow: "hidden",
+    borderRadius: 12,
+    padding: 0,
+    marginTop: 10,
+    marginBottom: 5,
+    borderColor: "#ccc",
+    borderWidth: 1,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
     shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
-  image: {
-    width: "100%",
-    height: 160,
+  cardHeader: {
+    backgroundColor: "#269fc12e",
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
   },
-  content: {
-    padding: 12,
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    margin: 8,
+    color: "#2891D9",
   },
-  title: {
-    fontSize: 17,
-    fontWeight: "bold",
-    marginBottom: 6,
-    color: "#1b3a57",
+  cardData: {
+    padding: 16,
   },
-  description: {
+  cardText: {
     fontSize: 14,
     color: "#333",
+    marginBottom: 4,
+  },
+  expandToggle: {
+    fontSize: 12,
+    color: "#0077cc",
+    marginTop: 4,
+  },
+  linkText: {
+    fontSize: 13,
+    color: "#1d4ed8",
+    textDecorationLine: "underline",
+    marginTop: 10,
     marginBottom: 6,
   },
-  meta: {
-    fontSize: 13,
-    color: "#5a8fbd",
-    marginBottom: 4,
-  },
-  rating: {
-    fontSize: 13,
-    color: "#2a9d8f",
-    marginBottom: 4,
-  },
   price: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#e76f51",
+    fontSize: 16,
+    color: "#2891D9",
+    fontWeight: "bold",
+    marginTop: 10,
   },
 });

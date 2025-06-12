@@ -45,6 +45,9 @@ export function addFlight(
     bookingLink: flightDetails.bookingLink,
     createdAt: serverTimestamp() as Timestamp,
     updatedAt: serverTimestamp() as Timestamp,
+    // added for return flights
+    isReturnFlight: flightDetails.isReturnFlight || false,
+    returnFlightDetails: flightDetails.returnFlightDetails || undefined,
   };
 
 

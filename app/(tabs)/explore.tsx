@@ -4,10 +4,11 @@ import { router } from 'expo-router';
 import FlightSearch from '../(pages)/flight-search';
 import HotelSearch from '../(pages)/hotel-search';
 import ActivitySearch from '../(pages)/activity-search';
-import CustomPlanAdd
-    from '../(pages)/custom-plan-add';
-export default function Explore() {
+import CustomPlanAdd from '../(pages)/custom-plan-add';
+import { useTheme } from '../ThemeContext';
 
+export default function Explore() {
+    const { mode }: any = useTheme();
     const [flightSearchPage, setFlightSearchPage] = useState(true)
     const [hotelSearchPage, setHotelSearchPage] = useState(false)
     const [activitySearchPage, setActivitySearchPage] = useState(false)
@@ -34,16 +35,16 @@ export default function Explore() {
         setCustomPlanPage(false)
     }
 
-    function handleCustomPageSelector() {
-        setCustomPlanPage(true)
-        setFlightSearchPage(false)
-        setHotelSearchPage(false)
-        setActivitySearchPage(false)
-    }
+    // function handleCustomPageSelector() {
+    //     setCustomPlanPage(true)
+    //     setFlightSearchPage(false)
+    //     setHotelSearchPage(false)
+    //     setActivitySearchPage(false)
+    // }
 
     return (
         <>
-            <View style={styles.pageSelection}>
+            <View style={[styles.pageSelection, { backgroundColor: mode.background }]}>
                 <ScrollView horizontal={true} >
 
                     <Pressable
@@ -91,7 +92,7 @@ export default function Explore() {
                         >Search Activities</Text>
                     </Pressable>
 
-                    <Pressable
+                    {/* <Pressable
                         onPress={handleCustomPageSelector}
                         style={[
                             styles.searchPageContainer,
@@ -104,7 +105,7 @@ export default function Explore() {
                                 customPlanPage && styles.searchPageTitleSelected,
                             ]}
                         >Add Custom Plan</Text>
-                    </Pressable>
+                    </Pressable> */}
 
                 </ScrollView>
             </View>

@@ -1,42 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, Button, ScrollView } from "react-native";
-import { router } from "expo-router"; 
-import { testCityData } from "@/test-data/testCityData"; 
-import ActivityCitySearch from "@/components/ActivityCitySearch"; 
-import DateActivitySearch from "@/components/DateActivitySearch"; 
+import { StyleSheet, Text, Button, ScrollView, View } from "react-native";
+import { router } from "expo-router";
+import { testCityData } from "@/test-data/testCityData";
+import ActivityCitySearch from "@/components/ActivityCitySearch";
+import DateActivitySearch from "@/components/DateActivitySearch";
 import { useQueryClient } from "@tanstack/react-query";
-import { useIsFocused } from "@react-navigation/native"; 
+import { useIsFocused } from "@react-navigation/native";
+import { useTheme } from '../ThemeContext';
 
 export default function ActivitySearch() {
+  const { mode }: any = useTheme();
   const [citySearchQuery, setCitySearchQuery] = useState("");
   const [selectedCityCode, setSelectedCityCode] = useState("");
- 
+
   const [selectedCityLong, setSelectedCityLong] = useState<number | null>(null);
   const [selectedCityLat, setSelectedCityLat] = useState<number | null>(null);
-  const [radius, setRadius] = useState(5); 
+  const [radius, setRadius] = useState(5);
 
- 
   const [fromDate, setFromDate] = useState(new Date());
- 
+
   const [toDate, setToDate] = useState(new Date());
 
   const queryClient = useQueryClient();
   const isFocused = useIsFocused();
 
-  
+
   useEffect(() => {
     if (isFocused) {
-  
+
       queryClient.removeQueries({ queryKey: ["activities"] });
     }
-  }, [isFocused, queryClient]); 
+  }, [isFocused, queryClient]);
 
- 
+
   useEffect(() => {
     setCitySearchQuery("");
     setSelectedCityCode("");
-   
-  }, []); 
+
+  }, []);
 
 
   const today = new Date();
@@ -46,10 +47,12 @@ export default function ActivitySearch() {
   const fromDay = new Date(fromDate);
   fromDay.setHours(0, 0, 0, 0);
 
- 
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text>Where are you heading to?</Text>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: mode.background }]}>
+
+      <Text style={[styles.label, { color: mode.text }]}>Where are you visiting?</Text>
+
       <ActivityCitySearch
         cityData={testCityData}
         citySearchQuery={citySearchQuery}
@@ -60,67 +63,95 @@ export default function ActivitySearch() {
         setSelectedCityLong={setSelectedCityLong}
       />
 
-      <Text>Select arrival date</Text>
-      <DateActivitySearch date={fromDate} setDate={setFromDate} />
-  
+      <View style={styles.searchComponent}>
+        <Text style={[styles.label, { color: mode.text }]}>Select date range (start)</Text>
+        <DateActivitySearch date={fromDate} setDate={setFromDate} />
+      </View>
+
+
       {fromDay < today ? (
-        <Text style={styles.warningText}>Selected arrival date is in the past!</Text>
+        <Text style={styles.error}>Selected arrival date is in the past!</Text>
       ) : null}
 
-      <Text>Select return date</Text>
-      <DateActivitySearch date={toDate} setDate={setToDate} />
- 
+      <View style={styles.searchComponent}>
+        <Text style={[styles.label, { color: mode.text }]}>Select date range (end)</Text>
+        <DateActivitySearch date={toDate} setDate={setToDate} />
+      </View>
+
       {toDate && toDate < fromDate ? (
-        <Text style={styles.warningText}>Return date cannot be before arrival date!</Text>
+        <Text style={styles.error}>Return date cannot be before arrival date!</Text>
       ) : null}
 
-      <Button
-        title="Search for activities"
-       
-        disabled={
-          (toDate && toDate < fromDate) ||
-          !selectedCityCode || 
-          selectedCityLat === null || 
-          selectedCityLong === null   
-        }
-        onPress={() => {
-          
-          const params: Record<string, string | number | undefined> = {
-            selectedCityCode,
-         
-            fromDate: fromDate.toISOString().split("T")[0],
-            toDate: toDate.toISOString().split("T")[0],
-            
-            latitude: selectedCityLat !== null ? selectedCityLat : undefined,
-            longitude: selectedCityLong !== null ? selectedCityLong : undefined,
-            radius: radius, 
-          };
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Search for activities"
 
-          console.log("ActivitySearch - Lat:", selectedCityLat, "Long:", selectedCityLong);
-          console.log("ActivitySearch - Params being pushed:", params);
+          disabled={
+            (toDate && toDate < fromDate) ||
+            !selectedCityCode ||
+            selectedCityLat === null ||
+            selectedCityLong === null
+          }
+          onPress={() => {
 
-          router.push({
-            pathname: "/activity-results", 
-            params: params,
-          });
-        }}
-      />
+            const params: Record<string, string | number | undefined> = {
+              selectedCityCode,
+
+              fromDate: fromDate.toISOString().split("T")[0],
+              toDate: toDate.toISOString().split("T")[0],
+
+              latitude: selectedCityLat !== null ? selectedCityLat : undefined,
+              longitude: selectedCityLong !== null ? selectedCityLong : undefined,
+              radius: radius,
+            };
+
+            router.push({
+              pathname: "/activity-results",
+              params: params,
+            });
+          }}
+        />
+
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1, 
+    flexGrow: 1,
     padding: 16,
-    backgroundColor: '#f8f8f8', 
+    backgroundColor: '#FFF'
   },
-  warningText: {
-    color: 'orange',
-    fontSize: 14,
+  searchComponent: {
+    marginTop: 10,
+    marginBottom: 15
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginTop: 10,
+    marginBottom: 8,
+    color: '#333',
+  },
+  error: {
+    fontSize: 12,
+    fontWeight: '400',
+    margin: 5,
+    marginLeft: 20,
+    color: 'red',
+  },
+  buttonContainer: {
+    marginBottom: 40
+  },
+  input: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
     marginTop: 5,
-    marginBottom: 10,
-    textAlign: 'center',
+    padding: 10,
+    fontSize: 16,
+    backgroundColor: '#fff',
   },
-  
+
 });

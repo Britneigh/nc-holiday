@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, ScrollView, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import { getAccessToken, getToursAndActivities } from "@/api"; // update path as needed
+import { getAccessToken, getToursAndActivities } from "@/api";
 import { useLocalSearchParams } from "expo-router";
-import ActivityCard from "@/components/ActivityCard"; // update path if needed
+import ActivityCard from "@/components/ActivityCard";
 import AddPlanToTrip from "@/components/AddPlanToTrip";
 import { testCityData } from "@/test-data/testCityData";
 
@@ -93,14 +99,21 @@ export default function ActivitySearchResults() {
   });
 
   if (activitiesQuery.isLoading || !searchAttempted) {
-    return <Text style={styles.loadingText}>Loading activities...</Text>;
+    return (
+      <View style={styles.loadingAndErrorContainer}>
+        <Text style={styles.loadingMessage}>Searching for activities...</Text>
+        <ActivityIndicator />
+      </View>
+    );
   }
 
   if (activitiesQuery.isError) {
     return (
-      <Text style={styles.errorText}>
-        Error loading activities: {activitiesQuery.error.message}
-      </Text>
+      <View style={styles.loadingAndErrorContainer}>
+        <Text style={styles.errorText}>
+          Error loading activities: {activitiesQuery.error.message}
+        </Text>
+      </View>
     );
   }
 
@@ -109,79 +122,77 @@ export default function ActivitySearchResults() {
   if (activities.length === 0) {
     const cityName = selectedCityCode || "the selected location";
     return (
-      <Text style={styles.noResultsText}>
-        No activities found for {cityName}. Try different coordinates or dates!
-      </Text>
+      <View style={styles.loadingAndErrorContainer}>
+        <Text style={styles.noResultsText}>
+          No activities found for {cityName}. Try different coordinates or dates!
+        </Text>
+      </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
+      <ScrollView>
+        <View>
+          {activities.map((activity, index) => {
+            const match = testCityData.find(
+              (obj) =>
+                obj.latitude === activity.location?.latitude &&
+                obj.longitude === activity.location?.longitude
+            );
+            const cityName = match ? match.city : "Unknown";
 
-
-
-      {/* {activities.map((activity) => (
-        <>
-          <ActivityCard key={activity.id} activity={activity} />
-        </>
-
-      ))} */}
-
-
-      {activities.map((activity) => {
-
-        const match = testCityData.find(
-          (obj) =>
-            obj.latitude === activity.geoCode.latitude &&
-            obj.longitude === activity.geoCode.longitude
-        );
-
-        const cityName = match ? match.city : "Unknown";
-        return (
-          <>
-            <ActivityCard key={activity.id} activity={activity} />
-            <AddPlanToTrip
-              typeOfPlan={"activity"}
-              planData={{
-                location: cityName,
-                startTime: '',
-                endTime: '',
-                description: activity.description,
-                cost: typeof activity.price === "object" && activity.price?.amount
-                  ? Number(activity.price.amount)
-                  : undefined,
-                bookingLink: activity.bookingLink,
-                isBooked: false,
-                pictures: ''
-              }}
-            ></AddPlanToTrip >
-          </>
-        );
-      })}
-
-
-    </ScrollView >
+            return (
+              <View key={activity.id} style={styles.cardWrapper}>
+                <ActivityCard activity={activity} />
+                <AddPlanToTrip
+                  typeOfPlan="activity"
+                  planData={{
+                    location: cityName,
+                    startTime: '',
+                    endTime: '',
+                    description: activity.description,
+                    cost: typeof activity.price === "object" && activity.price?.amount
+                      ? Number(activity.price.amount)
+                      : undefined,
+                    bookingLink: activity.bookingLink,
+                    isBooked: false,
+                    pictures: ''
+                  }}
+                />
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    padding: 16,
     flex: 1,
-    padding: 12,
-    backgroundColor: "#eef6f9",
+    backgroundColor: "#FFF",
   },
-  loadingText: {
-    padding: 20,
-    textAlign: "center",
-    fontSize: 16,
-    color: "#3a86ff",
+  cardWrapper: {
+    marginBottom: 12,
+  },
+  loadingAndErrorContainer: {
+    padding: 16,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ffffff",
+  },
+  loadingMessage: {
+    paddingBottom: 30,
   },
   errorText: {
-    color: "#d62828",
-    padding: 20,
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 12,
+    fontWeight: "400",
+    marginTop: 8,
+    color: "red",
   },
   noResultsText: {
     padding: 20,

@@ -48,8 +48,20 @@ export interface FlightData {
     pictures?: string[],
     createdAt: Timestamp,
     updatedAt: Timestamp,
-    airline?: string,
-    flightNumber?: string,
+    // airline?: string,
+    // flightNumber?: string,
+    // added for return flight
+    isReturnFlight?: boolean;
+    returnFlightDetails?: {
+        flightCode: string;
+        departureTime: Timestamp;
+        arrivalTime: Timestamp;
+        departureLocation: string;
+        arrivalLocation: string;
+        airline: string;
+        cost: number;
+        stops: string[];
+    };
 }
 
 
