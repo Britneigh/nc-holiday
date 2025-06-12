@@ -1,50 +1,36 @@
-# Welcome to your Expo app 👋
+# NC Travel
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+### Project Summary:
+### Nc Travel is a sleek, user-friendly mobile app designed to simplify travel planning — whether it's a weekend getaway or a long international holiday. With just a few taps, users can create personalised trips, search for flights, hotels and activities — using filters to find exactly what they’re looking for. Saved favourites can then be used to build a complete travel itinerary, all in one place. The app focuses on giving users full control and flexibility over their travel plans, allowing them to organise trips by upcoming or past travels, and remove any trips they no longer need. NC Travel is the smart, simple way to plan and manage efficient journeys.
 
-## Get started
+### Tech Stack:
+- Frontend: React.js, TypeScript
+- Backend: Firebase, Firestore, Amadeus API
 
-1. Install dependencies
+### Dev Team: [Antonio Rees](https://github.com/Antonio7098), [Britney Nguyen](https://github.com/Britneigh), [Ben Stirk](https://github.com/benstirk871), [Ella Spiridon](https://github.com/ells-s), [Gary Morris](https://github.com/garym350)
 
-   ```bash
-   npm install
-   ```
+## How to set it up locally:
+### 1. Clone down this repo:
+```$ git clone https://github.com/Britneigh/nc-holiday.git```
+### 2. Install all dependencies:
+``` npm install ```
+### 3. Create a .env file in the root directory. Your .env file should look like this:
+<pre>
+FIREBASE_API_KEY="YOUR_FIREBASE_KEY"
+FIREBASE_AUTH_DOMAIN="YOUR_FIREBASE_AUTH_DOMAIN"
+FIREBASE_PROJECT_ID="YOUR_FIREBASE_PROJECT_NAME"
+FIREBASE_STORAGE_BUCKET="YOUR-PROJECT-NAME.firebasestorage.app"
+FIREBASE_MESSAGING_SENDER_ID="YOUR_FIREBASE_MESSAGING_SENDER_ID"
+FIREBASE_APP_ID="YOUR_FIREBASE_APP_ID"
+FIREBASE_MEASUREMENT_ID="YOUR_FIREBASE_MEASUREMENT_ID"
+AMADEUS_CLIENT_ID="YOUR_AMADEUS_CLIENT_ID"
+AMADEUS_CLIENT_SECRET="YOUR_AMADEUS_CLIENT_SECRET" 
+</pre>
 
-2. Start the app
+### 4. Replace the values with the info from your Firebase and Amadeus account
 
-   ```bash
-   npx expo start
-   ```
+### 5. Create a .gitignore file and add .env to it.
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 6. Finally, run:
+``` npx expo start``` or ```npx expo start c-```
+### Now you can download Expo Go on your phone, scan the QR code, and run it directly from there.

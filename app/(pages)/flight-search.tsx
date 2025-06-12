@@ -10,9 +10,10 @@ import { getFlightSearchWithDestination, getAccessToken } from '../../api'
 import { useQueryClient } from '@tanstack/react-query';
 import { useIsFocused } from '@react-navigation/native';
 import GoBackHeader from '@/components/GoBackHeader';
-
+import { useTheme } from '../ThemeContext';
 
 export default function FlightSearch() {
+    const { mode }: any = useTheme();
     const [departureSearchQuery, setDepartureSearchQuery] = useState('');
     const [selectedDepartureCode, setSelectedDepartureCode] = useState('');
     const [arrivalSearchQuery, setArrivalSearchQuery] = useState('');
@@ -48,10 +49,10 @@ export default function FlightSearch() {
     return (
         <>
 
-            <ScrollView style={styles.container}>
+            <ScrollView style={[styles.container, { backgroundColor: mode.background }]}>
 
                 <View style={styles.searchComponent}>
-                    <Text style={styles.label}>Select departure airport</Text>
+                    <Text style={[styles.label, { color: mode.text }]}>Select departure airport</Text>
                     <DepartureFlightSearch
                         flightData={testAirportData}
                         departureSearchQuery={departureSearchQuery}
@@ -62,7 +63,7 @@ export default function FlightSearch() {
                 </View>
 
                 <View style={styles.searchComponent}>
-                    <Text style={styles.label}>Select arrival airport</Text>
+                    <Text style={[styles.label, { color: mode.text }]}>Select arrival airport</Text>
                     <ArrivalFlightSearch
                         flightData={testAirportData}
                         arrivalSearchQuery={arrivalSearchQuery}
@@ -74,7 +75,7 @@ export default function FlightSearch() {
 
 
                 <View style={styles.searchComponent}>
-                    <Text style={styles.label}>Select departure date</Text>
+                    <Text style={[styles.label, { color: mode.text }]}>Select departure date</Text>
                     <DateFlightSearch date={departureDate} setDate={setDepartureDate} />
                 </View>
 
@@ -88,12 +89,12 @@ export default function FlightSearch() {
                         onValueChange={toggleSwitch}
                         value={addAReturnFlight}
                     />
-                    <Text>Add a return flight?</Text>
+                    <Text style={{ color: mode.text }}>Add a return flight?</Text>
                 </View>
                 {
                     addAReturnFlight ?
                         <View style={styles.searchComponent}>
-                            <Text style={styles.label}>Select return date</Text>
+                            <Text style={[styles.label, { color: mode.text }]}>Select return date</Text>
                             <DateFlightSearch date={returnDate} setDate={setReturnDate} />
                             {returnDate && returnDate < departureDate ? <Text style={styles.error}>Return date is before depature date!</Text> : null}
                         </View>
@@ -103,7 +104,7 @@ export default function FlightSearch() {
 
 
                 <View style={styles.searchComponent}>
-                    <Text style={styles.label}>Select number of adult passengers</Text>
+                    <Text style={[styles.label, { color: mode.text }]}>Select number of adult passengers</Text>
                     <NumberOfAdultsSearch
                         numberOfAdults={numberOfAdults}
                         setNumberOfAdults={setNumberOfAdults}

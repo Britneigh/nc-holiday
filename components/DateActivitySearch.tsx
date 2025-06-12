@@ -44,7 +44,7 @@ export default function DateActivitySearch({ date, setDate }: any) {
               value={formattedDate}
               editable={false}
               pointerEvents="none"
-              style={styles.input}
+              style={[styles.input]}
             />
           </Pressable>
           {show && (

@@ -1,9 +1,9 @@
 
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-
+import { useTheme } from '../app/ThemeContext';
 
 export default function NumberOfAdultsSearch({ numberOfAdults, setNumberOfAdults }: any) {
-
+    const { mode }: any = useTheme();
 
     const increment = () => {
         if (numberOfAdults < 9) {
@@ -19,7 +19,7 @@ export default function NumberOfAdultsSearch({ numberOfAdults, setNumberOfAdults
 
     return (
         <View style={styles.container}>
-            <Text style={styles.labelDescription} >Choose Between (1-9):</Text>
+            <Text style={[styles.labelDescription, { color: mode.text }]}>Choose Between (1-9):</Text>
             <View style={styles.numberIncrementContainer}>
 
                 <TouchableOpacity

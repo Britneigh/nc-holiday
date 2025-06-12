@@ -2,8 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, Button, View, Image, Alert, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { deleteTrip } from '@/firestoreService/trip/deleteTrip';
+import { useTheme } from '../app/ThemeContext';
 
 export default function TripCard({ trip, refreshTrips, setDisplayUpcomingTripsStyle }: any) {
+    const { mode }: any = useTheme();
+
     const deleteImage = (tripId: string) => {
         deleteTrip(tripId)
             .then(() => {
@@ -27,7 +30,7 @@ export default function TripCard({ trip, refreshTrips, setDisplayUpcomingTripsSt
 
     return (
         <TouchableOpacity
-            style={styles.container}
+            style={[styles.container, { backgroundColor: mode.background }]}
             onPress={() => router.push({ pathname: '/trip-info', params: { id: trip.id } })}
         >
             <View style={isCurrentTrip ? styles.currentTripWrapper : styles.tripWrapper}>
