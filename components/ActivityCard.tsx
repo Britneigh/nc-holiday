@@ -18,7 +18,7 @@ type Activity = {
     longitude: number;
     cityCode: string;
   };
-  price?: { amount: number; currency: string } | string;
+  price?: { amount: number; currencyCode: string } | string;
   category?: string;
   rating?: number;
   images?: string[];
@@ -77,7 +77,7 @@ export default function ActivityCard({ activity }: Props) {
           <Text style={styles.price}>
             Price:{" "}
             {typeof activity.price === "object"
-              ? `${activity.price.amount} ${activity.price.currency}`
+              ? `${activity.price.amount} ${activity.price.currencyCode}`
               : activity.price}
           </Text>
         )}

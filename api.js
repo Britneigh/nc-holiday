@@ -120,29 +120,14 @@ export const getFlightSearchWithDestination = (
 
 //--------------------
 
-export const getHotelList = (
-  token,
-  cityCode,
-  ratings,
-  radius,
-  amenities,
-  // radiusUnit = "KM",
-  // chainCodes = [],
-  // hotelSource = "ALL"
-) => {
+export const getHotelList = (token, cityCode, ratings, radius, amenities) => {
   const params = {
     cityCode,
     ratings,
     radius,
-    // radiusUnit,
-    // hotelSource,
   };
-  // params.ratings = ratings.join(",");
-  // if (amenities.length > 0) params.amenities = amenities.join(",");
-  if (amenities.length === 0) delete params.amenities
 
-  // if (chainCodes.length > 0) params.chainCodes = chainCodes.join(",");
-  // if (rating.length > 0) params.rating = rating.join(",");
+  if (amenities.length === 0) delete params.amenities;
 
   return axios
     .get(
@@ -175,50 +160,34 @@ export const getHotelSearch = (
   checkInDate,
   checkOutDate,
   adults,
-  hotelList,
-  // countryOfResidence,
-  // roomQuantity = 1,
-  // priceRange,
-  // currency,
-  // paymentPolicy = "NONE",
-  // boardType,
-  // includeClosed = false,
-  // bestRatesOnly = true,
-  // lang
+  hotelList
 ) => {
   const hotelIds = Array.isArray(hotelList?.data)
-    ? hotelList.data.map((item) => item.hotelId).filter(Boolean)
+    ? hotelList.data
+        .map((item) => item.hotelId)
+        .filter(Boolean)
+        .slice(0, 30)
     : [];
 
-    if (!checkInDate) {
-      const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-      checkInDate = today;
-    }
+  if (!checkInDate) {
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    checkInDate = today;
+  }
 
-    if (!checkOutDate) {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      checkOutDate = tomorrow.toISOString().split("T")[0];
-    }
+  if (!checkOutDate) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    checkOutDate = tomorrow.toISOString().split("T")[0];
+  }
 
   const params = {
     checkInDate,
     checkOutDate,
     adults,
-    // countryOfResidence,
-    // roomQuantity,
-    // priceRange,
-    // currency,
-    // paymentPolicy,
-    // boardType,
-    // includeClosed,
-    // bestRatesOnly,
-    // lang,
   };
 
   params.hotelIds = hotelIds.join(",");
 
-  
   Object.keys(params).forEach(
     (key) => params[key] === undefined && delete params[key]
   );
@@ -301,7 +270,6 @@ export const rateLimitedRequest = (fn, args = [], retries = 5, attempt = 1) => {
   });
 };
 
-
 //--------------------------
 export const getHolidayDataTest = (
   token,
@@ -327,12 +295,10 @@ export const getHolidayDataTest = (
     .then((flightsResponse) => {
       const flights = (flightsResponse?.data || []).slice(0, 1); // <= 1 flight only
 
-    
       return rateLimitedRequest(getHotelList, [token, destination]).then(
         (hotelsResponse) => {
           const hotels = (hotelsResponse?.data || []).slice(0, 1); // <= 1 hotel only
 
-          
           return flights.reduce((flightChain, flight) => {
             return flightChain.then(() => {
               const flightResult = {
@@ -396,7 +362,6 @@ export const getHolidayDataTest = (
       return results;
     });
 };
-
 
 //-------
 
