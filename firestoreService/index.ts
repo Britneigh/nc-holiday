@@ -19,4 +19,6 @@ export * from './activity/deleteActivity';
 export * from './activity/getActivitiesByTrip'
 export * from './activity/updateActivity';
 
+export * from './memories/getMemoriesByTrip'
+
 export * from './types';

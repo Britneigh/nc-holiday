@@ -69,7 +69,7 @@ export default function Chatbot() {
       trips: tripData,
     };
 
-    axios.post("http://127.0.0.1:8002/api/agent", dataForApi, {
+    axios.post("http://127.0.0.1:8001/api/agent", dataForApi, {
       headers: { "Authorization": `Bearer ${token}` }
     }).then(response => {
       if (response.data && response.data.response) {
