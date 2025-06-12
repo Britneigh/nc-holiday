@@ -23,7 +23,7 @@ export default function HomeCurrentTrips({ setCurrentTripsLength }: any) {
                     const end = trip.endDate.toDate();
                     start.setHours(0, 0, 0, 0);
                     end.setHours(0, 0, 0, 0);
-                    return end >= today;
+                    return start <= today && end >= today;
                 })
                 filtered.sort((a, b) => {
                     const startA = a.startDate.toDate();
