@@ -3,8 +3,10 @@ import { StyleSheet, ScrollView, TouchableOpacity, View, Text, Image } from 'rea
 import { getTrips } from '@/firestoreService/trip/getTrips';
 import { router } from 'expo-router';
 import { Trip } from '@/firestoreService/types';
+import { useTheme } from '../app/ThemeContext';
 
-export default function HomeCurrentTrips({ setCurrentTripsLength }) {
+export default function HomeCurrentTrips({ setCurrentTripsLength }: any) {
+    const { mode }: any = useTheme();
     const [currentTrips, setCurrentTrips] = useState<Trip[]>([]);
 
     const today = new Date();
@@ -21,7 +23,12 @@ export default function HomeCurrentTrips({ setCurrentTripsLength }) {
                     const end = trip.endDate.toDate();
                     start.setHours(0, 0, 0, 0);
                     end.setHours(0, 0, 0, 0);
-                    return start <= today && end >= today;
+                    return end >= today;
+                })
+                filtered.sort((a, b) => {
+                    const startA = a.startDate.toDate();
+                    const startB = b.startDate.toDate();
+                    return startA.getTime() - startB.getTime();
                 });
                 setCurrentTrips(filtered);
                 setCurrentTripsLength(filtered.length);
@@ -29,39 +36,44 @@ export default function HomeCurrentTrips({ setCurrentTripsLength }) {
     }, []);
 
     return (
-        <ScrollView style={styles.scrollContainer}>
-            {currentTrips.map((trip) => (
-                <TouchableOpacity
-                    key={trip.id}
-                    style={styles.container}
-                    onPress={() => router.push({ pathname: '/trip-info', params: { id: trip.id } })}
-                >
-                    <View style={styles.currentTripWrapper}>
-                        <View style={styles.card}>
-                            <View style={styles.flightCardHeader}>
-                                <Text style={styles.currentTripBadge}>Current Trip</Text>
-                                <Text style={styles.label}>{trip.tripName}</Text>
-                            </View>
+        <View style={styles.centeringContainer}>
+            <ScrollView style={styles.scrollContainer}>
+                {currentTrips.map((trip) => (
 
-                            <View style={styles.cardDataContainer}>
-                                {/* {trip.pictures ? (
+                    <TouchableOpacity
+                        key={trip.id}
+                        style={[styles.container, { backgroundColor: mode.background }]}
+                        onPress={() => router.push({ pathname: '/trip-info', params: { id: trip.id } })}
+                    >
+                        <View style={styles.currentTripWrapper}>
+                            <View style={styles.card}>
+                                <View style={styles.flightCardHeader}>
+                                    <Text style={styles.currentTripBadge}>Current Trip</Text>
+                                    <Text style={styles.label}>{trip.tripName}</Text>
+                                </View>
+
+                                <View style={styles.cardDataContainer}>
+                                    {/* {trip.pictures ? (
                                     <Image style={styles.cardImg} source={{ uri: trip.pictures }} />
                                 ) : null} */}
 
-                                <Image style={styles.cardImg} source={{ uri: '' }} />
+                                    <Image style={styles.cardImg} source={{ uri: '' }} />
 
-                                <View style={styles.cardData}>
-                                    <Text style={styles.cardLocation}>{trip.location}</Text>
-                                    <Text style={styles.cardDate}>Start: {trip.startDate.toDate().toLocaleDateString()}</Text>
-                                    <Text style={styles.cardDate}>End: {trip.endDate.toDate().toLocaleDateString()}</Text>
-                                    <Text style={styles.cardDate}>Created: {trip.createdAt.toDate().toLocaleDateString()}</Text>
+                                    <View style={styles.cardData}>
+                                        <Text style={[styles.cardLocation, { color: mode.text }]}>{trip.location}</Text>
+                                        <Text style={styles.cardDate}>Start: {trip.startDate.toDate().toLocaleDateString()}</Text>
+                                        <Text style={styles.cardDate}>End: {trip.endDate.toDate().toLocaleDateString()}</Text>
+                                        <Text style={styles.cardDate}>Created: {trip.createdAt.toDate().toLocaleDateString()}</Text>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
-                </TouchableOpacity>
-            ))}
-        </ScrollView>
+                    </TouchableOpacity>
+
+                ))
+                }
+            </ScrollView >
+        </View>
     );
 }
 
@@ -69,10 +81,15 @@ const styles = StyleSheet.create({
     scrollContainer: {
         paddingHorizontal: 10,
         paddingVertical: 5,
+        width: '100%',
+
+    },
+    centeringContainer: {
+        alignItems: 'center'
     },
     container: {
-        width: 320,
-        marginRight: 10,
+        width: '100%',
+        paddingHorizontal: 10,
         backgroundColor: '#FFF',
     },
     currentTripWrapper: {

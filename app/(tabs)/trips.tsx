@@ -4,10 +4,10 @@ import { router } from 'expo-router';
 import TripCard from '@/components/TripCard';
 import { getTrips } from '../../firestoreService/trip/getTrips';
 import { Trip } from '../../firestoreService/types';
-
-
+import { useTheme } from '../ThemeContext';
 
 export default function Trips() {
+    const { mode }: any = useTheme();
     const [displayUpcomingTripsStyle, setDisplayUpcomingTripsStyle] = useState(true)
     const [allTrips, setAllTrips] = useState<Trip[]>([]);
     const [trips, setTrips] = useState<Trip[]>([]);
@@ -15,7 +15,6 @@ export default function Trips() {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
 
     const fetchTrips = () => {
         setIsLoading(true)
@@ -52,7 +51,7 @@ export default function Trips() {
 
     return (
         <>
-            <View style={styles.tripsDisplaysContainer}>
+            <View style={[styles.tripsDisplaysContainer, { backgroundColor: mode.background }]}>
                 <Pressable
                     onPress={displayUpcomingTrips}
                     style={[styles.optionalChoiceContainer, displayUpcomingTripsStyle && styles.optionalChoiceContainerSelected]}>
@@ -69,7 +68,7 @@ export default function Trips() {
                     <Text style={styles.optionalChoice}>Add New Trip</Text>
                 </Pressable>
             </View >
-            <ScrollView style={styles.scrollContainer}>
+            <ScrollView style={[styles.scrollContainer, { backgroundColor: mode.background }]}>
                 {trips.map((trip) => (
                     <TripCard key={trip.id} trip={trip} refreshTrips={fetchTrips} setDisplayUpcomingTripsStyle={setDisplayUpcomingTripsStyle} />
                 ))}
@@ -82,6 +81,7 @@ const styles = StyleSheet.create({
     scrollContainer: {
         flex: 1,
         backgroundColor: '#ffffff',
+
 
     },
     container: {

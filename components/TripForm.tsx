@@ -3,8 +3,10 @@ import { StyleSheet, Text, View, TextInput, Button, Alert } from 'react-native';
 import TripDates from './TripDates';
 import { router } from 'expo-router';
 import { addTrip } from '../firestoreService/trip/addTrip';
+import { useTheme } from '../app/ThemeContext';
 
 export default function TripForm({ tripName, setTripName, location, setLocation, startDate, setStartDate, endDate, setEndDate, tripPicture, setTripPicture }: any) {
+  const { mode }: any = useTheme();
 
   const isValidUrl = (url: string) => {
     const regex = /^(https?:\/\/)?([\w\-]+\.)+[a-z]{2,6}(:\d{1,5})?(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/i
@@ -50,31 +52,31 @@ export default function TripForm({ tripName, setTripName, location, setLocation,
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Trip Name:</Text>
+      <Text style={[styles.label, { color: mode.text }]}>Trip Name:</Text>
       <TextInput
         placeholder='Input trip name here...'
         clearButtonMode='always'
-        style={styles.input}
+        style={[styles.input, { color: mode.text, backgroundColor: mode.background }]}
         autoCorrect={false}
         value={tripName}
         onChangeText={setTripName}
       />
-      <Text style={styles.label}>Location:</Text>
+      <Text style={[styles.label, { color: mode.text }]}>Location:</Text>
       <TextInput
         placeholder='Where are you going?'
         clearButtonMode='always'
-        style={styles.input}
+        style={[styles.input, { color: mode.text, backgroundColor: mode.background }]}
         autoCorrect={false}
         value={location}
         onChangeText={setLocation}
       />
       <TripDates startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate} />
 
-      <Text style={styles.label}>Add a photo for your trip (optional)</Text>
+      <Text style={[styles.label, { color: mode.text }]}>Add a photo for your trip (optional)</Text>
       <TextInput
         placeholder="Enter a photo url for your trip"
         clearButtonMode='always'
-        style={styles.input}
+        style={[styles.input, { color: mode.text, backgroundColor: mode.background }]}
         autoCorrect={false}
         autoCapitalize='none'
         value={tripPicture}

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-export default function HotelRatingSearch({rating, setRating}: any) {
-        
+export default function HotelRatingSearch({ rating, setRating }: any) {
+
     const handleStarPress = (index: number) => {
         setRating([index + 1]);
     };
-    
+
     return (
         <View style={styles.container}>
             <View style={styles.starRow}>
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         padding: 16,
         justifyContent: 'center',
+        alignItems: 'center'
     },
     label: {
         fontSize: 16,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Button, Text, ScrollView, View } from "react-native";
 import { router } from "expo-router";
+import { useTheme } from '../ThemeContext';
 
 import HotelLocationSearch from "@/components/HotelLocationSearch";
 import HotelRatingSearch from "@/components/HotelRatingSearch";
@@ -10,6 +11,7 @@ import DateFlightSearch from "@/components/DateFlightSearch";
 import NumberOfAdultsSearch from "@/components/NumberOfAdultsSearch";
 
 export default function hotelSearch() {
+  const { mode }: any = useTheme();
   const [selectedLocationCode, setSelectedLocationCode] = useState("");
   const [radius, setRadius] = useState(20);
   const [rating, setRating] = useState([3]);
@@ -26,74 +28,78 @@ export default function hotelSearch() {
   checkInDay.setHours(0, 0, 0, 0);
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.searchComponent}>
-        <Text style={styles.label}>Select location</Text>
-        <HotelLocationSearch
-          selectedLocationCode={selectedLocationCode}
-          setSelectedLocationCode={setSelectedLocationCode}
-        />
-      </View>
-      <View style={styles.searchComponent}>
-        <Text style={styles.label}>Select check-in date</Text>
-        <DateFlightSearch date={checkInDate} setDate={setCheckInDate} />
-        {checkInDay < today ? (
-          <Text style={styles.error}>
-            Selected check-in date is in the past!
-          </Text>
-        ) : null}
-      </View>
-      <View style={styles.searchComponent}>
-        <Text style={styles.label}>Select check-out date</Text>
-        <DateFlightSearch date={checkOutDate} setDate={setCheckOutDate} />
-        {checkOutDate < checkInDate ? (
-          <Text style={styles.error}>
-            Check-out date is before check-in date!
-          </Text>
-        ) : null}
-      </View>
-      <View style={styles.searchComponent}>
-        <Text style={styles.label}>Select rating</Text>
-        <HotelRatingSearch rating={rating} setRating={setRating} />
-      </View>
-      <View style={styles.searchComponent}>
-        <Text style={styles.label}>Select number of adult guests</Text>
-        <NumberOfAdultsSearch
-          numberOfAdults={numberOfAdults}
-          setNumberOfAdults={setNumberOfAdults}
-        />
-      </View>
-      <View style={styles.searchComponent}>
-        <Text style={styles.label}>Select amenities</Text>
-        <HotelAmeneties
-          selectedAmenities={selectedAmenities}
-          setSelectedAmenities={setSelectedAmenities}
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Search for hotels"
-          disabled={
-            !selectedLocationCode || checkInDate > checkOutDate ? true : false
-          }
-          onPress={() => {
-            const params: any = {
-              selectedLocationCode,
-              rating,
-              radius,
-              selectedAmenities,
-              checkInDate: checkInDate.toISOString().split("T")[0],
-              checkOutDate: checkOutDate.toISOString().split("T")[0],
-              numberOfAdults,
-            };
-            router.push({
-              pathname: "/hotel-results",
-              params,
-            });
-          }}
-        />
-      </View>
-    </ScrollView>
+    <>
+      <ScrollView style={[styles.container, { backgroundColor: mode.background }]}>
+        <View style={styles.searchComponent}>
+          <Text style={[styles.label, { color: mode.text }]}>Select location</Text>
+
+          <HotelLocationSearch
+            selectedLocationCode={selectedLocationCode}
+            setSelectedLocationCode={setSelectedLocationCode}
+          />
+
+        </View>
+        <View style={styles.searchComponent}>
+          <Text style={[styles.label, { color: mode.text }]}>Select check-in date</Text>
+          <DateFlightSearch date={checkInDate} setDate={setCheckInDate} />
+          {checkInDay < today ? (
+            <Text style={styles.error}>
+              Selected check-in date is in the past!
+            </Text>
+          ) : null}
+        </View>
+        <View style={styles.searchComponent}>
+          <Text style={[styles.label, { color: mode.text }]}>Select check-out date</Text>
+          <DateFlightSearch date={checkOutDate} setDate={setCheckOutDate} />
+          {checkOutDate < checkInDate ? (
+            <Text style={styles.error}>
+              Check-out date is before check-in date!
+            </Text>
+          ) : null}
+        </View>
+        <View style={styles.searchComponent}>
+          <Text style={[styles.label, { color: mode.text }]}>Select rating</Text>
+          <HotelRatingSearch rating={rating} setRating={setRating} />
+        </View>
+        <View style={styles.searchComponent}>
+          <Text style={[styles.label, { color: mode.text }]}>Select number of adult guests</Text>
+          <NumberOfAdultsSearch
+            numberOfAdults={numberOfAdults}
+            setNumberOfAdults={setNumberOfAdults}
+          />
+        </View>
+        <View style={styles.searchComponent}>
+          <Text style={[styles.label, { color: mode.text }]}>Select amenities</Text>
+          <HotelAmeneties
+            selectedAmenities={selectedAmenities}
+            setSelectedAmenities={setSelectedAmenities}
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Search for hotels"
+            disabled={
+              !selectedLocationCode || checkInDate > checkOutDate ? true : false
+            }
+            onPress={() => {
+              const params: any = {
+                selectedLocationCode,
+                rating,
+                radius,
+                selectedAmenities,
+                checkInDate: checkInDate.toISOString().split("T")[0],
+                checkOutDate: checkOutDate.toISOString().split("T")[0],
+                numberOfAdults,
+              };
+              router.push({
+                pathname: "/hotel-results",
+                params,
+              });
+            }}
+          />
+        </View>
+      </ScrollView>
+    </>
   );
 }
 

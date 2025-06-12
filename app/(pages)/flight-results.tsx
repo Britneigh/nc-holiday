@@ -9,9 +9,10 @@ import TimeZonePicker from '@/components/TimeZonePicker';
 import { timeZoneOptions } from '@/app-data/time-zone-options';
 import { formatDateTime } from '@/utils/format-date-and-time';
 import AddPlanToTrip from '@/components/AddPlanToTrip';
+import { useTheme } from '../ThemeContext';
 
 export default function FlightSearchResults() {
-
+    const { mode }: any = useTheme();
     const { selectedDepartureCode, selectedArrivalCode, departureDate, numberOfAdults, returnDate } = useLocalSearchParams();
     const adults = Number(numberOfAdults);
     const [timeZone, setTimeZone] = useState('UTC')
@@ -37,8 +38,8 @@ export default function FlightSearchResults() {
         return (
             <>
                 <GoBackHeader />
-                <View style={styles.loadingAndErrorContainer}>
-                    <Text style={styles.loadingMessage}>Searching for flights...</Text>
+                <View style={[styles.loadingAndErrorContainer, { backgroundColor: mode.background }]}>
+                    <Text style={[styles.loadingMessage, { color: mode.text }]}>Searching for flights...</Text>
                     <ActivityIndicator />
                 </View>
             </>
@@ -50,7 +51,7 @@ export default function FlightSearchResults() {
         return (
             <>
                 <GoBackHeader />
-                <View style={styles.loadingAndErrorContainer}>
+                <View style={[styles.loadingAndErrorContainer, { backgroundColor: mode.background }]}>
                     <Text style={styles.error}>{error}</Text>
                 </View>
             </>
@@ -61,8 +62,8 @@ export default function FlightSearchResults() {
         return (
             <>
                 <GoBackHeader />
-                <View style={styles.loadingAndErrorContainer}>
-                    <Text style={styles.loadingMessage}>No results found for chosen airports and dates.</Text>
+                <View style={[styles.loadingAndErrorContainer, { backgroundColor: mode.background }]}>
+                    <Text style={[styles.loadingMessage, { color: mode.text }]}>No results found for chosen airports and dates.</Text>
                 </View>
             </>
         );
@@ -71,7 +72,7 @@ export default function FlightSearchResults() {
     const carrierDictionary = flightsQuery.data?.dictionaries?.carriers || {};
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: mode.background }]}>
             <GoBackHeader />
 
             <ScrollView>
@@ -85,7 +86,6 @@ export default function FlightSearchResults() {
 
                 {flightsQuery.data.data.map((flight: any, index: number) => {
 
-                    // check format needed for firebase, but think this is correct
                     const price = parseFloat(flight.price.grandTotal);
                     const createdAt = Timestamp.now();
                     const updatedAt = Timestamp.now();
@@ -96,7 +96,6 @@ export default function FlightSearchResults() {
                     const outboundAirline = carrierDictionary[outboundCarrierCode] || outboundCarrierCode;
                     const outboundFlightNumber = `${outboundCarrierCode}${outboundSegments[0].number}`;
 
-                    // check if format is correct to submit to firebase
                     const outboundDetails = {
                         cost: price,
                         departureTime: Timestamp.fromDate(new Date(outboundSegments[0].departure.at)), // I believe in firebase correct format
@@ -160,23 +159,23 @@ export default function FlightSearchResults() {
                                 )}
 
                                 {/* Outbound */}
-                                <View style={styles.card}>
+                                <View style={[styles.card, { backgroundColor: mode.background }]}>
                                     <View style={styles.flightCardHeader}>
                                         <Text style={styles.label}>Outbound Flight</Text>
                                     </View>
 
                                     <View style={styles.cardData}>
-                                        <Text style={styles.cardText}>{`${outboundDetails.airline}`} <Text style={styles.cardText}>{`${outboundDetails.flightNumber}`}</Text></Text>
+                                        <Text style={[styles.cardText, { color: mode.text }]}>{`${outboundDetails.airline}`} <Text style={[styles.cardText, { color: mode.text }]}>{`${outboundDetails.flightNumber}`}</Text></Text>
 
                                         <View>
-                                            <Text style={styles.cardText}>{`From: ${outboundDetails.departureLocation}`}</Text>
-                                            <Text style={styles.cardText}> {`${formatDateTime(outboundSegments[0].departure.at, timeZone)} (${timeZoneOptions[timeZone][1]})`}</Text>
+                                            <Text style={[styles.cardText, { color: mode.text }]}>{`From: ${outboundDetails.departureLocation}`}</Text>
+                                            <Text style={[styles.cardText, { color: mode.text }]}> {`${formatDateTime(outboundSegments[0].departure.at, timeZone)} (${timeZoneOptions[timeZone][1]})`}</Text>
                                             <Text>✈️→</Text>
-                                            <Text style={styles.cardText}>{`To: ${outboundDetails.arrivalLocation}`}</Text>
-                                            <Text style={styles.cardText}>{`Arrival: ${formatDateTime(outboundSegments[outboundSegments.length - 1].arrival.at, timeZone)} (${timeZoneOptions[timeZone][1]})`}</Text>
+                                            <Text style={[styles.cardText, { color: mode.text }]}>{`To: ${outboundDetails.arrivalLocation}`}</Text>
+                                            <Text style={[styles.cardText, { color: mode.text }]}>{`Arrival: ${formatDateTime(outboundSegments[outboundSegments.length - 1].arrival.at, timeZone)} (${timeZoneOptions[timeZone][1]})`}</Text>
                                         </View>
 
-                                        <Text style={styles.cardText}>{`Stops: ${outboundDetails.stops}`}</Text>
+                                        <Text style={[styles.cardText, { color: mode.text }]}>{`Stops: ${outboundDetails.stops}`}</Text>
                                         {!isRoundTrip && <Text style={styles.price}>{`Total: ${price} ${flight.price.currency}`}</Text>}
                                     </View>
                                 </View>
@@ -190,35 +189,58 @@ export default function FlightSearchResults() {
                                     arrivalLocation: outboundDetails.arrivalLocation,
                                     stops: outboundDetails.stops,
                                     bookingLink: '',
-                                    isBooked: false
-
+                                    isBooked: false,
+                                    isReturnFlight: false
                                 }}></AddPlanToTrip>}
 
                                 {/* Return */}
                                 {returnDetails && (
-                                    <View style={styles.card}>
+                                    <View style={[styles.card, { backgroundColor: mode.background }]}>
                                         <View style={styles.flightCardHeader}>
                                             <Text style={styles.label}>Return Flight</Text>
                                         </View>
 
                                         <View style={styles.cardData}>
-                                            <Text style={styles.cardText}>{`${returnDetails.airline}`} <Text style={styles.cardText}>{`${returnDetails.flightNumber}`}</Text></Text>
+                                            <Text style={[styles.cardText, { color: mode.text }]}>{`${returnDetails.airline}`} <Text style={[styles.cardText, { color: mode.text }]}>{`${returnDetails.flightNumber}`}</Text></Text>
                                             <View>
-                                                <Text style={styles.cardText}>{`From: ${returnDetails.departureLocation}`}</Text>
-                                                <Text style={styles.cardText}> {`${formatDateTime(returnDetails.departureTime.toDate().toISOString(), timeZone)} (${timeZoneOptions[timeZone][1]})`}</Text>
+                                                <Text style={[styles.cardText, { color: mode.text }]}>{`From: ${returnDetails.departureLocation}`}</Text>
+                                                <Text style={[styles.cardText, { color: mode.text }]}> {`${formatDateTime(returnDetails.departureTime.toDate().toISOString(), timeZone)} (${timeZoneOptions[timeZone][1]})`}</Text>
                                                 <Text>✈️→</Text>
-                                                <Text style={styles.cardText}>{`To: ${returnDetails.arrivalLocation}`}</Text>
-                                                <Text style={styles.cardText}>{`Arrival: ${formatDateTime(returnDetails.arrivalTime.toDate().toISOString(), timeZone)} (${timeZoneOptions[timeZone][1]})`}</Text>
+                                                <Text style={[styles.cardText, { color: mode.text }]}>{`To: ${returnDetails.arrivalLocation}`}</Text>
+                                                <Text style={[styles.cardText, { color: mode.text }]}>{`Arrival: ${formatDateTime(returnDetails.arrivalTime.toDate().toISOString(), timeZone)} (${timeZoneOptions[timeZone][1]})`}</Text>
                                             </View>
 
-                                            <Text style={styles.cardText}>{`Stops: ${returnDetails.stops}`}</Text>
+                                            <Text style={[styles.cardText, { color: mode.text }]}>{`Stops: ${returnDetails.stops}`}</Text>
                                         </View>
 
 
                                     </View>
                                 )}
                                 {isRoundTrip && <Text style={styles.price}>{`Total: ${price} ${flight.price.currency}`}</Text>}
-                                {isRoundTrip && <AddPlanToTrip typeOfPlan={'flight'} planData={returnDetails}></AddPlanToTrip>}
+                                {isRoundTrip && <AddPlanToTrip typeOfPlan={'flight'} planData={{
+                                    cost: outboundDetails.cost,
+                                    airline: outboundDetails.airline,
+                                    flightCode: outboundDetails.flightNumber,
+                                    departureTime: outboundDetails.departureTime,
+                                    arrivalTime: outboundDetails.arrivalTime,
+                                    departureLocation: outboundDetails.departureLocation,
+                                    arrivalLocation: outboundDetails.arrivalLocation,
+                                    stops: outboundDetails.stops,
+                                    bookingLink: '',
+                                    isBooked: false,
+                                    isReturnFlight: true,
+                                    returnFlightDetails: {
+                                        cost: returnDetails.cost,
+                                        airline: returnDetails.airline,
+                                        flightCode: returnDetails.flightNumber,
+                                        departureTime: returnDetails.departureTime,
+                                        arrivalTime: returnDetails.arrivalTime,
+                                        departureLocation: returnDetails.departureLocation,
+                                        arrivalLocation: returnDetails.arrivalLocation,
+                                        stops: returnDetails.stops,
+                                    }
+                                }}></AddPlanToTrip>}
+
                             </View>
                         );
                     }
