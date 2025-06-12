@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, ScrollView } from 'react-native';
 import TripForm from '@/components/TripForm';
 import GoBackHeader from '@/components/GoBackHeader';
+import { useTheme } from '../ThemeContext';
 
 export default function addTrip() {
-
+    const { mode }: any = useTheme();
     const [tripName, setTripName] = useState('');
     const [location, setLocation] = useState('');
     const [startDate, setStartDate] = useState(new Date());
@@ -33,8 +34,8 @@ export default function addTrip() {
     return (
         <>
             <GoBackHeader />
-            <ScrollView style={styles.container}>
-                <Text style={styles.header}>Add a trip to the itinerary:</Text>
+            <ScrollView style={[styles.container, { backgroundColor: mode.background }]}>
+                <Text style={[styles.header, { color: mode.text }]}>Add a trip to the itinerary:</Text>
                 <TripForm
                     tripName={tripName} setTripName={setTripName}
                     location={location} setLocation={setLocation}
