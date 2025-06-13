@@ -58,6 +58,7 @@ export default function ActivitySearchResults() {
     return !isNaN(floatValue) ? floatValue : undefined;
   };
 
+
   const parsedFromDate = parseDateParam(fromDate);
   const parsedToDate = parseDateParam(toDate);
   const parsedLat = parseNumberParam(latitude);
